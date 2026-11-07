@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>텍스트 효과 시안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Nanum+Myeongjo:wght@400;700;800&display=swap">
+<style>
+/* Layout: 한 열 세로 스크롤. 카드마다 어두운 무대 → 조절 슬라이더 → 개발 전달용 파라미터 표.
+   무대는 두 테마에서 같은 어두운 장면으로 고정하고, 나머지 UI만 테마를 따른다. */
+:root{
+  --bg:#eceff3; --surface:#ffffff; --fg:#13171d; --muted:#586170; --line:#d6dbe3;
+  --accent:#2b6c8a; --accent-ink:#ffffff; --chip:#e3e8ee;
+  --stage-1:#080b12; --stage-2:#16213a; --stage-ink:#d9e0ec; --stage-line:rgba(255,255,255,.18);
+  --font-display:"Nanum Myeongjo","Noto Serif KR",serif;
+  --font-ui:"IBM Plex Sans KR","Noto Sans KR",system-ui,-apple-system,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1015; --surface:#151a22; --fg:#e7eaf0; --muted:#9aa4b3; --line:#262d38;
+    --accent:#7cc4e0; --accent-ink:#0d1015; --chip:#202733; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1015; --surface:#151a22; --fg:#e7eaf0; --muted:#9aa4b3; --line:#262d38;
+  --accent:#7cc4e0; --accent-ink:#0d1015; --chip:#202733; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:var(--font-ui); font-size:15px; line-height:1.6;
+  padding-block:24px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.wrap{max-width:720px; margin:0 auto; display:grid; gap:24px}
+h1{font-family:var(--font-display); font-weight:800; font-size:clamp(28px,8vw,38px); line-height:1.15; margin:0; text-wrap:balance}
+.lead{margin:8px 0 0; color:var(--muted); max-width:60ch}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+.fx{background:var(--surface); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+.fx-head{padding:16px 16px 14px; display:grid; gap:6px}
+.fx-title{display:flex; align-items:baseline; justify-content:space-between; gap:4px 12px; flex-wrap:wrap}
+h2{margin:0; font-size:19px; font-weight:600}
+.tag{font-family:var(--font-mono); font-size:12px; color:var(--muted); letter-spacing:.04em}
+.intent{margin:0; color:var(--muted); font-size:14px; max-width:62ch}
+
+.stage{
+  position:relative; height:clamp(230px,62vw,300px);
+  background:radial-gradient(120% 100% at 50% 35%,var(--stage-2),var(--stage-1));
+  border-block:1px solid var(--line);
+}
+.stage canvas{display:block; width:100%; height:100%}
+.stage.g{display:grid; place-items:center; height:auto; min-height:230px; padding:28px 20px; text-align:center}
+.play{
+  justify-self:start; min-height:40px; padding:0 18px; border-radius:999px;
+  border:1px solid var(--line); background:var(--chip); color:var(--fg);
+  font:500 13px var(--font-ui); cursor:pointer;
+}
+.gtext{
+  font-family:var(--font-display); font-weight:700; font-size:clamp(24px,7.4vw,36px); line-height:1.5;
+  color:var(--stage-ink); white-space:pre-wrap; word-break:keep-all; overflow-wrap:anywhere; max-width:100%;
+}
+.gtext span{border-bottom:1px solid transparent}
+.gtext span.in{border-bottom-style:dashed; border-bottom-color:rgba(255,255,255,.3)}
+
+.controls{display:grid; gap:16px; padding:16px; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.field{display:grid; gap:6px; min-width:0; align-content:start}
+.field.wide{grid-column:1/-1}
+.sliders{grid-column:1/-1; display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.field-top{display:flex; justify-content:space-between; gap:8px; font-size:13px}
+.field-name{font-weight:500; font-size:13px}
+.val{font-family:var(--font-mono); color:var(--muted); font-variant-numeric:tabular-nums}
+input[type=range]{width:100%; height:28px; margin:0; accent-color:var(--accent)}
+input[type=text]{
+  width:100%; min-height:44px; padding:0 12px; border-radius:8px; border:1px solid var(--line);
+  background:var(--bg); color:var(--fg); font:16px var(--font-ui);
+}
+.swatches{display:flex; gap:10px; flex-wrap:wrap}
+.sw{width:44px; height:44px; border-radius:50%; border:2px solid var(--line); padding:0; cursor:pointer; background:var(--c)}
+.sw.pal{width:72px; border-radius:22px}
+.sw[aria-pressed=true]{outline:2px solid var(--accent); outline-offset:2px}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; justify-self:start}
+.seg button{min-height:44px; padding:0 16px; border:0; background:transparent; color:var(--fg); font:500 14px var(--font-ui); cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--accent); color:var(--accent-ink)}
+.range-cap{font-family:var(--font-mono); font-size:12.5px; color:var(--muted); overflow-wrap:anywhere}
+.hint{margin:0; font-size:12.5px; color:var(--muted)}
+.btn{justify-self:start; min-height:44px; padding:0 16px; border-radius:8px; border:1px solid var(--line); background:var(--chip); color:var(--fg); font:500 14px var(--font-ui); cursor:pointer}
+.valbox{margin:0; white-space:pre-wrap; overflow-wrap:anywhere; font-family:var(--font-mono); font-size:12.5px; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:10px 12px}
+
+details.spec{border-top:1px solid var(--line)}
+summary{padding:0 16px; min-height:48px; display:flex; align-items:center; cursor:pointer; font-weight:500; font-size:14px}
+.spec-body{padding:0 16px 16px; display:grid; gap:14px; font-size:13.5px}
+.spec-body h3{margin:0; font-size:12px; font-weight:500; color:var(--muted); letter-spacing:.06em}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse; width:100%; min-width:480px}
+th,td{text-align:left; padding:7px 12px 7px 0; border-bottom:1px solid var(--line); vertical-align:top}
+th{font-size:12px; color:var(--muted); font-weight:500}
+td.m{font-family:var(--font-mono); font-size:12.5px; white-space:nowrap}
+ol.steps{margin:0; padding-left:20px; display:grid; gap:4px}
+code.block{display:block; white-space:pre-wrap; overflow-wrap:anywhere; font-family:var(--font-mono); font-size:12.5px; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:10px 12px}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>텍스트 효과 시안</h1>
+    <p class="lead">슬픈 원령 대사 등에 쓸 텍스트 연출 3종입니다. 문구를 바꿔 보고 슬라이더로 움직임을 조절할 수 있어요. 각 카드 아래에 개발 전달용 파라미터가 있습니다.</p>
+  </header>
+
+  <section class="fx" id="fx-drop">
+    <div class="fx-head">
+      <div class="fx-title"><h2>1. 텍스트 드롭</h2><span class="tag">슬픈 원령 대사</span></div>
+      <p class="intent">글자의 분신이 원본에서 떨어져 나가 아래로 내려갑니다. 분리 직전 원본 글자가 살짝 내려앉았다가, 분신이 떨어져 나가면 제자리로 돌아옵니다. 떨어지는 길에 겹친 글자도 밀려났다가 돌아옵니다. '물방울' 방식은 같은 연출을 방울로 묘사한 대안 시안입니다.</p>
+    </div>
+    <div class="stage" id="stage-drop">
+      <canvas id="cv-drop" role="img" aria-label="텍스트 드롭 미리보기"></canvas>
+    </div>
+    <div class="controls" id="ctl-drop">
+      <div class="field wide"><button type="button" class="play" id="play-drop">일시정지</button></div>
+      <div class="field wide"><label class="field-name" for="txt-drop">문구</label><input id="txt-drop" type="text" maxlength="40" value="나는 아직 여기 있어요"></div>
+      <div class="field"><span class="field-name" id="modelbl-drop">표현 방식</span><div class="seg" id="mode-drop" role="group" aria-labelledby="modelbl-drop"></div></div>
+      <div class="field" id="unitbox-drop"><span class="field-name" id="unitlbl-drop">분신 단위</span><div class="seg" id="unit-drop" role="group" aria-labelledby="unitlbl-drop"></div></div>
+      <div class="field wide" id="presetbox-drop"><span class="field-name" id="presetlbl-drop">프리셋</span><div class="seg" id="preset-drop" role="group" aria-labelledby="presetlbl-drop"></div><p class="hint" id="hint-drop"></p><button type="button" class="btn" id="copy-drop">현재 값 보기·복사</button><pre class="valbox" id="vals-drop" hidden></pre></div>
+      <div class="field wide"><span class="field-name" id="inklbl-drop">글자색</span><div class="swatches" id="ink-drop" role="group" aria-labelledby="inklbl-drop"></div></div>
+      <div class="sliders" id="sl-drop"></div>
+    </div>
+    <details class="spec"><summary>플머 전달용 파라미터</summary><div class="spec-body" id="spec-drop"></div></details>
+  </section>
+
+  <section class="fx" id="fx-rise">
+    <div class="fx-head">
+      <div class="fx-title"><h2>2. 텍스트 상승</h2><span class="tag">1번의 반대</span></div>
+      <p class="intent">드롭을 위아래로 뒤집은 연출입니다. 글자의 분신이 원본에서 분리되어 위로 떠오르고, 올라가며 좌우로 흔들리다 사라집니다. 분리 직전 원본 글자는 위로 살짝 들렸다가 제자리로 돌아옵니다.</p>
+    </div>
+    <div class="stage" id="stage-rise">
+      <canvas id="cv-rise" role="img" aria-label="텍스트 상승 미리보기"></canvas>
+    </div>
+    <div class="controls" id="ctl-rise">
+      <div class="field wide"><button type="button" class="play" id="play-rise">일시정지</button></div>
+      <div class="field wide"><label class="field-name" for="txt-rise">문구</label><input id="txt-rise" type="text" maxlength="40" value="이제야 가벼워졌구나"></div>
+      <div class="field"><span class="field-name" id="modelbl-rise">표현 방식</span><div class="seg" id="mode-rise" role="group" aria-labelledby="modelbl-rise"></div></div>
+      <div class="field" id="unitbox-rise"><span class="field-name" id="unitlbl-rise">분신 단위</span><div class="seg" id="unit-rise" role="group" aria-labelledby="unitlbl-rise"></div></div>
+      <div class="field wide" id="presetbox-rise"><span class="field-name" id="presetlbl-rise">프리셋</span><div class="seg" id="preset-rise" role="group" aria-labelledby="presetlbl-rise"></div><p class="hint" id="hint-rise"></p><button type="button" class="btn" id="copy-rise">현재 값 보기·복사</button><pre class="valbox" id="vals-rise" hidden></pre></div>
+      <div class="field wide"><span class="field-name" id="inklbl-rise">글자색</span><div class="swatches" id="ink-rise" role="group" aria-labelledby="inklbl-rise"></div></div>
+      <div class="sliders" id="sl-rise"></div>
+    </div>
+    <details class="spec"><summary>플머 전달용 파라미터</summary><div class="spec-body" id="spec-rise"></div></details>
+  </section>
+
+  <section class="fx" id="fx-grad">
+    <div class="fx-head">
+      <div class="fx-title"><h2>3. 텍스트 그라데이션</h2><span class="tag">강조 구간</span></div>
+      <p class="intent">문장에서 지정한 구간만 색이 실시간으로 변합니다. 구간 밖 글자는 원래 색을 유지합니다. 점선은 지정된 구간을 보여 주는 표시이고, 실제 연출에는 들어가지 않습니다.</p>
+    </div>
+    <div class="stage g" id="stage-grad">
+      <div class="gtext" id="gtext" role="img" aria-label="텍스트 그라데이션 미리보기"></div>
+    </div>
+    <div class="controls" id="ctl-grad">
+      <div class="field wide"><button type="button" class="play" id="play-grad">일시정지</button></div>
+      <div class="field wide"><label class="field-name" for="txt-grad">문구</label><input id="txt-grad" type="text" maxlength="40" value="그 날의 하늘은 유난히 붉었다"></div>
+      <div class="field wide"><span class="field-name" id="presetlbl-grad">프리셋</span><div class="seg" id="preset-grad" role="group" aria-labelledby="presetlbl-grad"></div></div>
+      <div class="field"><span class="field-name" id="pallbl">팔레트</span><div class="swatches" id="pal-grad" role="group" aria-labelledby="pallbl"></div></div>
+      <div class="field"><span class="field-name" id="modelbl">변화 방식</span><div class="seg" id="mode-grad" role="group" aria-labelledby="modelbl"></div></div>
+      <div class="field wide"><span class="range-cap" id="cap-grad"></span></div>
+    </div>
+    <details class="spec"><summary>플머 전달용 파라미터</summary><div class="spec-body" id="spec-grad"></div></details>
+  </section>
+</div>
+
+<script>
+(function(){
+'use strict';
+var TAU=Math.PI*2;
+function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+function rand(a,b){return a+Math.random()*(b-a);}
+function ease(t){return t*t*(3-2*t);}
+function fmt(v){return Number.isInteger(v)?String(v):String(Math.round(v*100)/100);}
+var reduce=false;
+try{reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+var FONT='"Nanum Myeongjo","Noto Serif KR",serif';
+
+function ensureFont(text){
+  try{return document.fonts.load('700 40px "Nanum Myeongjo"',text).catch(function(){});}
+  catch(e){return Promise.resolve();}
+}
+
+var INKS=[
+  {n:'원령 흰색',fill:'#eaf2ff',glow:'rgba(140,180,255,.65)',clone:'#9fc0ff'},
+  {n:'한 맺힌 붉은색',fill:'#ff8f8f',glow:'rgba(255,70,70,.55)',clone:'#ff5a5a'},
+  {n:'청록',fill:'#9ff0e0',glow:'rgba(60,220,200,.5)',clone:'#4fe0c8'}
+];
+function hex(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
+var PALS=[
+  {k:'sunset',n:'노을',stops:['#ffb347','#ff5e7e','#8e5bff']},
+  {k:'ghost',n:'원령',stops:['#7ef0e0','#9db8ff','#e5d4ff']},
+  {k:'ember',n:'불씨',stops:['#fff3a0','#ff9a3c','#e0342b']}
+].map(function(p){p.rgb=p.stops.map(hex);return p;});
+var BASE=hex('#d9e0ec');
+
+/* ---------- 파라미터 정의: 슬라이더와 표가 같은 정의를 쓴다 ---------- */
+var DROP_DEFS=[
+  {key:'rate',label:'낙하 빈도',unit:'개/초',min:.2,max:3,step:.1,val:.9,desc:'초당 새로 맺히는 방울 수'},
+  {key:'size',label:'방울 크기',unit:'px',min:2,max:10,step:.5,val:5,desc:'방울 최대 반지름. 실제 구현에서는 글자 크기에 비례'},
+  {key:'hang',label:'맺힘 시간',unit:'초',min:.5,max:3,step:.1,val:1.4,desc:'방울이 매달려 부푸는 시간'},
+  {key:'gravity',label:'낙하 가속',unit:'px/s²',min:200,max:2000,step:50,val:900,desc:'떨어지는 가속도'},
+  {key:'dist',label:'낙하 거리',unit:'px',min:40,max:220,step:5,val:110,desc:'이 거리를 이동하며 끝 30% 구간에서 사라짐'}
+];
+var RISE_DEFS=[
+  {key:'rate',label:'상승 빈도',unit:'개/초',min:.2,max:3,step:.1,val:.9,desc:'초당 새로 맺히는 방울 수'},
+  {key:'size',label:'방울 크기',unit:'px',min:2,max:10,step:.5,val:4.5,desc:'방울 최대 반지름'},
+  {key:'hang',label:'맺힘 시간',unit:'초',min:.5,max:3,step:.1,val:1.2,desc:'방울이 맺혀 부푸는 시간'},
+  {key:'gravity',label:'상승 가속',unit:'px/s²',min:100,max:1200,step:25,val:350,desc:'위로 뜨는 가속도(부력)'},
+  {key:'dist',label:'상승 거리',unit:'px',min:40,max:220,step:5,val:130,desc:'이 거리를 이동하며 끝 30% 구간에서 사라짐'},
+  {key:'sway',label:'좌우 흔들림',unit:'px',min:0,max:24,step:1,val:8,desc:'올라가며 좌우로 흔들리는 폭. 드롭에는 없는 항목'}
+];
+var CLONE_DROP_DEFS=[
+  {key:'rate',label:'분신 빈도',unit:'개/초',min:.3,max:4,step:.1,val:1.4,desc:'초당 새로 분리되는 분신 수'},
+  {key:'hang',label:'분리 시간',unit:'초',min:.3,max:2.5,step:.1,val:.9,desc:'원본 위에서 늘어나다가 떨어져 나가기까지의 시간'},
+  {key:'stretch',label:'늘어남',unit:'배',min:1,max:2.2,step:.05,val:1.5,desc:'분리 직전 분신이 세로로 늘어나는 배율. 윗면을 고정하고 아래로 늘어남'},
+  {key:'sag',label:'내려앉음',unit:'px',min:0,max:14,step:.5,val:5,desc:'분리 직전 원본 글자가 아래로 밀려 내려앉는 거리. 분리되면 제자리로 돌아옴'},
+  {key:'bounce',label:'복귀 탄성',unit:'',min:0,max:1,step:.05,val:.5,desc:'제자리로 돌아올 때의 출렁임. 0이면 반동 없이 돌아옴'},
+  {key:'touch',label:'접촉 반응',unit:'px',min:0,max:14,step:.5,val:6,desc:'분신이 지나가며 겹친 다른 글자가 밀려났다가 돌아오는 정도. 0이면 반응 없음'},
+  {key:'gravity',label:'낙하 가속',unit:'px/s²',min:200,max:2000,step:50,val:700,desc:'떨어지는 가속도'},
+  {key:'dist',label:'낙하 거리',unit:'px',min:40,max:220,step:5,val:120,desc:'이 거리를 이동하며 끝 40% 구간에서 사라짐'},
+  {key:'alpha',label:'분신 농도',unit:'',min:.2,max:1,step:.05,val:.7,desc:'분신의 최대 불투명도'},
+  {key:'trail',label:'잔상 수',unit:'개',min:0,max:4,step:1,val:2,desc:'분신 뒤에 남는 흐린 복제본 수'},
+  {key:'tilt',label:'기울기',unit:'°',min:0,max:25,step:1,val:8,desc:'떨어지며 기울어지는 최대 각도'}
+];
+var CLONE_RISE_DEFS=[
+  {key:'rate',label:'분신 빈도',unit:'개/초',min:.3,max:4,step:.1,val:1.4,desc:'초당 새로 분리되는 분신 수'},
+  {key:'hang',label:'분리 시간',unit:'초',min:.3,max:2.5,step:.1,val:.9,desc:'원본 위에서 늘어나다가 떠오르기까지의 시간'},
+  {key:'stretch',label:'늘어남',unit:'배',min:1,max:2.2,step:.05,val:1.5,desc:'분리 직전 분신이 세로로 늘어나는 배율. 아랫면을 고정하고 위로 늘어남'},
+  {key:'sag',label:'들림',unit:'px',min:0,max:14,step:.5,val:5,desc:'분리 직전 원본 글자가 위로 들리는 거리. 분리되면 제자리로 돌아옴'},
+  {key:'bounce',label:'복귀 탄성',unit:'',min:0,max:1,step:.05,val:.5,desc:'제자리로 돌아올 때의 출렁임. 0이면 반동 없이 돌아옴'},
+  {key:'touch',label:'접촉 반응',unit:'px',min:0,max:14,step:.5,val:6,desc:'분신이 지나가며 겹친 다른 글자가 밀려났다가 돌아오는 정도. 0이면 반응 없음'},
+  {key:'gravity',label:'상승 가속',unit:'px/s²',min:100,max:1200,step:25,val:300,desc:'위로 뜨는 가속도(부력)'},
+  {key:'dist',label:'상승 거리',unit:'px',min:40,max:220,step:5,val:140,desc:'이 거리를 이동하며 끝 40% 구간에서 사라짐'},
+  {key:'sway',label:'좌우 흔들림',unit:'px',min:0,max:24,step:1,val:8,desc:'올라가며 좌우로 흔들리는 폭. 드롭에는 없는 항목'},
+  {key:'alpha',label:'분신 농도',unit:'',min:.2,max:1,step:.05,val:.7,desc:'분신의 최대 불투명도'},
+  {key:'trail',label:'잔상 수',unit:'개',min:0,max:4,step:1,val:2,desc:'분신 뒤에 남는 흐린 복제본 수'},
+  {key:'tilt',label:'기울기',unit:'°',min:0,max:25,step:1,val:6,desc:'떠오르며 기울어지는 최대 각도'}
+];
+/* 기획서의 프리셋 정의표와 같은 값. m 은 시안에서 확인한 값, s·l 은 초안 */
+var PRESETS={
+  drop:{
+    s:{rate:.8,hang:1.1,stretch:1.3,sag:3,bounce:.4,touch:4,gravity:500,dist:90,alpha:.55,trail:1,tilt:5},
+    m:{rate:1.4,hang:.9,stretch:1.5,sag:5,bounce:.5,touch:6,gravity:700,dist:120,alpha:.7,trail:2,tilt:8},
+    l:{rate:2.2,hang:.8,stretch:1.9,sag:8,bounce:.6,touch:9,gravity:900,dist:160,alpha:.85,trail:3,tilt:12}
+  },
+  rise:{
+    s:{rate:.8,hang:1.1,stretch:1.3,sag:3,bounce:.4,touch:4,gravity:220,dist:100,sway:5,alpha:.55,trail:1,tilt:4},
+    m:{rate:1.4,hang:.9,stretch:1.5,sag:5,bounce:.5,touch:6,gravity:300,dist:140,sway:8,alpha:.7,trail:2,tilt:6},
+    l:{rate:2.2,hang:.8,stretch:1.9,sag:8,bounce:.6,touch:9,gravity:400,dist:180,sway:12,alpha:.85,trail:3,tilt:9}
+  }
+};
+function paramsOf(defs){var p={};defs.forEach(function(d){p[d.key]=d.val;});return p;}
+
+function slider(id,def,params,onChange){
+  var wrap=document.createElement('div');wrap.className='field';
+  wrap.innerHTML='<div class="field-top"><label class="field-name" for="'+id+'">'+def.label+'</label><output class="val" for="'+id+'"></output></div><input id="'+id+'" type="range" min="'+def.min+'" max="'+def.max+'" step="'+def.step+'">';
+  var input=wrap.querySelector('input'),out=wrap.querySelector('output');
+  function show(){out.textContent=fmt(params[def.key])+(def.unit?' '+def.unit:'');}
+  input.value=params[def.key];show();
+  input.addEventListener('input',function(){params[def.key]=parseFloat(input.value);show();if(onChange)onChange(def.key);});
+  return {el:wrap,input:input,def:def,sync:function(){input.max=def.max;input.min=def.min;input.value=params[def.key];show();}};
+}
+function specTable(defs){
+  var rows=defs.map(function(d){
+    return '<tr><td>'+d.label+'</td><td class="m">'+d.key+'</td><td class="m">'+fmt(d.val)+(d.unit?' '+d.unit:'')+'</td><td>'+d.desc+'</td></tr>';
+  }).join('');
+  return '<div class="tbl"><table><thead><tr><th>이름</th><th>변수명</th><th>기본값</th><th>설명</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+function specTableP(defs,pre){
+  var rows=defs.map(function(d){
+    var cols=['s','m','l'].map(function(k){return '<td class="m">'+fmt(pre[k][d.key])+'</td>';}).join('');
+    return '<tr><td>'+d.label+'</td><td class="m">'+d.key+'</td>'+cols+'<td>'+d.desc+'</td></tr>';
+  }).join('');
+  return '<div class="tbl"><table><thead><tr><th>이름</th><th>변수명</th><th>s</th><th>m</th><th>l</th><th>설명</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+function group(box,items,renderBtn,start,onPick){
+  var btns=items.map(function(it,i){
+    var b=document.createElement('button');b.type='button';renderBtn(b,it,i);
+    b.addEventListener('click',function(){pick(i);});
+    box.appendChild(b);return b;
+  });
+  function pick(i){btns.forEach(function(b,j){b.setAttribute('aria-pressed',j===i?'true':'false');});onPick(items[i],i);}
+  pick(start);
+  return {pick:pick};
+}
+
+/* ---------- 줄바꿈 ---------- */
+function wrapLines(ctx,text,maxW){
+  var words=text.trim().split(/\s+/),lines=[],cur='';
+  function push(){if(cur){lines.push(cur);cur='';}}
+  words.forEach(function(wd){
+    var test=cur?cur+' '+wd:wd;
+    if(ctx.measureText(test).width<=maxW){cur=test;return;}
+    push();
+    if(ctx.measureText(wd).width<=maxW){cur=wd;return;}
+    Array.from(wd).forEach(function(ch){
+      var t2=cur+ch;
+      if(ctx.measureText(t2).width<=maxW)cur=t2;else{push();cur=ch;}
+    });
+  });
+  push();
+  return lines.length?lines:[''];
+}
+
+/* ---------- 물방울 효과 (dir=+1 드롭, dir=-1 상승) ---------- */
+function DripFx(o){
+  this.cv=o.canvas;this.ctx=this.cv.getContext('2d');
+  this.dir=o.dir;this.p=o.params;this.text=o.text;this.ink=INKS[0];
+  this.drops=[];this.res=[];this.t=0;this.playing=!reduce;this.visible=true;this.dirty=true;
+  this.off=document.createElement('canvas');
+  this.layout();
+}
+DripFx.prototype.setText=function(t){this.text=t;this.layout();};
+DripFx.prototype.setInk=function(i){this.ink=i;this.dirty=true;};
+DripFx.prototype.layout=function(){
+  var r=this.cv.getBoundingClientRect();if(r.width<2||r.height<2)return;
+  var w=r.width,h=r.height,dpr=Math.min(window.devicePixelRatio||1,3);
+  this.w=w;this.h=h;this.dpr=dpr;
+  this.cv.width=Math.round(w*dpr);this.cv.height=Math.round(h*dpr);
+  this.off.width=this.cv.width;this.off.height=this.cv.height;
+  var ctx=this.ctx;ctx.setTransform(dpr,0,0,dpr,0,0);
+  var maxW=w*0.86,fs=clamp(w*0.105,26,44),lines;
+  for(;;){
+    ctx.font='700 '+fs+'px '+FONT;
+    lines=wrapLines(ctx,this.text||' ',maxW);
+    if(lines.length<=2||fs<=22)break;
+    fs-=2;
+  }
+  this.fs=fs;this.lines=lines;this.lh=fs*1.4;
+  var total=lines.length*this.lh,cy=this.dir>0?h*0.34:h*0.64;
+  this.top=cy-total/2;
+  var o=this.off.getContext('2d',{willReadFrequently:true});
+  o.setTransform(dpr,0,0,dpr,0,0);o.clearRect(0,0,w,h);
+  o.font=ctx.font;o.textAlign='center';o.textBaseline='middle';o.fillStyle='#fff';
+  var self=this;
+  lines.forEach(function(ln,i){o.fillText(ln,w/2,self.top+(i+.5)*self.lh);});
+  var W=this.off.width,H=this.off.height,data=o.getImageData(0,0,W,H).data;
+  var step=Math.max(1,Math.round(2*dpr));
+  this.eB=[];this.eT=[];
+  for(var x=0;x<W;x+=step){
+    var yb=-1,yt=-1,y;
+    for(y=H-1;y>=0;y--){if(data[(y*W+x)*4+3]>150){yb=y;break;}}
+    if(yb<0)continue;
+    for(y=0;y<H;y++){if(data[(y*W+x)*4+3]>150){yt=y;break;}}
+    this.eB.push({x:x/dpr,y:(yb+1)/dpr});
+    this.eT.push({x:x/dpr,y:yt/dpr});
+  }
+  this.cv.setAttribute('aria-label',this.text);
+  this.drops=[];this.res=[];this.seed();this.dirty=true;
+};
+DripFx.prototype.spawn=function(){
+  var E=this.dir>0?this.eB:this.eT;if(!E.length)return null;
+  for(var k=0;k<8;k++){
+    var e=E[(Math.random()*E.length)|0];
+    var clash=this.drops.some(function(d){return d.phase==='hang'&&Math.abs(d.x-e.x)<this.p.size*3;},this);
+    if(clash)continue;
+    var d={x:e.x,y0:e.y-this.dir*1.5,phase:'hang',t:0,hang:this.p.hang*rand(.7,1.3),r:this.p.size*rand(.75,1.15),
+           vy:0,cx:e.x,cy:e.y,fall:0,ph:rand(0,TAU)};
+    this.drops.push(d);return d;
+  }
+  return null;
+};
+DripFx.prototype.seed=function(){
+  if(!this.eB.length)return;
+  for(var i=0;i<4;i++){
+    var d=this.spawn();if(!d)continue;
+    if(i<3){d.t=d.hang*rand(.25,.9);}
+    else{d.phase='fall';d.fall=rand(15,60);d.cy=d.y0+this.dir*d.fall;d.vy=this.dir*rand(160,280);}
+  }
+};
+DripFx.prototype.update=function(dt){
+  this.t+=dt;var p=this.p,dir=this.dir;
+  if(this.drops.length<22&&Math.random()<p.rate*dt)this.spawn();
+  var maxV=dir>0?760:260,sway=p.sway||0;
+  for(var i=0;i<this.drops.length;i++){
+    var d=this.drops[i];
+    if(d.phase==='hang'){
+      d.t+=dt;
+      if(d.t>=d.hang){
+        d.phase='fall';d.fall=0;d.cx=d.x;d.vy=dir*40;
+        d.cy=d.y0+dir*this.hangOff(d,d.r);
+        this.res.push({x:d.x,y:d.y0,r:d.r*.75,t:0});
+      }
+    }else{
+      d.vy+=dir*p.gravity*dt;
+      if(Math.abs(d.vy)>maxV)d.vy=dir*maxV;
+      d.cy+=d.vy*dt;d.fall+=Math.abs(d.vy)*dt;
+      if(sway)d.cx=d.x+Math.sin(this.t*2.2+d.ph)*sway*Math.min(1,d.fall/50);
+      if(d.fall>=p.dist||d.cy>this.h+20||d.cy<-20)d.dead=true;
+    }
+  }
+  this.drops=this.drops.filter(function(d){return !d.dead;});
+  this.res.forEach(function(r){r.t+=dt;});
+  this.res=this.res.filter(function(r){return r.t<.3;});
+};
+DripFx.prototype.hangOff=function(d,rb){var p=clamp(d.t/d.hang,0,1);return rb*.5+d.r*2.2*p*p;};
+DripFx.prototype.hl=function(x,y,r){
+  var c=this.ctx;c.save();c.shadowBlur=0;c.fillStyle='rgba(255,255,255,.6)';
+  c.beginPath();c.arc(x-r*.32,y-r*.3,Math.max(.6,r*.2),0,TAU);c.fill();c.restore();
+};
+DripFx.prototype.drawHang=function(d){
+  var c=this.ctx,dir=this.dir,p=clamp(d.t/d.hang,0,1);
+  var rb=d.r*(.35+.65*ease(Math.min(1,p*1.25)));
+  var off=this.hangOff(d,rb),y1=d.y0-dir*1.5,y2=d.y0+dir*off,ym=(y1+y2)/2;
+  var wa=rb*1.05,wn=rb*.55*(1-.75*p*p);
+  c.beginPath();
+  c.moveTo(d.x-wa,y1);
+  c.quadraticCurveTo(d.x-wn,ym,d.x-rb*.92,y2);
+  c.lineTo(d.x+rb*.92,y2);
+  c.quadraticCurveTo(d.x+wn,ym,d.x+wa,y1);
+  c.closePath();c.fill();
+  c.beginPath();c.arc(d.x,y2,rb,0,TAU);c.fill();
+  this.hl(d.x,y2,rb);
+};
+DripFx.prototype.drawFall=function(d){
+  var c=this.ctx,dir=this.dir,prog=d.fall/this.p.dist;
+  var a=prog<.7?1:clamp(1-(prog-.7)/.3,0,1);
+  var s=clamp(Math.abs(d.vy)/(dir>0?520:240),0,1);
+  var rx=d.r*(1-.22*s),ry=d.r*(1+.7*s),x=d.cx,y=d.cy;
+  c.globalAlpha=a;
+  c.beginPath();c.ellipse(x,y,rx,ry,0,0,TAU);c.fill();
+  var tailY=y-dir*(ry+d.r*(.5+1.6*s));
+  c.beginPath();c.moveTo(x-rx*.82,y-dir*ry*.3);c.lineTo(x,tailY);c.lineTo(x+rx*.82,y-dir*ry*.3);c.closePath();c.fill();
+  this.hl(x,y,Math.min(rx,ry));
+  c.globalAlpha=1;
+};
+DripFx.prototype.draw=function(){
+  var c=this.ctx,w=this.w,h=this.h,dir=this.dir,self=this;
+  if(!w)return;
+  c.clearRect(0,0,w,h);
+  c.font='700 '+this.fs+'px '+FONT;c.textAlign='center';c.textBaseline='middle';
+  c.fillStyle=this.ink.fill;c.shadowColor=this.ink.glow;c.shadowBlur=16;
+  this.lines.forEach(function(ln,i){c.fillText(ln,w/2,self.top+(i+.5)*self.lh);});
+  c.shadowBlur=10;
+  this.res.forEach(function(r){
+    var k=1-r.t/.3,rr=r.r*k*k;if(rr<.3)return;
+    c.beginPath();c.arc(r.x,r.y+dir*rr*.35,rr,0,TAU);c.fill();
+  });
+  this.drops.forEach(function(d){if(d.phase==='hang')self.drawHang(d);else self.drawFall(d);});
+  c.shadowBlur=0;
+};
+
+/* ---------- 분신 효과: 글자 조각의 복제본이 원본에서 분리되어 떨어지거나 떠오른다 ---------- */
+function CloneFx(o){
+  this.cv=o.canvas;this.ctx=this.cv.getContext('2d');
+  this.dir=o.dir;this.p=o.params;this.text=o.text;this.ink=INKS[0];this.unit='char';
+  this.cl=[];this.pieces=[];this.t=0;
+  this.layout();
+}
+CloneFx.prototype.setText=function(t){this.text=t;this.layout();};
+CloneFx.prototype.setUnit=function(u){
+  this.unit=u;if(!this.w)return;
+  this.computePieces();this.cl=[];this.seed();
+};
+CloneFx.prototype.layout=function(){
+  var r=this.cv.getBoundingClientRect();if(r.width<2||r.height<2)return;
+  var w=r.width,h=r.height,dpr=Math.min(window.devicePixelRatio||1,3);
+  this.w=w;this.h=h;
+  this.cv.width=Math.round(w*dpr);this.cv.height=Math.round(h*dpr);
+  var ctx=this.ctx;ctx.setTransform(dpr,0,0,dpr,0,0);
+  var maxW=w*0.86,fs=clamp(w*0.105,26,44),lines;
+  for(;;){
+    ctx.font='700 '+fs+'px '+FONT;
+    lines=wrapLines(ctx,this.text||' ',maxW);
+    if(lines.length<=2||fs<=22)break;
+    fs-=2;
+  }
+  this.fs=fs;this.lines=lines;this.lh=fs*1.4;
+  var total=lines.length*this.lh,cy=this.dir>0?h*0.34:h*0.64;
+  this.top=cy-total/2;
+  this.cv.setAttribute('aria-label',this.text);
+  this.computePieces();this.cl=[];this.seed();this.dirty=true;
+};
+CloneFx.prototype.computePieces=function(){
+  var ctx=this.ctx,self=this,w=this.w;
+  ctx.font='700 '+this.fs+'px '+FONT;this.pieces=[];this.off=null;
+  this.lines.forEach(function(ln,i){
+    var cy=self.top+(i+.5)*self.lh,lw=ctx.measureText(ln).width,x0=w/2-lw/2;
+    if(self.unit==='line'){if(ln)self.pieces.push({t:ln,cx:w/2,cy:cy,w:lw});return;}
+    if(self.unit==='word'){
+      var start=0;
+      ln.split(' ').forEach(function(wd){
+        if(wd){
+          var pre=ctx.measureText(ln.slice(0,start)).width,ww=ctx.measureText(wd).width;
+          self.pieces.push({t:wd,cx:x0+pre+ww/2,cy:cy,w:ww});
+        }
+        start+=wd.length+1;
+      });
+      return;
+    }
+    var pos=0;
+    Array.from(ln).forEach(function(ch){
+      if(ch!==' '){
+        var pre=ctx.measureText(ln.slice(0,pos)).width,cw=ctx.measureText(ch).width;
+        self.pieces.push({t:ch,cx:x0+pre+cw/2,cy:cy,w:cw});
+      }
+      pos+=ch.length;
+    });
+  });
+};
+CloneFx.prototype.spawn=function(){
+  if(!this.pieces.length)return null;
+  for(var k=0;k<8;k++){
+    var i=(Math.random()*this.pieces.length)|0;
+    if(this.cl.some(function(c){return c.i===i;}))continue;
+    var c={i:i,t:0,hang:this.p.hang*rand(.8,1.2),phase:'hang',fall:0,vy:0,sg:Math.random()<.5?-1:1,ph:rand(0,TAU)};
+    this.cl.push(c);return c;
+  }
+  return null;
+};
+CloneFx.prototype.seed=function(){
+  for(var i=0;i<4;i++){
+    var c=this.spawn();if(!c)continue;
+    if(i<2)c.t=c.hang*rand(.3,.9);
+    else{c.phase='fall';c.fall=rand(15,70);c.vy=this.dir*rand(150,300);}
+  }
+};
+CloneFx.prototype.update=function(dt){
+  this.t+=dt;var self=this,p=this.p,dir=this.dir,maxV=dir>0?900:300;
+  if(this.cl.length<16&&Math.random()<p.rate*dt)this.spawn();
+  this.cl.forEach(function(c){
+    if(c.phase==='hang'){
+      c.t+=dt;
+      if(c.t>=c.hang){
+        c.base=self.off&&self.off[c.i]?self.off[c.i].y:0;
+        c.phase='fall';c.vy=dir*30;c.fall=0;
+        /* 떨어져 나가는 순간 양옆 글자가 약하게 딸려간다 */
+        if(p.touch)self.neighbors(c.i).forEach(function(n){self.kickPiece(n[0],dir*p.touch*9*n[1],n[1]*.6);});
+      }
+    }else{
+      c.vy+=dir*p.gravity*dt;
+      if(Math.abs(c.vy)>maxV)c.vy=dir*maxV;
+      c.fall+=Math.abs(c.vy)*dt;
+      if(c.fall>=p.dist)c.dead=true;
+    }
+  });
+  this.cl=this.cl.filter(function(c){return !c.dead;});
+  this.touch();
+  this.stepSpring(dt);
+};
+/* 분신이 지나가며 겹친 다른 글자를 건드린다: 진행 방향으로 밀려났다가 돌아오고, 잠깐 밝아진다 */
+CloneFx.prototype.touch=function(){
+  var p=this.p,self=this,fs=this.fs,dir=this.dir;
+  if(!p.touch||!this.off)return;
+  this.cl.forEach(function(c){
+    var A=self.pieces[c.i];
+    if(c.phase!=='fall'||c.px==null||!A)return;
+    if(!c.hit)c.hit={};
+    var s=clamp(Math.abs(c.vy)/(dir>0?600:220),0,1);
+    self.pieces.forEach(function(B,j){
+      if(j===c.i||c.hit[j])return;
+      var oy=self.off[j]?self.off[j].y:0;
+      var over=Math.abs(c.px-B.cx)<(A.w+B.w)/2*.8&&Math.abs(c.py-(B.cy+oy))<fs*.55;
+      if(!over)return;
+      c.hit[j]=1;
+      var v0=dir*p.touch*18*(.5+.5*s);
+      self.kickPiece(j,v0,1);
+      self.neighbors(j).forEach(function(n){self.kickPiece(n[0],v0*n[1],n[1]);});
+    });
+  });
+};
+CloneFx.prototype.kickPiece=function(j,v,fl){
+  var o=this.off&&this.off[j];if(!o)return;
+  o.v+=v;o.vx+=(Math.random()-.5)*Math.abs(v)*.6;o.fl=Math.max(o.fl,fl);
+};
+CloneFx.prototype.neighbors=function(j){
+  var self=this,out=[],pj=this.pieces[j];
+  if(!pj)return out;
+  this.pieces.forEach(function(pc,k){
+    var d=Math.abs(k-j);
+    if(k===j||d>2||Math.abs(pc.cy-pj.cy)>self.fs*.5)return;
+    out.push([k,d===1?.4:.18]);
+  });
+  return out;
+};
+/* 분리 직전 원본 글자가 방향 쪽으로 밀려났다가, 분리되면 스프링처럼 제자리로 돌아온다 */
+CloneFx.prototype.stepSpring=function(dt){
+  if(!this.pieces.length)return;
+  if(!this.off||this.off.length!==this.pieces.length)this.off=this.pieces.map(function(){return {y:0,v:0,x:0,vx:0,fl:0};});
+  var p=this.p,dir=this.dir,tgt=this.pieces.map(function(){return 0;});
+  var sag=p.sag||0,zeta=1-.85*clamp(p.bounce==null?.5:p.bounce,0,1),k=160,damp=2*Math.sqrt(k)*zeta;
+  this.cl.forEach(function(c){
+    if(c.phase==='hang')tgt[c.i]=dir*sag*ease(clamp(c.t/c.hang,0,1));
+  });
+  var n=2,h=dt/n;
+  for(var s=0;s<n;s++){
+    for(var i=0;i<tgt.length;i++){
+      var o=this.off[i];
+      o.v+=(k*(tgt[i]-o.y)-damp*o.v)*h;o.y+=o.v*h;
+      o.vx+=(k*(0-o.x)-damp*o.vx)*h;o.x+=o.vx*h;
+      o.fl=Math.max(0,o.fl-h*2.4);
+    }
+  }
+};
+CloneFx.prototype.drawPiece=function(c,lag,mul){
+  var ctx=this.ctx,p=this.p,dir=this.dir,pc=this.pieces[c.i],fs=this.fs;
+  if(!pc)return;
+  var by=c.phase==='hang'?(this.off&&this.off[c.i]?this.off[c.i].y:0):(c.base||0);
+  var ay=pc.cy+by-dir*fs*.5,sx,sy,a,dx,dy,rot;
+  var stretch=p.stretch,sway=p.sway||0;
+  if(c.phase==='hang'){
+    var hp=clamp(c.t/c.hang,0,1),e=ease(hp);
+    sy=1+(stretch-1)*e;sx=1-.06*(stretch-1)*e;
+    a=p.alpha*(.2+.8*ease(Math.min(1,hp*1.6)));
+    dx=Math.sin(this.t*38+c.ph)*.9*hp;dy=0;rot=0;
+  }else{
+    var f=c.fall-lag;if(f<=0)return;
+    var prog=f/p.dist,s=clamp(Math.abs(c.vy)/(dir>0?600:220),0,1);
+    var rel=1-ease(clamp(f/(fs*1.5),0,1));
+    sy=1+(stretch-1)*rel+.3*s;sx=1-.06*(stretch-1)*rel;
+    a=p.alpha*(prog<.6?1:clamp(1-(prog-.6)/.4,0,1));
+    rot=c.sg*(p.tilt||0)*Math.PI/180*clamp(f/80,0,1);
+    dx=sway?Math.sin(this.t*2.2+c.ph)*sway*Math.min(1,f/50):c.sg*f*.05;
+    dy=dir*f;
+    if(lag===0){c.px=pc.cx+dx;c.py=pc.cy+by+dy;}
+  }
+  a*=mul;if(a<=.01)return;
+  ctx.save();ctx.globalAlpha=a;
+  ctx.translate(pc.cx+dx,ay+dy);ctx.rotate(rot);ctx.scale(sx,sy);ctx.translate(0,dir*fs*.5);
+  ctx.fillText(pc.t,0,0);
+  ctx.restore();
+};
+CloneFx.prototype.draw=function(){
+  var c=this.ctx,w=this.w,h=this.h,self=this;if(!w)return;
+  c.clearRect(0,0,w,h);
+  c.font='700 '+this.fs+'px '+FONT;c.textAlign='center';c.textBaseline='middle';
+  c.fillStyle=this.ink.fill;c.shadowColor=this.ink.glow;c.shadowBlur=16;
+  this.pieces.forEach(function(pc,i){
+    var o=self.off&&self.off[i],x=pc.cx+(o?o.x:0),y=pc.cy+(o?o.y:0);
+    c.fillText(pc.t,x,y);
+    if(o&&o.fl>.02){
+      c.save();c.globalAlpha=Math.min(1,o.fl*.8);c.fillStyle=self.ink.clone;c.shadowBlur=26;
+      c.fillText(pc.t,x,y);c.restore();
+    }
+  });
+  c.fillStyle=this.ink.clone;c.shadowBlur=12;
+  var trail=Math.round(this.p.trail||0);
+  this.cl.forEach(function(cl){
+    if(cl.phase==='fall'){
+      for(var k=trail;k>=1;k--)self.drawPiece(cl,k*(10+Math.abs(cl.vy)*.035),.5/k);
+    }
+    self.drawPiece(cl,0,1);
+  });
+  c.shadowBlur=0;c.globalAlpha=1;
+};
+
+/* 표현 방식(분신/물방울)을 바꿔 가며 쓰는 묶음. 공통 루프에는 이 객체 하나만 등록한다 */
+function Pair(engines,mode){
+  this.e=engines;this.mode=mode;this.playing=!reduce;this.visible=true;this.dirty=true;
+}
+Pair.prototype.cur=function(){return this.e[this.mode];};
+Pair.prototype.update=function(dt){this.cur().update(dt);};
+Pair.prototype.draw=function(){this.cur().draw();};
+Pair.prototype.layout=function(){this.cur().layout();this.dirty=true;};
+Pair.prototype.setMode=function(m){this.mode=m;this.cur().layout();this.dirty=true;};
+Pair.prototype.setText=function(t){
+  var self=this;
+  Object.keys(this.e).forEach(function(k){
+    if(self.e[k]===self.cur())self.e[k].setText(t);else self.e[k].text=t;
+  });
+  this.dirty=true;
+};
+Pair.prototype.setInk=function(i){
+  var self=this;
+  Object.keys(this.e).forEach(function(k){self.e[k].ink=i;});
+  this.dirty=true;
+};
+
+/* ---------- 그라데이션 효과 ---------- */
+function samplePal(rgb,pos){
+  var n=rgb.length,x=(pos-Math.floor(pos))*n,i=Math.floor(x),f=ease(x-i);
+  var a=rgb[i%n],b=rgb[(i+1)%n];
+  return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,a[2]+(b[2]-a[2])*f];
+}
+function GradFx(o){
+  this.box=o.box;this.p=o.params;this.pal=PALS[0];this.mode='flow';
+  this.t=0;this.playing=!reduce;this.visible=true;this.dirty=true;
+  this.setText(o.text);
+}
+GradFx.prototype.setText=function(t){
+  var self=this;
+  this.chars=Array.from(t);this.box.textContent='';
+  this.spans=this.chars.map(function(c){var s=document.createElement('span');s.textContent=c;self.box.appendChild(s);return s;});
+  this.box.setAttribute('aria-label',t);
+  this.markRange();
+};
+GradFx.prototype.markRange=function(){
+  var s=this.p.start,e=this.p.end;
+  this.spans.forEach(function(sp,i){
+    var on=i>=s&&i<e;sp.className=on?'in':'';if(!on)sp.style.color='';
+  });
+  this.dirty=true;
+};
+GradFx.prototype.update=function(dt){this.t+=dt;};
+GradFx.prototype.draw=function(){
+  var s=this.p.start,e=Math.min(this.p.end,this.spans.length),n=e-s;if(n<=0)return;
+  var f=this.p.feather,speed=this.p.speed,rgb=this.pal.rgb;
+  for(var i=s;i<e;i++){
+    var u=n>1?(i-s)/(n-1):0;
+    var pos=this.mode==='flow'?u-this.t*speed:this.t*speed;
+    var g=samplePal(rgb,pos);
+    var w=f===0?1:Math.min(1,(i-s+1)/(f+1),(e-i)/(f+1));
+    var r=BASE[0]+(g[0]-BASE[0])*w,gg=BASE[1]+(g[1]-BASE[1])*w,b=BASE[2]+(g[2]-BASE[2])*w;
+    this.spans[i].style.color='rgb('+Math.round(r)+','+Math.round(gg)+','+Math.round(b)+')';
+  }
+};
+
+/* ---------- 공통 루프 ---------- */
+var fxs=[];
+var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){
+  es.forEach(function(e){var f=e.target._fx;if(f){f.visible=e.isIntersecting;f.dirty=true;}});
+},{rootMargin:'80px'}):null;
+function register(fx,stage,playBtn){
+  fxs.push(fx);stage._fx=fx;
+  if(io)io.observe(stage);
+  function label(){playBtn.textContent=fx.playing?'일시정지':'재생';}
+  label();
+  playBtn.addEventListener('click',function(){fx.playing=!fx.playing;fx.dirty=true;label();});
+}
+var last=performance.now();
+function frame(now){
+  var dt=Math.min(.05,(now-last)/1000);last=now;
+  fxs.forEach(function(f){
+    if(!f.visible)return;
+    if(f.playing)f.update(dt);
+    if(f.playing||f.dirty){f.draw();f.dirty=false;}
+  });
+  requestAnimationFrame(frame);
+}
+
+/* ---------- 조립 ---------- */
+function setupDrip(key,dir,defsDrip,defsClone){
+  var pd=paramsOf(defsDrip),pc=paramsOf(defsClone);
+  var cv=document.getElementById('cv-'+key),stage=document.getElementById('stage-'+key);
+  var txt=document.getElementById('txt-'+key);
+  var clone=new CloneFx({canvas:cv,dir:dir,params:pc,text:txt.value});
+  var drip=new DripFx({canvas:cv,dir:dir,params:pd,text:txt.value});
+  var fx=new Pair({clone:clone,drip:drip},'clone');
+  var slBox=document.getElementById('sl-'+key),specBox=document.getElementById('spec-'+key),unitBox=document.getElementById('unitbox-'+key);
+  var presetBox=document.getElementById('presetbox-'+key),hint=document.getElementById('hint-'+key),valsBox=document.getElementById('vals-'+key);
+  var PRE=PRESETS[key],curPre='m',modified=false;
+  function showHint(){
+    var name='$'+key+'_'+curPre;
+    hint.textContent=modified?name+' 에서 값을 바꾼 상태예요. 아래 버튼으로 값을 복사해 보내 주세요.':name+' 값을 쓰고 있어요. 슬라이더로 값을 바꿔 볼 수 있어요.';
+  }
+  function onTune(){modified=true;showHint();valsBox.hidden=true;}
+  function build(mode){
+    var defs=mode==='clone'?defsClone:defsDrip,params=mode==='clone'?pc:pd;
+    slBox.textContent='';
+    defs.forEach(function(d){slBox.appendChild(slider(key+'-'+mode+'-'+d.key,d,params,mode==='clone'?onTune:null).el);});
+    specBox.innerHTML=specHtml(key,mode,defs);
+    unitBox.hidden=mode!=='clone';
+    presetBox.hidden=mode!=='clone';
+  }
+  function applyPreset(name){
+    curPre=name;modified=false;
+    Object.keys(PRE[name]).forEach(function(k){pc[k]=PRE[name][k];});
+    build('clone');showHint();valsBox.hidden=true;
+    clone.cl=[];if(clone.w)clone.seed();fx.dirty=true;
+  }
+  group(document.getElementById('mode-'+key),[{k:'clone',n:'분신'},{k:'drip',n:'물방울'}],function(b,it){b.textContent=it.n;},0,function(m){fx.setMode(m.k);build(m.k);});
+  group(document.getElementById('unit-'+key),[{k:'char',n:'글자'},{k:'word',n:'단어'},{k:'line',n:'줄'}],function(b,it){b.textContent=it.n;},0,function(u){clone.setUnit(u.k);fx.dirty=true;});
+  group(document.getElementById('preset-'+key),['s','m','l'],function(b,it){b.textContent='$'+key+'_'+it;},1,function(it){applyPreset(it);});
+  document.getElementById('copy-'+key).addEventListener('click',function(){
+    var lines=['$'+key+'_'+curPre+(modified?' (수정됨)':''),'unit='+clone.unit].concat(defsClone.map(function(d){return d.key+'='+fmt(pc[d.key]);}));
+    var text=lines.join('\n');
+    valsBox.textContent=text;valsBox.hidden=false;
+    try{navigator.clipboard.writeText(text).catch(function(){});}catch(e){}
+  });
+  group(document.getElementById('ink-'+key),INKS,function(b,it){
+    b.className='sw';b.style.setProperty('--c',it.fill);b.setAttribute('aria-label',it.n);
+  },0,function(ink){fx.setInk(ink);});
+  txt.addEventListener('input',function(){
+    fx.setText(txt.value);
+    ensureFont(txt.value).then(function(){fx.layout();});
+  });
+  register(fx,stage,document.getElementById('play-'+key));
+  var pending=false;
+  if('ResizeObserver' in window)new ResizeObserver(function(){
+    if(pending)return;pending=true;
+    requestAnimationFrame(function(){pending=false;fx.layout();});
+  }).observe(stage);
+  ensureFont(txt.value).then(function(){fx.layout();});
+  return fx;
+}
+
+function specHtml(key,mode,defs){
+  var h=mode==='clone'?specTableP(defs,PRESETS[key]):specTable(defs),list=function(title,items){
+    return '<h3>'+title+'</h3><ol class="steps">'+items.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ol>';
+  };
+  if(key==='drop'&&mode==='clone')h+=list('처리 순서',[
+    '문구를 글자(또는 단어, 줄) 단위 조각으로 나누고, 각 조각의 위치를 구한다.',
+    '조각 하나를 골라 분신을 만든다. 분신은 원본과 겹친 채 투명하게 시작해, 윗면을 고정한 채 아래로 늘어난다.',
+    '늘어나는 동안 원본 글자가 아래로 살짝 내려앉는다(내려앉음). 분신은 이 위치에 붙어 있다.',
+    '분리 시간이 끝나면 분신이 내려앉은 위치에서 떨어져 나가 낙하한다. 원본 글자는 스프링처럼 제자리로 돌아온다(복귀 탄성).',
+    '분리되는 순간 같은 줄의 양옆 글자가 약하게 딸려가 흔들린다.',
+    '낙하 중 분신이 다른 글자와 겹치면(접촉 반응), 그 글자가 낙하 방향으로 밀려났다가 제자리로 돌아오고 잠깐 밝아진다. 양옆 글자도 약하게 따라 흔들린다. 글자마다 한 번만 반응한다.',
+    '낙하 중 속도에 따라 세로로 길어지고, 좌우로 기울며 벌어진다. 뒤에 흐린 잔상이 남는다.',
+    '낙하 거리의 마지막 40% 구간에서 투명해지며 사라진다. 분신 색은 글자 색보다 약간 짙고 푸른 톤이다.']);
+  if(key==='rise'&&mode==='clone')h+=list('드롭과 다른 점',[
+    '분신이 아랫면을 고정한 채 위로 늘어난다. 이때 원본 글자는 위로 살짝 들렸다가, 분리되면 제자리로 돌아온다.',
+    '올라가며 위쪽의 다른 글자와 겹치면(접촉 반응), 그 글자가 위로 밀려났다가 제자리로 돌아오고 잠깐 밝아진다.',
+    '중력 대신 부력으로 위로 가속한다. 속도 상한이 낮아 천천히 떠오른다.',
+    '올라가는 동안 좌우로 흔들린다(sway).']);
+  if(key==='drop'&&mode==='drip')h+=list('처리 순서',[
+    '글자를 보이지 않는 캔버스에 그려 아랫면 외곽선 위치를 구하고, 이를 방울이 맺힐 후보 지점으로 쓴다.',
+    '후보 중 한 곳에 방울이 맺힌다. 글자 가장자리에서 부풀며 아래로 늘어나고, 연결 부분은 점점 가늘어진다.',
+    '맺힘 시간이 끝나면 끊어져 떨어진다. 글자 쪽에 남은 작은 방울은 수축하며 사라진다.',
+    '속도가 빠를수록 방울이 길쭉해지고 위쪽에 꼬리가 생긴다.',
+    '낙하 거리의 마지막 30% 구간에서 투명해지며 사라진다. 방울 색은 글자 색과 같다.']);
+  if(key==='rise'&&mode==='drip')h+=list('드롭과 다른 점',[
+    '시작 지점이 아랫면이 아니라 윗면 외곽선이다.',
+    '중력 대신 부력으로 위로 가속한다. 속도 상한이 낮아 천천히 떠오른다.',
+    '올라가는 동안 좌우로 흔들린다(sway).']);
+  return h;
+}
+
+setupDrip('drop',1,DROP_DEFS,CLONE_DROP_DEFS);
+setupDrip('rise',-1,RISE_DEFS,CLONE_RISE_DEFS);
+
+/* 그라데이션 */
+(function(){
+  var gp={start:9,end:16,speed:.25,feather:2};
+  var GDEFS=[
+    {key:'start',label:'구간 시작',unit:'번째',min:0,max:15,step:1,val:9,desc:'적용 구간의 첫 글자 위치. 0부터 센다'},
+    {key:'end',label:'구간 끝',unit:'번째',min:1,max:16,step:1,val:16,desc:'적용 구간의 끝 위치. 이 글자는 포함하지 않는다'},
+    {key:'speed',label:'변화 속도',unit:'회/초',min:.05,max:1,step:.05,val:.25,desc:'팔레트를 한 바퀴 도는 횟수'},
+    {key:'feather',label:'경계 번짐',unit:'글자',min:0,max:4,step:1,val:2,desc:'구간 양 끝 N글자에서 원래 색과 섞는다'}
+  ];
+  var box=document.getElementById('gtext'),txt=document.getElementById('txt-grad'),ctl=document.getElementById('ctl-grad');
+  var cap=document.getElementById('cap-grad'),stage=document.getElementById('stage-grad');
+  var fx=new GradFx({box:box,params:gp,text:txt.value});
+  var sl={};
+  function caption(){
+    cap.textContent='구간 ['+gp.start+', '+gp.end+')  "'+fx.chars.slice(gp.start,gp.end).join('')+'"';
+  }
+  function limits(){
+    var len=Math.max(1,fx.chars.length);
+    sl.start.def.max=Math.max(0,len-1);sl.end.def.max=len;
+  }
+  function onChange(key){
+    var len=fx.chars.length;
+    if(key==='start'&&gp.start>=gp.end)gp.end=Math.min(len,gp.start+1);
+    if(key==='end'&&gp.end<=gp.start)gp.start=Math.max(0,gp.end-1);
+    sl.start.sync();sl.end.sync();
+    fx.markRange();caption();
+  }
+  GDEFS.forEach(function(d){
+    var s=slider('grad-'+d.key,d,gp,onChange);sl[d.key]=s;ctl.appendChild(s.el);
+  });
+  var palG=group(document.getElementById('pal-grad'),PALS,function(b,it){
+    b.className='sw pal';b.style.setProperty('--c','linear-gradient(90deg,'+it.stops.join(',')+')');b.setAttribute('aria-label',it.n);
+  },0,function(p){fx.pal=p;fx.dirty=true;});
+  var modeG=group(document.getElementById('mode-grad'),[{k:'flow',n:'흐르기'},{k:'sync',n:'동시에'}],function(b,it){
+    b.textContent=it.n;
+  },0,function(m){fx.mode=m.k;fx.dirty=true;});
+  txt.addEventListener('input',function(){
+    fx.setText(txt.value);
+    var len=fx.chars.length;
+    gp.start=Math.floor(len*.55);gp.end=len;
+    if(gp.end<=gp.start)gp.start=Math.max(0,gp.end-1);
+    limits();sl.start.sync();sl.end.sync();fx.markRange();caption();
+  });
+  limits();sl.start.sync();sl.end.sync();caption();
+  group(document.getElementById('preset-grad'),PALS,function(b,it){b.textContent='$grad_'+it.k;},0,function(p,i){
+    palG.pick(i);modeG.pick(0);gp.speed=.25;gp.feather=2;sl.speed.sync();sl.feather.sync();
+  });
+  register(fx,stage,document.getElementById('play-grad'));
+  document.getElementById('spec-grad').innerHTML=
+    specTable(GDEFS)+
+    '<h3>변화 방식</h3><ol class="steps">'+
+    '<li>흐르기: 구간 안에서 팔레트가 글자를 따라 한쪽으로 흐른다.</li>'+
+    '<li>동시에: 구간 전체가 같은 색으로 함께 변한다.</li></ol>'+
+    '<h3>대사 텍스트에 효과를 지정하는 표기 제안</h3>'+
+    '<code class="block">그 날의 하늘은 {grad=노을}유난히 붉었다{/grad}\n{drop}나는 아직 여기 있어요{/drop}\n{rise}이제야 가벼워졌구나{/rise}</code>';
+})();
+
+requestAnimationFrame(function(t){last=t;requestAnimationFrame(frame);});
+})();
+</script>
