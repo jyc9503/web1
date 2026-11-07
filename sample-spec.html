@@ -1,0 +1,257 @@
+<title>장비 강화 기획서 샘플</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: 좌측 고정 목차 + 본문 한 단. 표와 흐름도가 주인공이고, 색은 상태(확정/검증필요/미정) 구분에만 쓴다. */
+:root{
+  --bg:#f4f5f8; --surface:#ffffff; --ink:#161b26; --muted:#586174; --line:#dde1e9;
+  --accent:#2f55d4; --accent-soft:#e7ecfc;
+  --ok:#157347; --ok-soft:#dcf2e6;
+  --warn:#8f5500; --warn-soft:#fdebc8;
+  --tbd:#5f43b2; --tbd-soft:#ebe5fa;
+  --crit:#b3261e; --crit-soft:#fbe3e1;
+  --f-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,"D2Coding",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10131a; --surface:#171b24; --ink:#e8ebf2; --muted:#9aa3b5; --line:#2a303c;
+  --accent:#8fa8ff; --accent-soft:#1f2848;
+  --ok:#62d49c; --ok-soft:#16332a;
+  --warn:#f1bb5f; --warn-soft:#3a2c12;
+  --tbd:#bba9f6; --tbd-soft:#2a2446;
+  --crit:#ff8d85; --crit-soft:#3d1c1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10131a; --surface:#171b24; --ink:#e8ebf2; --muted:#9aa3b5; --line:#2a303c;
+  --accent:#8fa8ff; --accent-soft:#1f2848;
+  --ok:#62d49c; --ok-soft:#16332a;
+  --warn:#f1bb5f; --warn-soft:#3a2c12;
+  --tbd:#bba9f6; --tbd-soft:#2a2446;
+  --crit:#ff8d85; --crit-soft:#3d1c1a; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.7 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+a{color:var(--accent)}
+code,.mono{font-family:var(--f-mono);font-size:.88em}
+code{background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:4px}
+
+.shell{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px;padding-block:32px 80px}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;font-size:13px}
+nav.toc .label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+nav.toc a{display:block;padding:5px 10px;border-left:2px solid var(--line);color:var(--muted);text-decoration:none}
+nav.toc a:hover{color:var(--ink);border-left-color:var(--accent)}
+.legend{margin-top:22px;display:grid;gap:6px;font-size:12px;color:var(--muted)}
+.vbtn{margin-top:18px;width:100%;font:inherit;font-size:12.5px;padding:8px 10px;border-radius:6px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-align:left}
+.vbtn[aria-pressed="true"]{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.vbtn:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+main{min-width:0}
+header.doc{padding-bottom:24px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.sample-tag{display:inline-block;font-size:11px;letter-spacing:.1em;color:var(--muted);border:1px dashed var(--muted);padding:2px 8px;border-radius:4px;margin-bottom:14px}
+h1{font-size:30px;line-height:1.3;margin:0 0 6px;text-wrap:balance;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 20px}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.meta div{background:var(--surface);padding:10px 14px}
+.meta dt{font-size:11px;color:var(--muted);letter-spacing:.08em}
+.meta dd{margin:2px 0 0;font-weight:500}
+
+section{padding-top:40px;scroll-margin-top:16px}
+h2{font-size:20px;margin:0 0 14px;display:flex;align-items:baseline;gap:10px;text-wrap:balance}
+h2 .sec{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:400}
+h3{font-size:15px;margin:24px 0 8px}
+p{margin:0 0 12px;max-width:68ch}
+
+.badge{display:inline-block;font-size:11.5px;font-weight:700;line-height:1;padding:4px 8px;border-radius:999px;white-space:nowrap}
+.b-ok{background:var(--ok-soft);color:var(--ok)}
+.b-warn{background:var(--warn-soft);color:var(--warn)}
+.b-tbd{background:var(--tbd-soft);color:var(--tbd)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+th{text-align:left;font-size:12px;color:var(--muted);letter-spacing:.06em;font-weight:500;padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--line)}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.id{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--f-mono)}
+tr[data-s="warn"] td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
+tr[data-s="tbd"] td:first-child{box-shadow:inset 3px 0 0 var(--tbd)}
+.only-verify tr[data-s="ok"]{opacity:.32}
+
+.bar{display:inline-block;vertical-align:middle;height:8px;border-radius:4px;background:var(--accent);margin-right:8px}
+.bar.f{background:var(--crit)}
+
+.flow{border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow-x:auto;padding:12px}
+.flow svg{display:block;min-width:700px;width:100%;height:auto}
+.flow text{font-family:var(--f-body);font-size:13px;fill:var(--ink)}
+.flow .sm{font-size:11.5px;fill:var(--muted)}
+.n{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.n.start{fill:var(--accent-soft);stroke:var(--accent)}
+.n.good{fill:var(--ok-soft);stroke:var(--ok)}
+.n.bad{fill:var(--crit-soft);stroke:var(--crit)}
+.n.mid{fill:var(--warn-soft);stroke:var(--warn)}
+.e{stroke:var(--muted);stroke-width:1.5;fill:none}
+
+.note{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:14px 16px;margin:14px 0}
+.note.dev{border-color:var(--accent);background:var(--accent-soft)}
+.note.dev strong:first-child{color:var(--accent)}
+ul.check{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+ul.check li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px}
+ul.check .mono{color:var(--muted)}
+
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:8px}
+  nav.toc{position:static;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  nav.toc .label,.legend{display:none}
+  nav.toc a{border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--surface)}
+  .vbtn{width:auto;margin:0}
+  h1{font-size:25px}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<div class="shell">
+  <nav class="toc" aria-label="목차">
+    <p class="label">목차</p>
+    <a href="#overview">개요</a>
+    <a href="#rules">핵심 규칙</a>
+    <a href="#flow">처리 흐름</a>
+    <a href="#numbers">수치표</a>
+    <a href="#exceptions">예외 처리</a>
+    <a href="#dev">구현 전달사항</a>
+    <a href="#open">검증·미결 목록</a>
+    <div class="legend">
+      <span><span class="badge b-ok">확정</span> 그대로 구현</span>
+      <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
+      <span><span class="badge b-tbd">미정</span> 결정 대기</span>
+    </div>
+    <button class="vbtn" id="vbtn" type="button" aria-pressed="false">검증필요·미정만 강조</button>
+  </nav>
+
+  <main>
+    <header class="doc">
+      <span class="sample-tag">SAMPLE · 디자인 확인용 가짜 내용</span>
+      <h1>장비 강화 시스템</h1>
+      <p class="sub">플레이어가 재화를 써서 장비 등급을 올리고, 실패 시 단계가 내려가거나 장비가 파괴될 수 있는 시스템.</p>
+      <dl class="meta">
+        <div><dt>버전</dt><dd class="mono">v0.3 초안</dd></div>
+        <div><dt>작성</dt><dd>기획팀</dd></div>
+        <div><dt>구현 대상</dt><dd>클라이언트 · 서버</dd></div>
+        <div><dt>검증필요 항목</dt><dd><span class="badge b-warn" id="vcount">0건</span></dd></div>
+      </dl>
+    </header>
+
+    <section id="overview">
+      <h2><span class="sec">§1</span>개요</h2>
+      <p>장비에는 +0부터 +15까지 강화 단계가 있다. 강화를 시도하면 확률로 판정하고, 성공하면 단계가 1 오른다. 단계가 높을수록 성공 확률은 낮아지고 실패 페널티는 커진다.</p>
+      <p>이번 범위는 <strong>단일 장비 강화</strong>까지다. 일괄 강화와 강화 전이는 다음 버전에서 다룬다.</p>
+    </section>
+
+    <section id="rules">
+      <h2><span class="sec">§2</span>핵심 규칙</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>ID</th><th>규칙</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr data-s="ok"><td class="id">R-01</td><td>강화 단계는 +0 ~ +15. +15 장비는 더 강화할 수 없다.</td><td><span class="badge b-ok">확정</span></td></tr>
+          <tr data-s="ok"><td class="id">R-02</td><td>강화 시도 시 재화와 강화석을 먼저 차감하고 판정한다.</td><td><span class="badge b-ok">확정</span></td></tr>
+          <tr data-s="warn"><td class="id">R-03</td><td>+0~+5 구간은 실패해도 단계가 유지된다. +6~+9는 1단계 하락, +10 이상은 파괴된다.</td><td><span class="badge b-warn">검증필요</span></td></tr>
+          <tr data-s="warn"><td class="id">R-04</td><td>보호권을 쓰면 파괴 대신 단계 유지. 보호권은 시도 1회에 1장 소모한다.</td><td><span class="badge b-warn">검증필요</span></td></tr>
+          <tr data-s="tbd"><td class="id">R-05</td><td>이벤트 기간 성공 확률 보정을 허용할지, 허용한다면 상한을 얼마로 둘지.</td><td><span class="badge b-tbd">미정</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="flow">
+      <h2><span class="sec">§3</span>처리 흐름</h2>
+      <p>서버가 판정하고 클라이언트는 결과를 표시만 한다. 차감은 판정 전에 끝난다(R-02).</p>
+      <div class="flow">
+        <svg viewBox="0 0 760 270" role="img" aria-label="강화 요청부터 성공, 유지, 하락, 파괴로 갈라지는 처리 흐름">
+          <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+          <rect class="n start" x="10" y="95" width="110" height="50" rx="8"/><text x="65" y="125" text-anchor="middle">강화 요청</text>
+          <rect class="n" x="170" y="95" width="120" height="50" rx="8"/><text x="230" y="116" text-anchor="middle">조건 검사</text><text class="sm" x="230" y="134" text-anchor="middle">재화·강화석·단계</text>
+          <rect class="n" x="340" y="95" width="120" height="50" rx="8"/><text x="400" y="116" text-anchor="middle">재료 차감</text><text class="sm" x="400" y="134" text-anchor="middle">R-02</text>
+          <rect class="n" x="510" y="95" width="120" height="50" rx="8"/><text x="570" y="116" text-anchor="middle">확률 판정</text><text class="sm" x="570" y="134" text-anchor="middle">§4 표 참조</text>
+          <path class="e" d="M120 120H168" marker-end="url(#ar)"/>
+          <path class="e" d="M290 120H338" marker-end="url(#ar)"/>
+          <path class="e" d="M460 120H508" marker-end="url(#ar)"/>
+          <rect class="n bad" x="170" y="205" width="120" height="44" rx="8"/><text x="230" y="231" text-anchor="middle">중단 · 안내</text>
+          <path class="e" d="M230 145V203" marker-end="url(#ar)"/><text class="sm" x="238" y="180">조건 부족</text>
+          <rect class="n good" x="660" y="14" width="92" height="44" rx="8"/><text x="706" y="40" text-anchor="middle">성공 +1</text>
+          <path class="e" d="M630 108L690 60" marker-end="url(#ar)"/>
+          <rect class="n mid" x="660" y="100" width="92" height="44" rx="8"/><text x="706" y="126" text-anchor="middle">유지 / 하락</text>
+          <path class="e" d="M630 122H658" marker-end="url(#ar)"/>
+          <rect class="n bad" x="660" y="186" width="92" height="44" rx="8"/><text x="706" y="212" text-anchor="middle">파괴</text>
+          <path class="e" d="M630 136L690 184" marker-end="url(#ar)"/>
+          <text class="sm" x="590" y="60" text-anchor="end">성공</text>
+          <text class="sm" x="590" y="196" text-anchor="end">실패, +10 이상</text>
+        </svg>
+      </div>
+    </section>
+
+    <section id="numbers">
+      <h2><span class="sec">§4</span>수치표</h2>
+      <p>성공 확률과 소모량. 막대는 성공 확률을 나타낸다.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>단계</th><th>성공 확률</th><th class="num">강화석</th><th class="num">골드</th><th>실패 시</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr data-s="ok"><td class="mono">+0 → +1</td><td><span class="bar" style="width:100px"></span><span class="mono">100%</span></td><td class="num">1</td><td class="num">1,000</td><td>유지</td><td><span class="badge b-ok">확정</span></td></tr>
+          <tr data-s="ok"><td class="mono">+3 → +4</td><td><span class="bar" style="width:80px"></span><span class="mono">80%</span></td><td class="num">2</td><td class="num">3,000</td><td>유지</td><td><span class="badge b-ok">확정</span></td></tr>
+          <tr data-s="warn"><td class="mono">+5 → +6</td><td><span class="bar" style="width:60px"></span><span class="mono">60%</span></td><td class="num">3</td><td class="num">8,000</td><td>유지</td><td><span class="badge b-warn">검증필요</span></td></tr>
+          <tr data-s="warn"><td class="mono">+8 → +9</td><td><span class="bar" style="width:40px"></span><span class="mono">40%</span></td><td class="num">5</td><td class="num">25,000</td><td>1단계 하락</td><td><span class="badge b-warn">검증필요</span></td></tr>
+          <tr data-s="warn"><td class="mono">+10 → +11</td><td><span class="bar" style="width:25px"></span><span class="mono">25%</span></td><td class="num">8</td><td class="num">60,000</td><td>파괴</td><td><span class="badge b-warn">검증필요</span></td></tr>
+          <tr data-s="tbd"><td class="mono">+14 → +15</td><td><span class="bar" style="width:5px"></span><span class="mono">5%</span></td><td class="num">20</td><td class="num">300,000</td><td>파괴</td><td><span class="badge b-tbd">미정</span></td></tr>
+        </tbody>
+      </table></div>
+      <p style="margin-top:10px;color:var(--muted);font-size:13px">표에는 대표 단계만 실었다. 전체 단계표는 별도 시트로 전달한다.</p>
+    </section>
+
+    <section id="exceptions">
+      <h2><span class="sec">§5</span>예외 처리</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>상황</th><th>처리</th><th>메시지</th></tr></thead>
+        <tbody>
+          <tr data-s="ok"><td>골드 부족</td><td>요청 거부, 아무것도 차감하지 않는다.</td><td>골드가 부족합니다.</td></tr>
+          <tr data-s="ok"><td>판정 중 연결 끊김</td><td>서버가 판정 결과를 저장하고, 재접속 시 결과를 보여준다.</td><td>강화 결과를 불러왔습니다.</td></tr>
+          <tr data-s="warn"><td>보호권이 있는데 +5 이하에서 사용 시도</td><td>사용 불가. 보호권은 소모되지 않는다.</td><td>이 단계에서는 보호권이 필요 없습니다.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="dev">
+      <h2><span class="sec">§6</span>구현 전달사항</h2>
+      <div class="note dev">
+        <strong>프로그래머분께</strong>
+        <ul style="margin:8px 0 0;padding-left:20px">
+          <li>확률 판정은 서버에서만 한다. 클라이언트에는 결과만 내려준다.</li>
+          <li>확률과 비용은 코드에 넣지 말고 테이블로 분리해 주세요. <strong>검증필요</strong> 항목은 값이 바뀔 가능성이 높습니다.</li>
+          <li>R-03, R-04의 단계 경계값(5, 9)도 상수로 빼 주세요.</li>
+          <li>강화 시도마다 로그를 남긴다: 유저, 장비, 이전 단계, 결과, 소모량.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="open">
+      <h2><span class="sec">§7</span>검증·미결 목록</h2>
+      <p>회사 데이터 기준 검토와 결정이 필요한 항목이다. 검토가 끝나면 해당 규칙의 상태 배지를 <span class="badge b-ok">확정</span>으로 바꾼다.</p>
+      <ul class="check" id="openlist">
+        <li><span class="mono">R-03</span><span>실제 서비스 중인 유사 시스템의 단계별 실패 페널티와 비교. 파괴 시작 단계가 적절한지.</span></li>
+        <li><span class="mono">R-04</span><span>보호권 보유량과 획득 경로 데이터로 소모 속도 확인.</span></li>
+        <li><span class="mono">§4</span><span>+5 이상 구간의 확률과 비용이 재화 획득량 대비 과하지 않은지 시뮬레이션.</span></li>
+        <li><span class="mono">R-05</span><span>이벤트 보정 허용 여부와 상한. 운영팀 의견 필요.</span></li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+  var rows=document.querySelectorAll('tr[data-s="warn"],tr[data-s="tbd"]');
+  var c=document.getElementById('vcount'); if(c) c.textContent=rows.length+'건';
+  var b=document.getElementById('vbtn');
+  b.addEventListener('click',function(){
+    var on=b.getAttribute('aria-pressed')!=='true';
+    b.setAttribute('aria-pressed',on);
+    document.querySelector('main').classList.toggle('only-verify',on);
+  });
+})();
+</script>
