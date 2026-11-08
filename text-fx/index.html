@@ -85,6 +85,9 @@ input[type=text],textarea{
 .seg button{min-height:44px; padding:0 10px; white-space:nowrap; border:0; background:transparent; color:var(--fg); font:500 14px var(--font-ui); cursor:pointer}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed=true]{background:var(--accent); color:var(--accent-ink)}
+.seg.wrap{flex-wrap:wrap; border:0; gap:8px; overflow:visible}
+.seg.wrap button{border:1px solid var(--line); border-radius:8px}
+.seg.wrap button+button{border-left:1px solid var(--line)}
 .range-cap{font-family:var(--font-mono); font-size:12.5px; color:var(--muted); overflow-wrap:anywhere}
 textarea{padding:10px 12px; line-height:1.5; resize:vertical; min-height:88px}
 .hint{margin:0; font-size:12.5px; color:var(--muted)}
@@ -120,7 +123,7 @@ code.block{display:block; white-space:pre-wrap; overflow-wrap:anywhere; font-fam
     </div>
     <div class="controls" id="ctl-drop">
       <div class="field wide"><button type="button" class="play" id="play-drop">일시정지</button></div>
-      <div class="field wide"><label class="field-name" for="txt-drop">문구 (태그 포함)</label><textarea id="txt-drop" rows="3" maxlength="120" spellcheck="false">&lt;$drop_m&gt;나는 아직 여기 있어요&lt;/$drop_m&gt;
+      <div class="field wide"><label class="field-name" for="txt-drop">문구 (태그 포함)</label><textarea id="txt-drop" rows="3" maxlength="200" spellcheck="false">&lt;$drop_m&gt;나는 아직 여기 있어요&lt;/$drop_m&gt;
 아무도 나를 부르지 않아요</textarea><p class="hint">태그로 감싼 글자만 분신을 만들어요. 태그 밖 글자는 지나가는 분신에 닿으면 반응해요. 줄바꿈도 쓸 수 있어요.</p></div>
       <div class="field" id="unitbox-drop"><span class="field-name" id="unitlbl-drop">분신 단위</span><div class="seg" id="unit-drop" role="group" aria-labelledby="unitlbl-drop"></div></div>
       <div class="field wide" id="presetbox-drop"><span class="field-name" id="presetlbl-drop">프리셋</span><div class="seg" id="preset-drop" role="group" aria-labelledby="presetlbl-drop"></div><p class="hint" id="hint-drop"></p><button type="button" class="btn" id="copy-drop">현재 값 보기·복사</button><pre class="valbox" id="vals-drop" hidden></pre></div>
@@ -140,7 +143,7 @@ code.block{display:block; white-space:pre-wrap; overflow-wrap:anywhere; font-fam
     </div>
     <div class="controls" id="ctl-rise">
       <div class="field wide"><button type="button" class="play" id="play-rise">일시정지</button></div>
-      <div class="field wide"><label class="field-name" for="txt-rise">문구 (태그 포함)</label><textarea id="txt-rise" rows="3" maxlength="120" spellcheck="false">이제야 가벼워졌구나
+      <div class="field wide"><label class="field-name" for="txt-rise">문구 (태그 포함)</label><textarea id="txt-rise" rows="3" maxlength="200" spellcheck="false">이제야 가벼워졌구나
 &lt;$rise_m&gt;이제 편히 쉬어요&lt;/$rise_m&gt;</textarea><p class="hint">태그로 감싼 글자만 분신을 만들어요. 태그 밖 글자는 지나가는 분신에 닿으면 반응해요. 줄바꿈도 쓸 수 있어요.</p></div>
       <div class="field" id="unitbox-rise"><span class="field-name" id="unitlbl-rise">분신 단위</span><div class="seg" id="unit-rise" role="group" aria-labelledby="unitlbl-rise"></div></div>
       <div class="field wide" id="presetbox-rise"><span class="field-name" id="presetlbl-rise">프리셋</span><div class="seg" id="preset-rise" role="group" aria-labelledby="presetlbl-rise"></div><p class="hint" id="hint-rise"></p><button type="button" class="btn" id="copy-rise">현재 값 보기·복사</button><pre class="valbox" id="vals-rise" hidden></pre></div>
@@ -160,8 +163,8 @@ code.block{display:block; white-space:pre-wrap; overflow-wrap:anywhere; font-fam
     </div>
     <div class="controls" id="ctl-grad">
       <div class="field wide"><button type="button" class="play" id="play-grad">일시정지</button></div>
-      <div class="field wide"><label class="field-name" for="txt-grad">문구 (태그 포함)</label><textarea id="txt-grad" rows="2" maxlength="120" spellcheck="false">그 날의 하늘은 &lt;$grad_sunset&gt;유난히 붉었다&lt;/$grad_sunset&gt;</textarea><p class="hint">구간은 &lt;$grad_이름&gt; … &lt;/$grad_이름&gt; 태그로 정해요. 프리셋 버튼을 누르면 태그 이름이 바뀝니다.</p></div>
-      <div class="field wide"><span class="field-name" id="presetlbl-grad">프리셋</span><div class="seg" id="preset-grad" role="group" aria-labelledby="presetlbl-grad"></div></div>
+      <div class="field wide"><label class="field-name" for="txt-grad">문구 (태그 포함)</label><textarea id="txt-grad" rows="2" maxlength="200" spellcheck="false">그 날의 하늘은 &lt;$grad_orange_purple&gt;유난히 붉었다&lt;/$grad_orange_purple&gt;</textarea><p class="hint">구간은 &lt;$grad_이름&gt; … &lt;/$grad_이름&gt; 태그로 정해요. 프리셋 버튼을 누르면 태그 이름이 바뀝니다.</p></div>
+      <div class="field wide"><span class="field-name" id="presetlbl-grad">프리셋</span><div class="seg wrap" id="preset-grad" role="group" aria-labelledby="presetlbl-grad"></div></div>
       <div class="field"><span class="field-name" id="modelbl">변화 방식</span><div class="seg" id="mode-grad" role="group" aria-labelledby="modelbl"></div></div>
     </div>
     <details class="spec"><summary>플머 전달용 파라미터</summary><div class="spec-body" id="spec-grad"></div></details>
@@ -192,9 +195,9 @@ var INKS=[
 ];
 function hex(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
 var PALS=[
-  {k:'sunset',n:'노을',stops:['#ffb347','#ff5e7e','#8e5bff']},
-  {k:'ghost',n:'원령',stops:['#7ef0e0','#9db8ff','#e5d4ff']},
-  {k:'ember',n:'불씨',stops:['#fff3a0','#ff9a3c','#e0342b']}
+  {k:'orange_purple',n:'주황-보라',stops:['#ffb347','#ff5e7e','#8e5bff']},
+  {k:'teal_lavender',n:'청록-연보라',stops:['#7ef0e0','#9db8ff','#e5d4ff']},
+  {k:'yellow_red',n:'노랑-빨강',stops:['#fff3a0','#ff9a3c','#e0342b']}
 ].map(function(p){p.rgb=p.stops.map(hex);return p;});
 var BASE=hex('#d9e0ec');
 
@@ -278,7 +281,7 @@ function group(box,items,renderBtn,start,onPick){
 
 /* ---------- 태그: 문구 속 <$종류_이름> … </$종류_이름> 구간을 찾는다 ---------- */
 function parseTags(s,kind){
-  var re=new RegExp('<\\$'+kind+'_([a-z]+)>([\\s\\S]*?)<\\/\\$'+kind+'_\\1>','g'),plain='',segs=[],last=0,m;
+  var re=new RegExp('<\\$'+kind+'_([a-z_]+)>([\\s\\S]*?)<\\/\\$'+kind+'_\\1>','g'),plain='',segs=[],last=0,m;
   while((m=re.exec(s))!==null){
     plain+=s.slice(last,m.index);
     var start=Array.from(plain).length;
@@ -711,7 +714,7 @@ setupDrip('rise',-1,CLONE_RISE_DEFS);
   txt.addEventListener('input',function(){fx.setText(txt.value);});
   group(document.getElementById('preset-grad'),PALS,function(b,it){b.textContent='$grad_'+it.k;},0,function(p){
     var v=txt.value;
-    if(/<\$grad_[a-z]+>/.test(v))v=v.replace(/<(\/?)\$grad_[a-z]+>/g,function(m,slash){return '<'+slash+'$grad_'+p.k+'>';});
+    if(/<\$grad_[a-z_]+>/.test(v))v=v.replace(/<(\/?)\$grad_[a-z_]+>/g,function(m,slash){return '<'+slash+'$grad_'+p.k+'>';});
     else v='<$grad_'+p.k+'>'+v+'</$grad_'+p.k+'>';
     txt.value=v;fx.setText(v);
     modeG.pick(0);gp.speed=.25;gp.feather=2;sl.speed.sync();sl.feather.sync();
@@ -723,7 +726,7 @@ setupDrip('rise',-1,CLONE_RISE_DEFS);
     '<li>흐르기: 구간 안에서 팔레트가 글자를 따라 한쪽으로 흐른다.</li>'+
     '<li>동시에: 구간 전체가 같은 색으로 함께 변한다.</li></ol>'+
     '<h3>태그 표기</h3>'+
-    '<code class="block">그 날의 하늘은 &lt;$grad_sunset&gt;유난히 붉었다&lt;/$grad_sunset&gt;\n&lt;$grad_ghost&gt;아직 떠나지 못했어요&lt;/$grad_ghost&gt;</code>';
+    '<code class="block">그 날의 하늘은 &lt;$grad_orange_purple&gt;유난히 붉었다&lt;/$grad_orange_purple&gt;\n&lt;$grad_teal_lavender&gt;아직 떠나지 못했어요&lt;/$grad_teal_lavender&gt;</code>';
 })();
 
 requestAnimationFrame(function(t){last=t;requestAnimationFrame(frame);});
