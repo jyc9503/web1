@@ -1,0 +1,23 @@
+<svg viewBox="0 0 870 310" role="img" aria-label="맵 연출 테이블 관계도: 스토리 테이블이 MapScene을 부르고, MapScene은 MapBackground와 앞 연출을 참조하며, MapPin·MapWaypoint·MapScenePlace가 MapScene에 속하고, 웨이포인트와 장소 등장은 MapPlace를 참조한다">
+  <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+  <rect class="n" x="20" y="30" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="54" text-anchor="middle">스토리 테이블</text><text class="sm" x="105" y="72" text-anchor="middle">기존 (회사)</text>
+  <rect class="n start" x="240" y="30" width="170" height="56" rx="8"/><text x="325" y="54" text-anchor="middle">MapScene</text><text class="sm" x="325" y="72" text-anchor="middle">연출 맵 · SceneID</text>
+  <rect class="n" x="680" y="30" width="170" height="56" rx="8"/><text x="765" y="54" text-anchor="middle">MapBackground</text><text class="sm" x="765" y="72" text-anchor="middle">배경 · BgID</text>
+  <rect class="n start" x="240" y="130" width="170" height="56" rx="8"/><text x="325" y="154" text-anchor="middle">MapPin</text><text class="sm" x="325" y="172" text-anchor="middle">핀 · SceneID+PinNo</text>
+  <rect class="n start" x="240" y="230" width="170" height="56" rx="8"/><text x="325" y="254" text-anchor="middle">MapWaypoint</text><text class="sm" x="325" y="272" text-anchor="middle">점 · +Seq</text>
+  <rect class="n" x="460" y="130" width="190" height="56" rx="8"/><text x="555" y="154" text-anchor="middle">MapScenePlace</text><text class="sm" x="555" y="172" text-anchor="middle">장소 등장 · SceneID+PlaceID</text>
+  <rect class="n" x="680" y="230" width="170" height="56" rx="8"/><text x="765" y="254" text-anchor="middle">MapPlace</text><text class="sm" x="765" y="272" text-anchor="middle">장소 마크 · PlaceID</text>
+  <rect class="n mid" x="20" y="230" width="170" height="56" rx="8"/><text x="105" y="254" text-anchor="middle">MapSpeedPreset</text><text class="sm" x="105" y="272" text-anchor="middle">속도 · PresetID</text>
+  <rect class="n mid" x="20" y="130" width="170" height="56" rx="8"/><text x="105" y="154" text-anchor="middle">MapConfig</text><text class="sm" x="105" y="172" text-anchor="middle">튜닝 값 · Key</text>
+
+  <path class="e" d="M190 58H238" marker-end="url(#ar2)"/><text class="sm" x="196" y="50">map_play</text>
+  <path class="e" d="M410 58H678" marker-end="url(#ar2)"/><text class="sm" x="520" y="50">BgID</text>
+  <path class="e" d="M300 30C300 4 350 4 350 28" marker-end="url(#ar2)"/><text class="sm" x="360" y="16">PrevSceneID (이어가기)</text>
+  <path class="e" d="M325 130V88" marker-end="url(#ar2)"/><text class="sm" x="331" y="114">SceneID</text>
+  <path class="e" d="M325 230V188" marker-end="url(#ar2)"/><text class="sm" x="331" y="214">SceneID+PinNo</text>
+  <path class="e" d="M240 176L192 236" marker-end="url(#ar2)"/><text class="sm" x="150" y="214">SpeedPreset</text>
+  <path class="e" d="M460 150H432V78H412" marker-end="url(#ar2)"/><text class="sm" x="436" y="122">SceneID</text>
+  <path class="e" d="M610 186V212H740V228" marker-end="url(#ar2)"/><text class="sm" x="616" y="206">PlaceID</text>
+  <path class="e" d="M410 258H678" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="430" y="250">PlaceID (장소를 지날 때)</text>
+  <path class="e" d="M765 230V88" marker-end="url(#ar2)"/><text class="sm" x="771" y="160">BgID</text>
+</svg>

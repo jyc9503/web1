@@ -90,7 +90,7 @@ def process_rows(html_text, stats):
 
 def convert(md_text, plan_dir):
     meta, body = parse_front(md_text)
-    body = re.sub(r"^\[\[svg:(.+?)\]\]\s*$", r"@@SVG:\1@@", body, flags=re.M)
+    body = re.sub(r"^\[\[svg:(.+?)\]\][ \t]*$", r"@@SVG:\1@@", body, flags=re.M)
     html_body = markdown.markdown(body, extensions=["tables", "fenced_code"])
 
     html_body = html_body.replace(' style="text-align: right;"', ' class="num"')

@@ -25,11 +25,11 @@ def pin(c, path, delay=0.0, dur=2.0, curve="smooth"):
     return dict(c=c, path=path, delay=delay, dur=dur, curve=curve)
 
 
-S1 = [pin("char_a", [(.10, .74), (.28, .56), (.50, .62), (.78, .30)], 0, 2.4),
+S1 = [pin("char_a", [(.10, .74), (.28, .56), (.50, .62), (.78, .30)], 0, 2.0),  # 달리기 2000ms
       pin("char_b", [(.14, .30), (.40, .36), (.62, .50)], 0.6, 2.0),
       pin("char_c", [(.88, .80), (.66, .74), (.84, .52)], 1.4, 1.8, "line")]
-S2 = [pin("char_a", [(.78, .30), (.70, .18), (.45, .16)], 0, 2.0),
-      pin("char_b", [(.62, .50), (.70, .68), (.88, .80)], 0.6, 2.0),
+S2 = [pin("char_a", [(.78, .30), (.70, .18), (.45, .16)], 0, 1.5),  # 걷기 1500ms
+      pin("char_b", [(.62, .50), (.70, .68), (.88, .80)], 1.5, 1.3),  # 핀 1 도착 후
       pin("char_c", [(.84, .52)], 0, 2.0, "line")]
 
 
@@ -289,10 +289,10 @@ HEAD = """<!doctype html>
 
 def mockups():
     cuts = [
-        ("① 핀 등장", "장면 1 · 0.8초", game(S1, 0.8, modes=S1_PLACES), "배경과 장소 마크가 보이고 핀이 시작 위치에 서 있다. 앞으로 갈 경로는 게임에서 보이지 않는다. 관측소는 아직 숨어 있다."),
-        ("② 이동 중", "장면 1 · 2.3초", game(S1, 2.3, modes=S1_PLACES), "핀이 지나온 구간만 점선으로 남는다. 이동 중인 핀에 진행 방향 삼각형이 붙는다."),
-        ("③ 전원 도착", "장면 1 · 4.0초", game(S1, 4.0, modes=S1_PLACES), "모든 핀이 도착했다. A가 도착하면서 관측소 마크가 나타났다(등장: 핀 도착 시). 1.0초 뒤 대사가 이어지고 맵은 뒤에 남는다."),
-        ("④ 이어가기", "장면 2 · 1.6초", game(S2, 1.6, PREV, True, modes=S2_PLACES), "대사 뒤 map_play로 장면 2가 열린 맵에서 바로 이어진다. 장면 1 궤적은 흐린 점선. 탑은 A가 도착할 때 나타난다."),
+        ("① 핀 등장", "장면 1 · 0ms", game(S1, 0.8, modes=S1_PLACES), "배경과 장소 마크가 보이고 핀이 시작 위치에 서 있다. 앞으로 갈 경로는 게임에서 보이지 않는다. 관측소는 아직 숨어 있다."),
+        ("② 이동 중", "장면 1 · 1500ms", game(S1, 2.3, modes=S1_PLACES), "핀이 지나온 구간만 점선으로 남는다. 이동 중인 핀에 진행 방향 삼각형이 붙는다."),
+        ("③ 전원 도착", "장면 1 · 3200ms", game(S1, 4.0, modes=S1_PLACES), "모든 핀이 도착했다. A가 도착하면서 관측소 마크가 나타났다(등장: 핀 도착 시). 1.0초 뒤 대사가 이어지고 맵은 뒤에 남는다."),
+        ("④ 이어가기", "장면 2 · 1000ms", game(S2, 1.0, PREV, True, modes=S2_PLACES), "대사 뒤 map_play로 장면 2가 열린 맵에서 바로 이어진다. 장면 1 궤적은 흐린 점선. B는 A가 도착하면 출발하고, 탑은 A가 도착할 때 나타난다."),
     ]
     cards = "".join(f'<figure class="card"><div class="shot">{s}</div><figcaption><b>{n}</b> <span class="mono">{m}</span><p>{d}</p></figcaption></figure>' for n, m, s, d in cuts)
     css = """
@@ -323,7 +323,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
 """
     html = HEAD.format(title="맵 핀 이동 화면 시안", layout="Layout: 장면 컷 4장, 게임/편집 보기 비교, 해부도, 리소스 요청표를 위에서 아래로.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
-  <span class="tag">카제나 · 스토리 연출 · v0.4 시안</span>
+  <span class="tag">카제나 · 스토리 연출 · v0.5 시안</span>
   <h1>맵 핀 이동 화면 시안</h1>
   <p class="sub">아트팀과 배경 담당에게 보여주는 장면 컷과 리소스 요청 내용입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다. 화면은 가로 16:9로 확정했고, 스토리 화면의 실제 UI(대사창 위치 등)는 확인 전입니다. <span class="badge b-warn">검증필요</span></p>
 
@@ -406,7 +406,7 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
     html += f"""<div class="wrap">
   <header class="top">
     <div>
-      <span class="tag">카제나 · 스토리 연출 · v0.4</span>
+      <span class="tag">카제나 · 스토리 연출 · v0.5</span>
       <h1>맵 핀 이동 연출</h1>
       <p class="one">스토리 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 움직여, 누가 어디서 어디로 갔는지 보여준다. 스토리 테이블로 맵을 열고 닫으며, 열린 맵에서 다음 이동을 이어간다.</p>
     </div>
@@ -415,7 +415,7 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
 
   <div class="main">
     <div>
-      <div class="shot">{game(S2, 2.6, PREV, True, dialog=False, modes=S2_PLACES)}</div>
+      <div class="shot">{game(S2, 2.8, PREV, True, dialog=False, modes=S2_PLACES)}</div>
       <p class="cap">장면 2 완료 모습. 진한 점선은 이번 장면, 흐린 점선은 앞 장면 궤적. 배경과 캐릭터는 자리표시용.</p>
     </div>
     <div class="col">
@@ -427,7 +427,8 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
           <li><span class="id">R-21</span><span>장소 마크: 처음부터 / 시간 / 핀 도착 시 등장</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-26</span><span>맵은 map_close 전까지 대사 뒤에 남음</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-22</span><span>열린 맵에서 이어가기, 툴에서 버튼 하나로 가져옴</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-12</span><span>재생 중 화면 탭하면 0.3초 만에 최종 상태</span><span class="badge b-ok">확정</span></li>
+          <li><span class="id">R-08</span><span>이동 시간은 속도 프리셋으로 자동 계산, 출발 조건으로 순서 지정</span><span class="badge b-ok">확정</span></li>
+          <li><span class="id">R-37</span><span>좌표는 배경 px 정수, 시간은 ms, 0ms = 이동 시작</span><span class="badge b-ok">확정</span></li>
         </ul>
       </section>
       <section class="block">
@@ -435,14 +436,15 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
         <div class="stats">
           <div><b>8</b><span>핀 최대</span></div>
           <div><b>12</b><span>핀당 점</span></div>
-          <div><b>2.0s</b><span>기본 이동</span></div>
-          <div><b>3~8s</b><span>총 길이</span></div>
+          <div><b>500</b><span>걷기 px/초</span></div>
+          <div><b>800</b><span>달리기 px/초</span></div>
         </div>
       </section>
       <section class="block">
         <h2>함께 보는 문서</h2>
         <ul class="rules">
           <li><span class="id">툴</span><span>「맵 이동 연출 편집 툴」: 경로 그리기, 장소 마크, 이어가기</span><span></span></li>
+          <li><span class="id">테이블</span><span>기획서 「테이블 설계」: 테이블 8개, 설정 키, 예시 데이터</span><span></span></li>
         </ul>
       </section>
     </div>
