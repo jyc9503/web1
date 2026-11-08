@@ -153,10 +153,10 @@ td code{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기와 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.1 초안</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.2 초안</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">32건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">31건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -172,7 +172,7 @@ td code{white-space:nowrap}
 <p>@@SVG:layout.svg@@
 | 영역 | 내용 | 상태 |
 |---|---|---|
-| 연출 목록 | 같은 스토리의 연출 맵 목록. 이어가기로 연결된 연출은 들여쓰기로 표시 | {검증필요} |
+| 연출 목록 | 묶음(<code>group</code>)별 연출 맵 목록, 순번 순서. 이어가기로 연결된 연출은 들여쓰기로 표시 | {검증필요} |
 | 캔버스 | 배경 위에서 경로와 장소 마크를 편집 | {검증필요} |
 | 보기 전환 | 편집 보기 / 게임 보기 | {검증필요} |
 | 레이어 탭 | 경로 / 장소 마크 | {검증필요} |
@@ -418,10 +418,10 @@ td code{white-space:nowrap}
 <td>마크를 끌어 옮기고, 이름을 바꾸고, 지운다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">M-03</td>
-<td>장소 마크 세트는 배경에 저장된다. 같은 배경을 쓰는 모든 연출이 같은 세트를 쓴다. 한 연출에서 마크를 고치면 다른 연출에도 반영된다는 안내를 띄운다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td>장소 마크 세트는 기획자가 이 툴에서 관리하고, 배경별로 저장한다. 같은 배경을 쓰는 모든 연출이 같은 세트를 쓴다. 한 연출에서 마크를 고치면 다른 연출에도 반영된다는 안내를 띄운다.</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">M-04</td>
@@ -448,7 +448,7 @@ td code{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td class="id">C-01</td>
-<td>「앞 연출에서 이어가기」 버튼. 같은 스토리에서 바로 앞 연출을 기본으로 추천하고, 목록에서 다른 연출도 고를 수 있다.</td>
+<td>「앞 연출에서 이어가기」 버튼. 같은 묶음(C-07)에서 바로 앞 순번의 연출을 기본으로 추천하고, 목록에서 다른 연출도 고를 수 있다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
@@ -474,6 +474,11 @@ td code{white-space:nowrap}
 <tr data-s="warn">
 <td class="id">C-06</td>
 <td>앞 연출에서 사라짐(on_end: 사라짐)으로 끝난 핀은 가져오지 않는다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">C-07</td>
+<td>별도 툴이라 스토리 노드 순서를 모른다. 그래서 연출 맵마다 묶음 이름(<code>group</code>, 예: 챕터 3 이동)과 순번(<code>order</code>)을 입력해 연결 순서를 툴 안에서 관리한다. 스토리 쪽에서는 연출 맵 ID만 참조한다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -504,21 +509,20 @@ td code{white-space:nowrap}
 <td>저장 전에 검사한다: 핀·점 한도 초과, 이미지 범위 밖 좌표, 경로가 빈 핀, 이름 없는 장소 마크, 끊긴 이어가기 연결, 속도 경고(P-16).</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
-<tr data-s="tbd">
+<tr data-s="ok">
 <td class="id">T-08</td>
-<td>툴을 기존 스토리 툴에 확장할지, 새로 만들지.</td>
-<td><span class="badge b-tbd">미정</span></td>
+<td>기존 스토리 툴과 분리된 별도 툴로 만든다. 스토리 노드는 연출 맵 ID로 참조한다.</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
 </section>
 <section id="s8"><h2><span class="sec">§8</span>검증·미결 목록</h2>
 <ul class="check">
-<li><span class="mono">□</span><span>기존 스토리 툴의 구조와 플랫폼(PC 에디터인지, 웹인지) 확인 (T-08)</span></li>
+<li><span class="mono">□</span><span>별도 툴의 플랫폼(PC 에디터인지, 웹인지)과 스토리 데이터에서 연출 맵 ID를 참조하는 방식 확인 (T-08, C-07)</span></li>
 <li><span class="mono">□</span><span>구간별 직선/곡선이 실제로 필요한지, 점 추가로 충분한지 (P-05)</span></li>
 <li><span class="mono">□</span><span>자유 그리기가 실제 작업에서 쓰일지 (P-02)</span></li>
 <li><span class="mono">□</span><span>기준 속도 0.35가 연출 의도와 맞는지 (P-15)</span></li>
-<li><span class="mono">□</span><span>장소 마크 세트 관리 주체(기획 / 배경 담당) (M-03)</span></li>
 </ul>
 <h3>결정 필요 항목과 추천안</h3>
 <div class="tablewrap"><table>
@@ -537,12 +541,6 @@ td code{white-space:nowrap}
 <td>이번 버전은 경로 단위로만 지정한다</td>
 <td>대부분 점 추가로 해결된다. 필요가 확인되면 추가한다</td>
 </tr>
-<tr>
-<td class="id">T-08</td>
-<td>툴 위치</td>
-<td>기존 스토리 툴의 노드 편집 화면에 붙인다</td>
-<td>이어가기가 스토리 노드 순서를 알아야 하고, 기획자가 툴을 오가지 않아도 된다</td>
-</tr>
 </tbody>
 </table></div>
 </section>
@@ -556,6 +554,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.2</td>
+<td>2026-11-08</td>
+<td>별도 툴로 확정(T-08), 묶음·순번으로 이어가기 순서 관리(C-07), 장소 마크는 기획이 관리(M-03)</td>
+</tr>
 <tr>
 <td>v0.1</td>
 <td>2026-11-08</td>

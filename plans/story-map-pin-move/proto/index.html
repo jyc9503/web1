@@ -88,7 +88,7 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · v0.2 프로토타입</span>
+    <span class="tag">카제나 · 스토리 연출 · v0.3 프로토타입</span>
     <h1>맵 핀 이동 연출</h1>
     <p>게임 보기는 게임과 같은 화면, 편집 보기는 툴 화면입니다. 장면 2는 장면 1에서 이어가기로 만든 예시입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다.</p>
   </header>
@@ -357,6 +357,7 @@ function renderGame(tt){
     if(p.on_end==='fade'&&moves(p))a*=1-clamp((tt-(b+p.delay+p.duration))/0.4,0,1);
     return {p:p,c:c,local:local,pos:pos,a:a};
   });
+  spread(st,tt,b);
   st.forEach(function(s){ /* 궤적: 지나온 구간만 점선 (R-09) */
     if(!s||!s.p.trail||s.local<=0||!moves(s.p))return;
     var pts=s.c.pts.slice(0,s.pos.i);pts.push({x:s.pos.x,y:s.pos.y});
@@ -364,6 +365,24 @@ function renderGame(tt){
   });
   st.forEach(function(s){if(s&&s.a>0)pinBody(s.p,s.pos.x*W,s.pos.y*H,s.a,(s.local>0&&s.local<1)?s.pos.a:null,false);});
   st.forEach(function(s){if(s&&s.a>0)tag(char(s.p.character)[1],s.pos.x*W,s.pos.y*H+pinR()+5,s.a);});
+}
+function spread(st,tt,b){ /* 도착한 핀끼리 겹치면 원형으로 비켜 놓기 (R-17) */
+  var R=pinR(),done=st.filter(function(s){return s&&s.local>=1&&s.a>0;}),used=[];
+  done.forEach(function(s){
+    if(used.indexOf(s)>=0)return;
+    var g=done.filter(function(o){return used.indexOf(o)<0&&Math.hypot((o.pos.x-s.pos.x)*W,(o.pos.y-s.pos.y)*H)<R*1.8;});
+    g.forEach(function(o){used.push(o);});
+    if(g.length<2)return;
+    var tA=0;g.forEach(function(o){if(moves(o.p))tA=Math.max(tA,b+o.p.delay+o.p.duration);});
+    var k=ease('inout',clamp((tt-tA)/0.25,0,1)),cx=0,cy=0;
+    g.forEach(function(o){cx+=o.pos.x;cy+=o.pos.y;});cx/=g.length;cy/=g.length;
+    /* 가로로 나란히. 간격은 핀 지름 1.15배와 이름표 폭 중 큰 값 */
+    var f=fs();ctx.font='500 '+f+'px "Noto Sans KR",sans-serif';
+    var gap=R*2.3;g.forEach(function(o){gap=Math.max(gap,ctx.measureText(char(o.p.character)[1]).width+f*1.2+6);});
+    g.sort(function(p1,p2){return p1.pos.x-p2.pos.x;});
+    g.forEach(function(o,i){var dx=(i-(g.length-1)/2)*gap;
+      o.pos.x=o.pos.x+(cx+dx/W-o.pos.x)*k;o.pos.y=o.pos.y+(cy-o.pos.y)*k;});
+  });
 }
 function renderEdit(){
   var sc=S(),d=dots();

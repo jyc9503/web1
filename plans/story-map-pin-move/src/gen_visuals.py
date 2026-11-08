@@ -300,7 +300,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
 """
     html = HEAD.format(title="맵 핀 이동 화면 시안", layout="Layout: 장면 컷 4장, 게임/편집 보기 비교, 해부도, 리소스 요청표를 위에서 아래로.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
-  <span class="tag">카제나 · 스토리 연출 · v0.2 시안</span>
+  <span class="tag">카제나 · 스토리 연출 · v0.3 시안</span>
   <h1>맵 핀 이동 화면 시안</h1>
   <p class="sub">아트팀과 배경 담당에게 보여주는 장면 컷과 리소스 요청 내용입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다. 스토리 화면의 실제 UI와 화면 방향은 확인 전이라 가로 16:9로 그렸습니다. <span class="badge b-warn">검증필요</span></p>
 
@@ -383,7 +383,7 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
     html += f"""<div class="wrap">
   <header class="top">
     <div>
-      <span class="tag">카제나 · 스토리 연출 · v0.2</span>
+      <span class="tag">카제나 · 스토리 연출 · v0.3</span>
       <h1>맵 핀 이동 연출</h1>
       <p class="one">스토리 중 배경 지도 위에서 캐릭터 핀이 경로를 따라 움직여, 누가 어디서 어디로 갔는지 보여준다. 앞 연출이 끝난 자리에서 이어갈 수 있다.</p>
     </div>
@@ -403,7 +403,8 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
           <li><span class="id">R-09</span><span>게임에는 지나온 구간만 점선. 앞 경로·도착 지점은 툴에서만</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-20</span><span>배경 위 장소마다 이름 마크</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-22</span><span>앞 연출 끝 상태에서 이어가기, 툴에서 버튼 하나로 가져옴</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-12</span><span>재생 중 화면 탭하면 0.3초 만에 최종 상태</span><span class="badge b-warn">검증필요</span></li>
+          <li><span class="id">R-12</span><span>재생 중 화면 탭하면 0.3초 만에 최종 상태</span><span class="badge b-ok">확정</span></li>
+          <li><span class="id">R-17</span><span>도착한 핀이 겹치면 자동으로 비켜 놓기</span><span class="badge b-ok">확정</span></li>
         </ul>
       </section>
       <section class="block">
@@ -425,12 +426,12 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
   </div>
 
   <section>
-    <h2>결정이 필요합니다</h2>
+    <h2>남은 결정</h2>
     <div class="decide">
-      <div class="block"><h3><span class="id">R-16</span>카메라 팬·줌 <span class="badge b-tbd">미정</span></h3><p><b>추천</b> 이번 버전은 화면 고정. 전체 지도가 보여야 위치가 읽힌다.</p></div>
-      <div class="block"><h3><span class="id">R-17</span>핀 겹침 <span class="badge b-tbd">미정</span></h3><p><b>추천</b> 같은 지점에 도착하면 자동으로 살짝 어긋나게 배치.</p></div>
-      <div class="block"><h3><span class="id">R-19</span>화면 맞춤 <span class="badge b-tbd">미정</span></h3><p><b>추천</b> 배경 전체가 보이게 맞추고 남는 곳은 여백. 규격은 16:9 2048×1152.</p></div>
-      <div class="block"><h3><span class="id">R-30</span>효과음 <span class="badge b-tbd">미정</span></h3><p><b>추천</b> 이동 시작에만 짧은 효과음 1종, 핀이 여럿이어도 한 번.</p></div>
+      <div class="block"><h3><span class="id">R-18</span>배경 규격 <span class="badge b-tbd">미정</span></h3><p><b>추천</b> 가로 16:9, 2048×1152. 배경 담당과 합의 필요.</p></div>
+      <div class="block"><h3><span class="id">P-05</span>구간별 직선·곡선 <span class="badge b-tbd">미정</span></h3><p><b>추천</b> 이번 버전은 경로 단위로만 지정. 점 추가로 대부분 해결된다.</p></div>
+      <div class="block"><h3><span class="id">C-07</span>이어가기 순서 관리 <span class="badge b-warn">검증필요</span></h3><p><b>제안</b> 별도 툴이라 연출마다 묶음 이름과 순번을 입력해 앞 연출을 찾는다.</p></div>
+      <div class="block"><h3><span class="id">R-16</span>카메라 연출 <span class="badge b-ok">나중에</span></h3><p><b>예정</b> 이번 버전은 고정. 기능을 다 만든 뒤 다시 검토한다.</p></div>
     </div>
   </section>
 </div>
