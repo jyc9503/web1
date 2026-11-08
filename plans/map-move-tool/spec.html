@@ -154,10 +154,10 @@ td code{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기와 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.4 초안</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.5 초안</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">34건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">35건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -315,17 +315,22 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">K-03</td>
-<td>핀은 핀 번호(1~8)로 구분한다. 이어가기 연출 사이에서 같은 번호가 같은 핀이다. 같은 리소스 핀이 둘 이상이어도 헷갈리지 않는다.</td>
+<td>핀은 핀 번호(1~99)로 구분한다. 이어가기 연출 사이에서 같은 번호가 같은 핀이다. 새 핀은 이어가기 연결 전체에서 쓰지 않은 가장 작은 번호를 받는다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">K-04</td>
-<td><strong>출발 조건</strong>: 시간 / 다른 핀 출발 후 / 다른 핀 도착 후 + 지연(ms). 기준 핀은 같은 연출의 핀 목록에서 고른다.</td>
+<td><strong>출발 조건</strong>: 시간 / 다른 핀 출발 후 / 다른 핀 도착 후 + 오프셋(ms). 기준 핀은 같은 연출의 핀 목록에서 고른다. 저장 열: <code>StartType</code>, <code>StartPinNo</code>, <code>StartOffsetMs</code>.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">K-05</td>
 <td><strong>타임라인 막대</strong>: 재생 바 위에 핀별 이동 구간을 막대로 보여준다. 출발 조건으로 묶인 핀은 화살표로 잇는다. 막대를 끌면 지연(ms)이 바뀐다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">K-06</td>
+<td><strong>등장 시점</strong>: 처음부터(기본) / 출발할 때. 출발할 때 등장하는 핀은 편집 보기에서 반투명으로 보인다. 저장 열: <code>ShowFrom</code>.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -417,13 +422,13 @@ td code{white-space:nowrap}
 <tr data-s="warn">
 <td class="id">P-08</td>
 <td>자유 그리기 단순화</td>
-<td>그린 선을 Douglas-Peucker 방식으로 줄인다. 허용 오차는 화면 폭의 0.8%부터 키우며 점이 12개 이하가 될 때까지 반복한다.</td>
+<td>그린 선을 Douglas-Peucker 방식으로 줄인다. 허용 오차는 <code>MAP_TOOL_SIMPLIFY_PX</code>(배경 16px)부터 키우며 점이 12개 이하가 될 때까지 반복한다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">P-09</td>
 <td>장소 마크 스냅</td>
-<td>점을 장소 마크 근처(배경 폭 2% 이내)에 놓으면 마크에 붙는다. 붙은 점은 좌표 대신 장소 ID로 저장되어, 장소를 옮기면 경로도 따라간다(연출 R-40). 붙은 점은 다이아몬드 모양으로 표시한다. 켜고 끌 수 있다(기본 켬).</td>
+<td>점을 장소 마크 근처(<code>MAP_TOOL_SNAP_PX</code>, 배경 40px 이내)에 놓으면 마크에 붙는다. 붙은 점은 좌표 대신 장소 ID로 저장되어, 장소를 옮기면 경로도 따라간다(연출 R-40). 붙은 점은 다이아몬드 모양으로 표시한다. 켜고 끌 수 있다(기본 켬).</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -634,7 +639,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">T-07</td>
-<td>저장 전에 검사한다: 핀·점 한도 초과, 배경 범위 밖 좌표, 경로가 빈 핀, 이름 키가 없는 장소 마크, 도착할 핀이 지워진 장소 마크, 앞 연출에 없는 <code>FromPrev</code> 핀, 서로를 기다리는 출발 조건, 끊긴 이어가기 연결, 속도 경고(P-16), 대사창 영역 안의 도착 지점(V-05).</td>
+<td>저장 전에 검사한다: 핀·점 한도 초과, 배경 범위 밖 좌표, 경로가 빈 핀, 이름 키가 없는 장소 마크, 다른 배경의 장소를 가리키는 점·등장, 도착할 핀이 지워진 장소 마크, 앞 연출에 없는 <code>FromPrev</code> 핀, 앞 연출과 다른 배경, 없는 기준 핀, 서로를 기다리는 출발 조건, 끊긴 이어가기 연결, 속도 경고(P-16), 권장 길이 초과(<code>MAP_RECOMMEND_MAX_MS</code>), 대사창 영역 안의 도착 지점(V-05). 오류는 저장을 막고, 경고는 목록만 보여준다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
@@ -683,6 +688,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.5</td>
+<td>2026-11-08</td>
+<td>핀 번호 1~99·새 번호 규칙(K-03), <code>StartOffsetMs</code>(K-04), 등장 시점(K-06), 스냅·단순화를 배경 px 설정 키로(P-08, P-09), 검사 항목 정리(T-07)</td>
+</tr>
 <tr>
 <td>v0.4</td>
 <td>2026-11-08</td>

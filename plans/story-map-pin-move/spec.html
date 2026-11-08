@@ -158,10 +158,10 @@ td code{white-space:nowrap}
       <h1>스토리 맵 핀 이동 연출</h1>
       <p class="sub">스토리 진행 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 이동하며 "누가 어디서 어디로 갔는지"를 보여주는 연출 기능.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.5 초안</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.6 초안</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>클라이언트 · 편집 툴 · 데이터</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">20건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">23건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -226,7 +226,7 @@ td code{white-space:nowrap}
 </tr>
 <tr>
 <td>핀 번호</td>
-<td>연출 안에서 핀을 가리키는 번호(1~8). 이어가기로 연결된 연출들 사이에서는 같은 번호가 같은 핀이다</td>
+<td>핀을 가리키는 번호(1~99). 이어가기로 연결된 연출들 사이에서는 같은 번호가 같은 핀이다</td>
 </tr>
 <tr>
 <td>웨이포인트</td>
@@ -292,7 +292,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">R-06</td>
-<td>한 연출에 핀은 최대 8개, 핀당 웨이포인트는 최대 12개.</td>
+<td>한 연출에 핀은 최대 8개, 핀당 저장하는 웨이포인트는 최대 12개(이어가기 시작점은 저장하지 않으므로 세지 않음). 핀 번호는 1~99를 쓴다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -437,7 +437,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">R-35</td>
-<td>대사 로그에는 맵 연출을 핀마다 한 줄로 남긴다("[이동] 전투원 A: 정거장 → 관측소"). 출발·도착 장소는 경로 첫 점과 끝 점이 가리키는 장소 마크를 쓰고, 장소가 아니면 그 줄을 생략한다. 문구는 문자열 키 템플릿이다.</td>
+<td>대사 로그에는 맵 연출을 핀마다 한 줄로 남긴다("[이동] 전투원 A: 정거장 → 관측소"). 출발·도착 장소는 경로 첫 점과 끝 점이 가리키는 장소 마크를 쓰고(이어가기 핀의 출발은 앞 연출의 끝 점), 둘 중 하나라도 장소가 아니면 그 줄을 생략한다. 문구는 문자열 키 템플릿이다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -468,6 +468,21 @@ td code{white-space:nowrap}
 <tr data-s="warn">
 <td class="id">R-41</td>
 <td>위치·길이·속도는 모두 배경 픽셀 기준이다. 핀 지름, 글자, 점선 같은 표시 크기는 UI 기준 해상도의 px로 정한다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">R-42</td>
+<td>핀 등장 시점은 처음부터(기본) 또는 출발할 때 중에서 고른다. 출발할 때 등장하는 핀은 출발 시각에 시작 위치에서 400ms 동안 페이드인하며 출발한다. 이어가기로 이미 화면에 있는 핀은 처음부터만 쓴다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">R-43</td>
+<td>이어가기 연출의 배경은 앞 연출과 같아야 한다. 툴이 앞 연출의 배경으로 자동으로 채우고 바꾸지 못하게 한다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">R-44</td>
+<td>장소 마크의 "핀 도착 시 등장"이 움직이지 않는 핀을 가리키면 처음부터 보인다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -836,7 +851,7 @@ td code{white-space:nowrap}
 <td>BgID</td>
 <td>int</td>
 <td>10</td>
-<td>배경</td>
+<td>배경. 이어가기면 앞 연출과 같아야 한다(R-43)</td>
 </tr>
 <tr>
 <td>PrevSceneID</td>
@@ -897,7 +912,7 @@ td code{white-space:nowrap}
 <td>PinNo</td>
 <td>int</td>
 <td>2</td>
-<td>핀 번호 1~8. 이어가기 연출 사이에서 같은 번호가 같은 핀</td>
+<td>핀 번호 1~99. 이어가기 연출 사이에서 같은 번호가 같은 핀. 연출당 최대 8개</td>
 </tr>
 <tr>
 <td>PinResID</td>
@@ -910,6 +925,12 @@ td code{white-space:nowrap}
 <td>bool</td>
 <td>TRUE</td>
 <td>앞 연출의 같은 핀 끝 위치에서 출발. TRUE면 시작점 웨이포인트를 적지 않는다</td>
+</tr>
+<tr>
+<td>ShowFrom</td>
+<td>enum</td>
+<td>(비움)</td>
+<td><code>START</code> / <code>ON_DEPART</code>. 비우면 <code>START</code>(R-42)</td>
 </tr>
 <tr>
 <td>LabelKey</td>
@@ -954,10 +975,10 @@ td code{white-space:nowrap}
 <td>기준 핀 (<code>TIME</code>이면 비움)</td>
 </tr>
 <tr>
-<td>StartDelayMs</td>
+<td>StartOffsetMs</td>
 <td>int</td>
 <td>0</td>
-<td><code>TIME</code>이면 0ms 기준, 아니면 기준 핀 기준</td>
+<td>기준점에서 몇 ms 뒤에 출발하는지. 기준점은 <code>TIME</code>이면 0ms(이동 시작), 아니면 기준 핀의 출발·도착 시각</td>
 </tr>
 <tr>
 <td>Easing</td>
@@ -1083,6 +1104,8 @@ td code{white-space:nowrap}
 </table></div>
 <ul>
 <li>일반 연출: 여기 적은 마크만 보인다.</li>
+<li><code>PIN_ARRIVE</code>가 움직이지 않는 핀을 가리키면 <code>START</code>와 같다(R-44).</li>
+<li>장소는 연출의 배경에 속한 장소여야 한다(같은 BgID).</li>
 <li>이어가기 연출: 앞 연출 끝에 보이던 마크는 적지 않아도 보인다. 새로 나타날 마크와 숨길 마크(<code>HIDE</code>)만 적는다.</li>
 </ul>
 <h3>MapSpeedPreset (속도 프리셋)</h3>
@@ -1090,34 +1113,39 @@ td code{white-space:nowrap}
 <thead>
 <tr>
 <th>PresetID</th>
-<th>NameKey</th>
+<th>Name</th>
 <th>SpeedPx</th>
-<th>쓰임</th>
+<th>Memo</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>1</td>
-<td><code>MAP_SPEED_WALK</code></td>
-<td>500</td>
 <td>걷기</td>
+<td>500</td>
+<td>인물 기본</td>
 </tr>
 <tr>
 <td>2</td>
-<td><code>MAP_SPEED_RUN</code></td>
-<td>800</td>
 <td>달리기</td>
+<td>800</td>
+<td>급한 이동</td>
 </tr>
 <tr>
 <td>3</td>
-<td><code>MAP_SPEED_FAST</code></td>
+<td>고속</td>
 <td>1200</td>
 <td>함선·비행</td>
 </tr>
 </tbody>
 </table></div>
 <ul>
-<li>속도 단위는 <strong>배경 px/초</strong>이고, 가로 2048px 배경을 기준으로 한다. 배경 가로가 다르면 엔진이 비례로 맞춘다. 값은 모두 <code>검증필요</code>.</li>
+<li>
+<p><code>Name</code>은 툴에만 보이는 이름이라 문자열 키를 쓰지 않는다.</p>
+</li>
+<li>
+<p>속도 단위는 <strong>배경 px/초</strong>이고, 가로 2048px 배경을 기준으로 한다. 배경 가로가 다르면 엔진이 비례로 맞춘다. 값은 모두 <code>검증필요</code>.</p>
+</li>
 <li>이동 시간 = 경로 길이(px) ÷ 속도 × 1000, 100ms 단위 반올림.</li>
 </ul>
 <h3>MapConfig (설정 키)</h3>
@@ -1240,6 +1268,24 @@ td code{white-space:nowrap}
 <td>UI px</td>
 <td>이름표 글자</td>
 </tr>
+<tr>
+<td>MAP_RECOMMEND_MAX_MS</td>
+<td>8000</td>
+<td>ms</td>
+<td>툴 경고: 페이드인 제외 연출 길이가 이보다 길면</td>
+</tr>
+<tr>
+<td>MAP_TOOL_SNAP_PX</td>
+<td>40</td>
+<td>배경 px</td>
+<td>툴: 장소 마크에 붙는 반경</td>
+</tr>
+<tr>
+<td>MAP_TOOL_SIMPLIFY_PX</td>
+<td>16</td>
+<td>배경 px</td>
+<td>툴: 자유 그리기 단순화 시작 허용 오차</td>
+</tr>
 </tbody>
 </table></div>
 <ul>
@@ -1270,11 +1316,6 @@ td code{white-space:nowrap}
 <td>[이동] {0}: {1} → {2}</td>
 <td>대사 로그 (R-35). {0} 핀 이름, {1} 출발 장소, {2} 도착 장소</td>
 </tr>
-<tr>
-<td><code>MAP_SPEED_*</code></td>
-<td>걷기</td>
-<td>툴 표시용 프리셋 이름</td>
-</tr>
 </tbody>
 </table></div>
 <h3>왜 이렇게 나눴나</h3>
@@ -1300,7 +1341,7 @@ td code{white-space:nowrap}
 </tr>
 <tr>
 <td>핀은 번호(PinNo)로 식별</td>
-<td>이어가기 연결 안에서 같은 핀을 번호로 이어 붙인다. 리소스가 같은 핀이 둘이어도 헷갈리지 않는다</td>
+<td>이어가기 연결 안에서 같은 핀을 번호로 이어 붙인다. 리소스가 같은 핀이 둘이어도 헷갈리지 않는다. 번호는 1~99라 긴 이어가기에서 새 핀이 계속 나와도 모자라지 않는다</td>
 </tr>
 <tr>
 <td>속도를 프리셋으로</td>
@@ -1314,10 +1355,18 @@ td code{white-space:nowrap}
 <td>합치지 않은 것: 핀과 웨이포인트</td>
 <td>핀 행에 좌표 목록을 넣으면 한 셀에 숫자 24개가 들어가 손으로 고치거나 검사하기 어렵다</td>
 </tr>
+<tr>
+<td>열 하나에 뜻 하나</td>
+<td><code>StartOffsetMs</code>는 항상 "기준점에서 몇 ms 뒤"다. 기준점이 무엇인지는 <code>StartType</code>이 정한다</td>
+</tr>
+<tr>
+<td>bool 표기</td>
+<td>예시는 TRUE/FALSE로 적었다. 회사 테이블이 1/0을 쓰면 그대로 따른다</td>
+</tr>
 </tbody>
 </table></div>
 <div class="note dev"><p><strong>회사 테이블 규칙이 단일 ID 열을 요구하면</strong></p>
-<p>복합 키를 숫자로 합친다. 예: 핀 행 ID = SceneID × 10 + PinNo, 웨이포인트 행 ID = SceneID × 1000 + PinNo × 100 + Seq. 한도(핀 8개, 점 12개)가 자릿수 안에 들어간다.</p></div>
+<p>복합 키를 숫자로 합친다. 예: 핀 행 ID = SceneID × 100 + PinNo, 웨이포인트 행 ID = SceneID × 10000 + PinNo × 100 + Seq. 핀 번호(1~99)와 점 순서(1~12)가 각각 두 자리 안에 들어간다.</p></div>
 </section>
 <section id="s8"><h2><span class="sec">§8</span>연출 타임라인 (예시)</h2>
 <p>아래 「예시 데이터」와 같은 값이다. 캐릭터와 장소 이름은 자리표시다.</p>
@@ -1546,7 +1595,7 @@ td code{white-space:nowrap}
 <th>SpeedPreset</th>
 <th>StartType</th>
 <th>StartPinNo</th>
-<th>StartDelayMs</th>
+<th>StartOffsetMs</th>
 <th>Curve</th>
 </tr>
 </thead>
@@ -1838,6 +1887,16 @@ td code{white-space:nowrap}
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
+<td>출발 조건의 기준 핀이 연출에 없음</td>
+<td>툴이 저장 전에 막는다. 게임에서는 <code>TIME</code>으로 보고 로그를 남긴다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>웨이포인트·장소 등장이 다른 배경의 장소를 가리킴</td>
+<td>툴이 저장 전에 막는다. 게임에서는 그 점·마크를 무시하고 로그를 남긴다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
 <td>맵이 열린 채 이어가기가 아닌 다른 맵 연출 재생</td>
 <td>지금 맵을 400ms 동안 닫고 새 맵을 일반 등장시킨다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
@@ -1962,6 +2021,7 @@ td code{white-space:nowrap}
 <li><span class="mono">□</span><span>스토리 화면의 실제 UI(대사창 위치, 여백 영역의 처리)에 맞는지 확인 (R-15, R-19)</span></li>
 <li><span class="mono">□</span><span>핀 한도(8개)와 웨이포인트 한도(12개)가 실제 스토리 연출에 충분한지 (R-06)</span></li>
 <li><span class="mono">□</span><span>속도 프리셋 값(걷기 500, 달리기 800, 고속 1200 px/초)이 연출 의도와 맞는지</span></li>
+<li><span class="mono">□</span><span>테이블 bool 표기(TRUE/1), 열거값 표기 규칙</span></li>
 <li><span class="mono">□</span><span>핀 규격 리소스 테이블이 있는지, 없으면 어느 테이블을 확장할지 (R-33)</span></li>
 <li><span class="mono">□</span><span>스토리 테이블에 <code>map_play</code> / <code>map_close</code> 명령을 추가할 수 있는지, 명령 이름 규칙 (R-31, R-32)</span></li>
 <li><span class="mono">□</span><span>테이블 이름, ID 형식, 단일 ID 열 규칙, 공용 설정 테이블 유무 (테이블 설계)</span></li>
@@ -2001,6 +2061,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.6</td>
+<td>2026-11-08</td>
+<td>시스템 기획 검토: 핀 번호 1~99(R-06), 핀 등장 시점 <code>ShowFrom</code>(R-42), <code>StartDelayMs</code>→<code>StartOffsetMs</code>, 이어가기 배경 일치(R-43), 정지 핀 도착 등장 정의(R-44), 속도 프리셋 이름은 툴 전용, 툴 반경을 배경 px 설정 키로, 권장 길이 경고, 단일 ID 합성식 갱신, 예외 2건 추가</td>
+</tr>
 <tr>
 <td>v0.5</td>
 <td>2026-11-08</td>
