@@ -103,13 +103,34 @@ def bg():
     return o
 
 
-def places():
+# 장면별 장소 마크 등장 방식 (프로토 예시와 같음). 없으면 처음부터 보임
+S1_PLACES = {"관측소": ("arrive", 0), "탑": ("hidden",)}
+S2_PLACES = {"탑": ("arrive", 0)}
+
+
+def place_alpha(modes, name, t, base, scene, edit):
+    m = (modes or {}).get(name, ("start",))
+    if m[0] == "hidden":
+        return .35 if edit else 0
+    if edit or t is None:
+        return 1
+    if m[0] == "arrive":
+        p = scene[m[1]]
+        return max(0, min(1, (t - (base + p["delay"] + p["dur"])) / .4))
+    return 1
+
+
+def places(modes=None, t=None, base=0, scene=None, edit=False):
     o = ""
     for name, x, y in PLACES:
+        a = place_alpha(modes, name, t, base, scene, edit)
+        if a <= 0:
+            continue
         X, Y = x * W, y * H
+        o += f'<g opacity="{a:.2f}">'
         o += (f'<circle cx="{X:.1f}" cy="{Y:.1f}" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/>'
               f'<text x="{X:.1f}" y="{Y - R - 6:.1f}" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8"'
-              f' stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">{name}</text>')
+              f' stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">{name}</text></g>')
     return o
 
 
@@ -131,10 +152,10 @@ def svg_open(label):
     return f'<svg viewBox="0 0 {W} {H}" role="img" aria-label="{label}" xmlns="http://www.w3.org/2000/svg" {FONT}>'
 
 
-def game(scene, t, prev=None, seamless=False, dialog=True):
+def game(scene, t, prev=None, seamless=False, dialog=True, modes=None):
     """게임 보기: 지나온 구간만 점선, 앞으로 갈 경로·도착 지점 없음."""
     base = 0 if seamless else INTRO + PINFADE
-    o = svg_open(f"게임 화면 {t}초") + bg() + places()
+    o = svg_open(f"게임 화면 {t}초") + bg() + places(modes, t, base, scene)
     for c, pts in (prev or []):
         o += poly(pts, COL[c], DOT[0], DOT[1], .4)
     st = []
@@ -156,9 +177,11 @@ def game(scene, t, prev=None, seamless=False, dialog=True):
     return o + "</svg>"
 
 
-def edit(scene, sel=0, prev=None):
-    """편집 보기: 앞으로 갈 경로(파선), 도착 링, 선택한 핀의 점 번호."""
-    o = svg_open("툴 편집 화면") + bg() + places()
+def edit(scene, sel=0, prev=None, modes=None):
+    """편집 보기: 앞으로 갈 경로(파선), 도착 링, 선택한 핀의 점 번호, 대사창 영역."""
+    o = svg_open("툴 편집 화면") + bg() + places(modes, edit=True)
+    o += ('<rect x="25.6" y="295" width="588.8" height="50" rx="6" fill="none" stroke="rgba(255,255,255,.35)" stroke-dasharray="4 4"/>'
+          '<text x="610" y="307" text-anchor="end" font-size="8" fill="rgba(255,255,255,.5)">대사창 영역 · 맵 유지 중 가려짐</text>')
     for c, pts in (prev or []):
         o += poly(pts, COL[c], DOT[0], DOT[1], .4)
     for k, p in enumerate(scene):
@@ -266,10 +289,10 @@ HEAD = """<!doctype html>
 
 def mockups():
     cuts = [
-        ("① 핀 등장", "장면 1 · 0.8초", game(S1, 0.8), "배경과 장소 마크가 보이고 핀이 시작 위치에 서 있다. 앞으로 갈 경로는 게임에서 보이지 않는다."),
-        ("② 이동 중", "장면 1 · 2.3초", game(S1, 2.3), "핀이 지나온 구간만 점선으로 남는다. 이동 중인 핀에 진행 방향 삼각형이 붙는다."),
-        ("③ 전원 도착", "장면 1 · 4.0초", game(S1, 4.0), "모든 핀이 장소에 도착했다. 도착 표시 없이 장소 마크로 위치를 읽는다. 1.0초 뒤 대사창이 돌아온다."),
-        ("④ 이어가기", "장면 2 · 1.6초", game(S2, 1.6, PREV, True), "대사 뒤 장면 2가 장면 1의 끝 상태에서 바로 이어진다. 장면 1 궤적은 흐린 점선으로 남는다."),
+        ("① 핀 등장", "장면 1 · 0.8초", game(S1, 0.8, modes=S1_PLACES), "배경과 장소 마크가 보이고 핀이 시작 위치에 서 있다. 앞으로 갈 경로는 게임에서 보이지 않는다. 관측소는 아직 숨어 있다."),
+        ("② 이동 중", "장면 1 · 2.3초", game(S1, 2.3, modes=S1_PLACES), "핀이 지나온 구간만 점선으로 남는다. 이동 중인 핀에 진행 방향 삼각형이 붙는다."),
+        ("③ 전원 도착", "장면 1 · 4.0초", game(S1, 4.0, modes=S1_PLACES), "모든 핀이 도착했다. A가 도착하면서 관측소 마크가 나타났다(등장: 핀 도착 시). 1.0초 뒤 대사가 이어지고 맵은 뒤에 남는다."),
+        ("④ 이어가기", "장면 2 · 1.6초", game(S2, 1.6, PREV, True, modes=S2_PLACES), "대사 뒤 map_play로 장면 2가 열린 맵에서 바로 이어진다. 장면 1 궤적은 흐린 점선. 탑은 A가 도착할 때 나타난다."),
     ]
     cards = "".join(f'<figure class="card"><div class="shot">{s}</div><figcaption><b>{n}</b> <span class="mono">{m}</span><p>{d}</p></figcaption></figure>' for n, m, s, d in cuts)
     css = """
@@ -300,9 +323,9 @@ td.spec{font-family:var(--f-mono);font-size:13px}
 """
     html = HEAD.format(title="맵 핀 이동 화면 시안", layout="Layout: 장면 컷 4장, 게임/편집 보기 비교, 해부도, 리소스 요청표를 위에서 아래로.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
-  <span class="tag">카제나 · 스토리 연출 · v0.3 시안</span>
+  <span class="tag">카제나 · 스토리 연출 · v0.4 시안</span>
   <h1>맵 핀 이동 화면 시안</h1>
-  <p class="sub">아트팀과 배경 담당에게 보여주는 장면 컷과 리소스 요청 내용입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다. 스토리 화면의 실제 UI와 화면 방향은 확인 전이라 가로 16:9로 그렸습니다. <span class="badge b-warn">검증필요</span></p>
+  <p class="sub">아트팀과 배경 담당에게 보여주는 장면 컷과 리소스 요청 내용입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다. 화면은 가로 16:9로 확정했고, 스토리 화면의 실제 UI(대사창 위치 등)는 확인 전입니다. <span class="badge b-warn">검증필요</span></p>
 
   <h2>장면 컷 (게임 화면)</h2>
   <p>장면 1과, 장면 1에서 이어가는 장면 2입니다.</p>
@@ -311,8 +334,8 @@ td.spec{font-family:var(--f-mono);font-size:13px}
   <h2>게임 보기와 편집 보기</h2>
   <p>같은 장면 1입니다. 앞으로 갈 경로, 도착 링, 점 번호는 툴에서만 보입니다 (R-09).</p>
   <div class="pair">
-    <figure class="card"><div class="shot">{game(S1, 4.0, dialog=False)}</div><figcaption><b>게임 보기</b><p>지나온 궤적(점선), 장소 마크, 핀만 보인다.</p></figcaption></figure>
-    <figure class="card"><div class="shot">{edit(S1, 0)}</div><figcaption><b>편집 보기</b><p>모든 핀의 경로(파선)와 도착 링, 선택한 핀의 점 번호가 보인다.</p></figcaption></figure>
+    <figure class="card"><div class="shot">{game(S1, 4.0, dialog=False, modes=S1_PLACES)}</div><figcaption><b>게임 보기</b><p>지나온 궤적(점선), 장소 마크, 핀만 보인다.</p></figcaption></figure>
+    <figure class="card"><div class="shot">{edit(S1, 0, modes=S1_PLACES)}</div><figcaption><b>편집 보기</b><p>모든 핀의 경로(파선)와 도착 링, 선택한 핀의 점 번호, 숨긴 장소 마크(흐리게), 대사창 영역이 보인다.</p></figcaption></figure>
   </div>
 
   <h2>핀과 장소 마크 해부도</h2>
@@ -321,9 +344,9 @@ td.spec{font-family:var(--f-mono);font-size:13px}
     <div class="shot ana">{anatomy()}</div>
     <ol class="legend">
       <li><b>진행 방향 삼각형</b>: 이동 중에만 붙는다.</li>
-      <li><b>핀 본체</b>: 캐릭터 얼굴 원형 아이콘, 흰 링, 지름은 화면 폭의 4.5%.</li>
+      <li><b>핀 본체</b>: 핀 규격 원형 아이콘(캐릭터 얼굴 또는 대상), 흰 링, 지름은 화면 폭의 4.5%.</li>
       <li><b>핀 색</b>: 캐릭터마다 다른 색. 궤적도 같은 색이다.</li>
-      <li><b>이름표</b>: 핀 아래 알약 모양, 어두운 반투명 바탕.</li>
+      <li><b>이름표</b>: 핀 아래 알약 모양, 어두운 반투명 바탕. 글자 변경·끄기 가능.</li>
       <li><b>지나온 궤적</b>: 둥근 점선. 앞으로 갈 경로는 그리지 않는다.</li>
       <li><b>장소 마크</b>: 작은 점과 장소 이름. 글자에 어두운 외곽선. 이름은 핀 높이만큼 위에 둔다.</li>
       <li><b>앞 장면 궤적</b>: 이어가기일 때 흐린 점선(40%)으로 남는다.</li>
@@ -335,8 +358,8 @@ td.spec{font-family:var(--f-mono);font-size:13px}
     <thead><tr><th>리소스</th><th>규격</th><th>담당</th><th>상태</th></tr></thead>
     <tbody>
       <tr><td>배경 이미지</td><td class="spec">16:9 / 2048×1152 (추천)</td><td>배경</td><td><span class="badge b-tbd">미정</span></td></tr>
-      <tr><td>장소 마크 세트</td><td class="spec">배경마다 장소 이름과 위치 목록</td><td>기획 또는 배경</td><td><span class="badge b-tbd">미정</span></td></tr>
-      <tr><td>핀 얼굴 아이콘</td><td class="spec">원형 128×128, 기존 리소스 재사용 여부 확인</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
+      <tr><td>장소 마크 세트</td><td class="spec">배경마다 장소 이름과 위치 목록. 편집 툴에서 관리</td><td>기획</td><td><span class="badge b-ok">확정</span></td></tr>
+      <tr><td>핀 아이콘</td><td class="spec">핀 규격 원형 128×128. 캐릭터 얼굴, 함대·탈것 등 대상 아이콘. 기존 리소스 테이블 확인</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
       <tr><td>핀 링 / 방향 삼각형</td><td class="spec">코드 도형. 아트 스타일 지정 시 이미지로 교체</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
       <tr><td>이름표 바탕</td><td class="spec">알약 9-slice, 높이 26px 기준</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
       <tr><td>장소 마크 점과 글꼴</td><td class="spec">점 아이콘 24×24 또는 코드 도형, 이름 글꼴과 외곽선 색</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
@@ -383,28 +406,28 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
     html += f"""<div class="wrap">
   <header class="top">
     <div>
-      <span class="tag">카제나 · 스토리 연출 · v0.3</span>
+      <span class="tag">카제나 · 스토리 연출 · v0.4</span>
       <h1>맵 핀 이동 연출</h1>
-      <p class="one">스토리 중 배경 지도 위에서 캐릭터 핀이 경로를 따라 움직여, 누가 어디서 어디로 갔는지 보여준다. 앞 연출이 끝난 자리에서 이어갈 수 있다.</p>
+      <p class="one">스토리 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 움직여, 누가 어디서 어디로 갔는지 보여준다. 스토리 테이블로 맵을 열고 닫으며, 열린 맵에서 다음 이동을 이어간다.</p>
     </div>
     <div class="counts" aria-label="상태 집계 (규칙·툴 요구 ID 기준)"><span class="badge b-ok">확정 {c['확정']}</span><span class="badge b-warn">검증필요 {c['검증필요']}</span><span class="badge b-tbd">미정 {c['미정']}</span></div>
   </header>
 
   <div class="main">
     <div>
-      <div class="shot">{game(S2, 2.6, PREV, True, dialog=False)}</div>
+      <div class="shot">{game(S2, 2.6, PREV, True, dialog=False, modes=S2_PLACES)}</div>
       <p class="cap">장면 2 완료 모습. 진한 점선은 이번 장면, 흐린 점선은 앞 장면 궤적. 배경과 캐릭터는 자리표시용.</p>
     </div>
     <div class="col">
       <section class="block">
         <h2>핵심 규칙</h2>
         <ul class="rules">
-          <li><span class="id">R-01~03</span><span>배경 위 캐릭터 핀이 지정한 경로로 이동</span><span class="badge b-ok">확정</span></li>
+          <li><span class="id">R-01~03</span><span>배경 위 핀(캐릭터·대상)이 지정한 경로로 이동</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-09</span><span>게임에는 지나온 구간만 점선. 앞 경로·도착 지점은 툴에서만</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-20</span><span>배경 위 장소마다 이름 마크</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-22</span><span>앞 연출 끝 상태에서 이어가기, 툴에서 버튼 하나로 가져옴</span><span class="badge b-ok">확정</span></li>
+          <li><span class="id">R-21</span><span>장소 마크: 처음부터 / 시간 / 핀 도착 시 등장</span><span class="badge b-ok">확정</span></li>
+          <li><span class="id">R-26</span><span>맵은 map_close 전까지 대사 뒤에 남음</span><span class="badge b-ok">확정</span></li>
+          <li><span class="id">R-22</span><span>열린 맵에서 이어가기, 툴에서 버튼 하나로 가져옴</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-12</span><span>재생 중 화면 탭하면 0.3초 만에 최종 상태</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-17</span><span>도착한 핀이 겹치면 자동으로 비켜 놓기</span><span class="badge b-ok">확정</span></li>
         </ul>
       </section>
       <section class="block">
@@ -426,11 +449,11 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
   </div>
 
   <section>
-    <h2>남은 결정</h2>
+    <h2>남은 확인</h2>
     <div class="decide">
+      <div class="block"><h3><span class="id">R-33</span>핀 리소스 테이블 <span class="badge b-warn">회사 확인</span></h3><p><b>확인</b> 핀 규격 리소스 테이블이 있는지, 없으면 어느 테이블을 확장할지.</p></div>
+      <div class="block"><h3><span class="id">R-32</span>스토리 명령 <span class="badge b-warn">회사 확인</span></h3><p><b>제안</b> <code>map_play &lt;ID&gt;</code>, <code>map_close</code>. 기존 명령 규칙에 맞춰 이름을 정한다.</p></div>
       <div class="block"><h3><span class="id">R-18</span>배경 규격 <span class="badge b-tbd">미정</span></h3><p><b>추천</b> 가로 16:9, 2048×1152. 배경 담당과 합의 필요.</p></div>
-      <div class="block"><h3><span class="id">P-05</span>구간별 직선·곡선 <span class="badge b-tbd">미정</span></h3><p><b>추천</b> 이번 버전은 경로 단위로만 지정. 점 추가로 대부분 해결된다.</p></div>
-      <div class="block"><h3><span class="id">C-07</span>이어가기 순서 관리 <span class="badge b-warn">검증필요</span></h3><p><b>제안</b> 별도 툴이라 연출마다 묶음 이름과 순번을 입력해 앞 연출을 찾는다.</p></div>
       <div class="block"><h3><span class="id">R-16</span>카메라 연출 <span class="badge b-ok">나중에</span></h3><p><b>예정</b> 이번 버전은 고정. 기능을 다 만든 뒤 다시 검토한다.</p></div>
     </div>
   </section>
