@@ -58,6 +58,7 @@ plans/<기획-슬러그>/
   mockups/         화면 시안 HTML
   proto/           동작 프로토타입 HTML
   summary.html     한 장 요약
+  src/             시안·요약 생성 스크립트 (있으면 HTML을 직접 고치지 말고 스크립트를 고쳐 다시 만든다)
 ```
 
 - 폴더 이름은 영문 소문자와 하이픈으로 짓는다(예: `plans/summer-event/`). 한글 제목은 문서 안에 쓴다.

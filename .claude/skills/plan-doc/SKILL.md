@@ -20,6 +20,8 @@ python3 tools/artifact_fragment.py 입력.html 출력.html            # proto, m
 - 필요 패키지: `pip install markdown`
 - spec.md 작성 규칙은 `tools/build_spec.py` 맨 위 설명을 따른다(front matter, `{확정}` `{검증필요}` `{미정}` 배지, `[[svg:파일]]` 흐름도, `>` 전달사항 박스).
 - 게시용 조각은 스크래치패드에 만들고 Artifact로 올린다. 저장소에는 넣지 않는다.
+- 시안·요약처럼 같은 그림을 여러 번 쓰는 HTML은 기획 폴더의 `src/` 생성 스크립트로 만든다. 예: `plans/story-map-pin-move/src/gen_visuals.py`
+- 기능이 커서 툴 기획이 따로 필요하면 별도 기획 폴더로 나누고 서로 참조한다. 예: `plans/map-move-tool/`
 - 참고 사례: `plans/story-map-pin-move/` (spec.md, flow.svg, mockups, proto, summary 한 세트)
 
 ## 1. spec.md 구조
