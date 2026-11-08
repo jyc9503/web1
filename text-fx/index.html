@@ -73,7 +73,7 @@ h2{margin:0; font-size:19px; font-weight:600}
 .field-name{font-weight:500; font-size:13px}
 .val{font-family:var(--font-mono); color:var(--muted); font-variant-numeric:tabular-nums}
 input[type=range]{width:100%; height:28px; margin:0; accent-color:var(--accent)}
-input[type=text]{
+input[type=text],textarea{
   width:100%; min-height:44px; padding:0 12px; border-radius:8px; border:1px solid var(--line);
   background:var(--bg); color:var(--fg); font:16px var(--font-ui);
 }
@@ -86,6 +86,7 @@ input[type=text]{
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed=true]{background:var(--accent); color:var(--accent-ink)}
 .range-cap{font-family:var(--font-mono); font-size:12.5px; color:var(--muted); overflow-wrap:anywhere}
+textarea{padding:10px 12px; line-height:1.5; resize:vertical; min-height:88px}
 .hint{margin:0; font-size:12.5px; color:var(--muted)}
 .btn{justify-self:start; min-height:44px; padding:0 16px; border-radius:8px; border:1px solid var(--line); background:var(--chip); color:var(--fg); font:500 14px var(--font-ui); cursor:pointer}
 .valbox{margin:0; white-space:pre-wrap; overflow-wrap:anywhere; font-family:var(--font-mono); font-size:12.5px; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:10px 12px}
@@ -112,14 +113,15 @@ code.block{display:block; white-space:pre-wrap; overflow-wrap:anywhere; font-fam
   <section class="fx" id="fx-drop">
     <div class="fx-head">
       <div class="fx-title"><h2>1. 텍스트 드롭</h2><span class="tag">슬픈 원령 대사</span></div>
-      <p class="intent">글자의 분신이 원본에서 떨어져 나가 아래로 내려갑니다. 분리 직전 원본 글자가 살짝 내려앉았다가, 분신이 떨어져 나가면 제자리로 돌아옵니다. 떨어지는 길에 겹친 글자도 밀려났다가 돌아옵니다.</p>
+      <p class="intent">글자의 분신이 원본에서 떨어져 나가 아래로 내려갑니다. 분리 직전 원본 글자가 살짝 내려앉았다가, 분신이 떨어져 나가면 제자리로 돌아옵니다. 떨어지는 길에 겹친 글자도 밀려났다가 돌아옵니다. 문구에 태그를 적어 효과를 줄 글자를 정합니다.</p>
     </div>
     <div class="stage" id="stage-drop">
       <canvas id="cv-drop" role="img" aria-label="텍스트 드롭 미리보기"></canvas>
     </div>
     <div class="controls" id="ctl-drop">
       <div class="field wide"><button type="button" class="play" id="play-drop">일시정지</button></div>
-      <div class="field wide"><label class="field-name" for="txt-drop">문구</label><input id="txt-drop" type="text" maxlength="40" value="나는 아직 여기 있어요"></div>
+      <div class="field wide"><label class="field-name" for="txt-drop">문구 (태그 포함)</label><textarea id="txt-drop" rows="3" maxlength="120" spellcheck="false">&lt;$drop_m&gt;나는 아직 여기 있어요&lt;/$drop_m&gt;
+아무도 나를 부르지 않아요</textarea><p class="hint">태그로 감싼 글자만 분신을 만들어요. 태그 밖 글자는 지나가는 분신에 닿으면 반응해요. 줄바꿈도 쓸 수 있어요.</p></div>
       <div class="field" id="unitbox-drop"><span class="field-name" id="unitlbl-drop">분신 단위</span><div class="seg" id="unit-drop" role="group" aria-labelledby="unitlbl-drop"></div></div>
       <div class="field wide" id="presetbox-drop"><span class="field-name" id="presetlbl-drop">프리셋</span><div class="seg" id="preset-drop" role="group" aria-labelledby="presetlbl-drop"></div><p class="hint" id="hint-drop"></p><button type="button" class="btn" id="copy-drop">현재 값 보기·복사</button><pre class="valbox" id="vals-drop" hidden></pre></div>
       <div class="field wide"><span class="field-name" id="inklbl-drop">글자색</span><div class="swatches" id="ink-drop" role="group" aria-labelledby="inklbl-drop"></div></div>
@@ -131,14 +133,15 @@ code.block{display:block; white-space:pre-wrap; overflow-wrap:anywhere; font-fam
   <section class="fx" id="fx-rise">
     <div class="fx-head">
       <div class="fx-title"><h2>2. 텍스트 상승</h2><span class="tag">1번의 반대</span></div>
-      <p class="intent">드롭을 위아래로 뒤집은 연출입니다. 글자의 분신이 원본에서 분리되어 위로 떠오르고, 올라가며 좌우로 흔들리다 사라집니다. 분리 직전 원본 글자는 위로 살짝 들렸다가 제자리로 돌아옵니다.</p>
+      <p class="intent">드롭을 위아래로 뒤집은 연출입니다. 글자의 분신이 원본에서 분리되어 위로 떠오르고, 올라가며 좌우로 흔들리다 사라집니다. 분리 직전 원본 글자는 위로 살짝 들렸다가 제자리로 돌아옵니다. 문구에 태그를 적어 효과를 줄 글자를 정합니다.</p>
     </div>
     <div class="stage" id="stage-rise">
       <canvas id="cv-rise" role="img" aria-label="텍스트 상승 미리보기"></canvas>
     </div>
     <div class="controls" id="ctl-rise">
       <div class="field wide"><button type="button" class="play" id="play-rise">일시정지</button></div>
-      <div class="field wide"><label class="field-name" for="txt-rise">문구</label><input id="txt-rise" type="text" maxlength="40" value="이제야 가벼워졌구나"></div>
+      <div class="field wide"><label class="field-name" for="txt-rise">문구 (태그 포함)</label><textarea id="txt-rise" rows="3" maxlength="120" spellcheck="false">이제야 가벼워졌구나
+&lt;$rise_m&gt;이제 편히 쉬어요&lt;/$rise_m&gt;</textarea><p class="hint">태그로 감싼 글자만 분신을 만들어요. 태그 밖 글자는 지나가는 분신에 닿으면 반응해요. 줄바꿈도 쓸 수 있어요.</p></div>
       <div class="field" id="unitbox-rise"><span class="field-name" id="unitlbl-rise">분신 단위</span><div class="seg" id="unit-rise" role="group" aria-labelledby="unitlbl-rise"></div></div>
       <div class="field wide" id="presetbox-rise"><span class="field-name" id="presetlbl-rise">프리셋</span><div class="seg" id="preset-rise" role="group" aria-labelledby="presetlbl-rise"></div><p class="hint" id="hint-rise"></p><button type="button" class="btn" id="copy-rise">현재 값 보기·복사</button><pre class="valbox" id="vals-rise" hidden></pre></div>
       <div class="field wide"><span class="field-name" id="inklbl-rise">글자색</span><div class="swatches" id="ink-rise" role="group" aria-labelledby="inklbl-rise"></div></div>
@@ -157,7 +160,7 @@ code.block{display:block; white-space:pre-wrap; overflow-wrap:anywhere; font-fam
     </div>
     <div class="controls" id="ctl-grad">
       <div class="field wide"><button type="button" class="play" id="play-grad">일시정지</button></div>
-      <div class="field wide"><label class="field-name" for="txt-grad">문구 (태그 포함)</label><input id="txt-grad" type="text" maxlength="80" value="그 날의 하늘은 &lt;$grad_sunset&gt;유난히 붉었다&lt;/$grad_sunset&gt;"><p class="hint">구간은 &lt;$grad_이름&gt; … &lt;/$grad_이름&gt; 태그로 정해요. 프리셋 버튼을 누르면 태그 이름이 바뀝니다.</p></div>
+      <div class="field wide"><label class="field-name" for="txt-grad">문구 (태그 포함)</label><textarea id="txt-grad" rows="2" maxlength="120" spellcheck="false">그 날의 하늘은 &lt;$grad_sunset&gt;유난히 붉었다&lt;/$grad_sunset&gt;</textarea><p class="hint">구간은 &lt;$grad_이름&gt; … &lt;/$grad_이름&gt; 태그로 정해요. 프리셋 버튼을 누르면 태그 이름이 바뀝니다.</p></div>
       <div class="field wide"><span class="field-name" id="presetlbl-grad">프리셋</span><div class="seg" id="preset-grad" role="group" aria-labelledby="presetlbl-grad"></div></div>
       <div class="field"><span class="field-name" id="modelbl">변화 방식</span><div class="seg" id="mode-grad" role="group" aria-labelledby="modelbl"></div></div>
     </div>
@@ -273,29 +276,56 @@ function group(box,items,renderBtn,start,onPick){
   return {pick:pick};
 }
 
-/* ---------- 줄바꿈 ---------- */
-function wrapLines(ctx,text,maxW){
-  var words=text.trim().split(/\s+/),lines=[],cur='';
-  function push(){if(cur){lines.push(cur);cur='';}}
-  words.forEach(function(wd){
-    var test=cur?cur+' '+wd:wd;
-    if(ctx.measureText(test).width<=maxW){cur=test;return;}
-    push();
-    if(ctx.measureText(wd).width<=maxW){cur=wd;return;}
-    Array.from(wd).forEach(function(ch){
-      var t2=cur+ch;
-      if(ctx.measureText(t2).width<=maxW)cur=t2;else{push();cur=ch;}
-    });
-  });
-  push();
-  return lines.length?lines:[''];
+/* ---------- 태그: 문구 속 <$종류_이름> … </$종류_이름> 구간을 찾는다 ---------- */
+function parseTags(s,kind){
+  var re=new RegExp('<\\$'+kind+'_([a-z]+)>([\\s\\S]*?)<\\/\\$'+kind+'_\\1>','g'),plain='',segs=[],last=0,m;
+  while((m=re.exec(s))!==null){
+    plain+=s.slice(last,m.index);
+    var start=Array.from(plain).length;
+    plain+=m[2];
+    segs.push({start:start,end:Array.from(plain).length,key:m[1]});
+    last=m.index+m[0].length;
+  }
+  plain+=s.slice(last);
+  return {plain:plain,segs:segs};
 }
 
-/* ---------- 분신 효과: 글자 조각의 복제본이 원본에서 분리되어 떨어지거나 떠오른다 ---------- */
+/* ---------- 줄바꿈: 줄바꿈 문자와 폭 기준으로 줄을 나누고, 각 글자가 원래 몇 번째인지 기억한다 ---------- */
+function wrapLines(ctx,text,maxW){
+  var chars=Array.from(text),lines=[],paras=[],start=0,k;
+  for(k=0;k<=chars.length;k++){
+    if(k===chars.length||chars[k]==='\n'){paras.push([start,k]);start=k+1;}
+  }
+  function width(a){return ctx.measureText(a.ch.join('')).width;}
+  paras.forEach(function(pr){
+    var words=[],wd=null,cur=null;
+    for(var q=pr[0];q<pr[1];q++){
+      if(/\s/.test(chars[q])){if(wd){words.push(wd);wd=null;}}
+      else{if(!wd)wd={ch:[],idx:[]};wd.ch.push(chars[q]);wd.idx.push(q);}
+    }
+    if(wd)words.push(wd);
+    function push(){if(cur){lines.push({text:cur.ch.join(''),idx:cur.idx});cur=null;}}
+    words.forEach(function(w){
+      var test=cur?{ch:cur.ch.concat([' '],w.ch),idx:cur.idx.concat([-1],w.idx)}:w;
+      if(width(test)<=maxW){cur=test;return;}
+      push();
+      if(width(w)<=maxW){cur=w;return;}
+      w.ch.forEach(function(ch,n){
+        var t2=cur?{ch:cur.ch.concat([ch]),idx:cur.idx.concat([w.idx[n]])}:{ch:[ch],idx:[w.idx[n]]};
+        if(width(t2)<=maxW)cur=t2;else{push();cur={ch:[ch],idx:[w.idx[n]]};}
+      });
+    });
+    push();
+    if(!words.length)lines.push({text:'',idx:[]});
+  });
+  return lines.length?lines:[{text:'',idx:[]}];
+}
+
+/* ---------- 분신 효과: 태그로 감싼 글자 조각의 복제본이 원본에서 분리되어 떨어지거나 떠오른다 ---------- */
 function CloneFx(o){
   this.cv=o.canvas;this.ctx=this.cv.getContext('2d');
-  this.dir=o.dir;this.p=o.params;this.text=o.text;this.ink=INKS[0];this.unit='char';
-  this.cl=[];this.pieces=[];this.t=0;this.playing=!reduce;this.visible=true;this.dirty=true;
+  this.dir=o.dir;this.kind=o.kind;this.pp=o.presets;this.text=o.text;this.ink=INKS[0];this.unit='char';
+  this.cl=[];this.pieces=[];this.segs=[];this.t=0;this.playing=!reduce;this.visible=true;this.dirty=true;
   this.layout();
 }
 CloneFx.prototype.setText=function(t){this.text=t;this.layout();};
@@ -305,78 +335,101 @@ CloneFx.prototype.setUnit=function(u){
 };
 CloneFx.prototype.layout=function(){
   var r=this.cv.getBoundingClientRect();if(r.width<2||r.height<2)return;
-  var w=r.width,h=r.height,dpr=Math.min(window.devicePixelRatio||1,3);
+  var self=this,w=r.width,h=r.height,dpr=Math.min(window.devicePixelRatio||1,3);
   this.w=w;this.h=h;
   this.cv.width=Math.round(w*dpr);this.cv.height=Math.round(h*dpr);
   var ctx=this.ctx;ctx.setTransform(dpr,0,0,dpr,0,0);
-  var maxW=w*0.86,fs=clamp(w*0.105,26,44),lines;
+  var parsed=parseTags(this.text,this.kind);
+  this.plain=parsed.plain;this.segs=parsed.segs;
+  this.tagAt=Array.from(parsed.plain).map(function(){return -1;});
+  parsed.segs.forEach(function(sg,si){for(var k=sg.start;k<sg.end;k++)self.tagAt[k]=si;});
+  var maxW=w*0.86,fs=clamp(w*0.105,26,44),lines,maxLines=Math.max(2,parsed.plain.split('\n').length);
   for(;;){
     ctx.font='700 '+fs+'px '+FONT;
-    lines=wrapLines(ctx,this.text||' ',maxW);
-    if(lines.length<=2||fs<=22)break;
+    lines=wrapLines(ctx,parsed.plain,maxW);
+    if(lines.length<=maxLines||fs<=22)break;
     fs-=2;
   }
   this.fs=fs;this.lines=lines;this.lh=fs*1.4;
-  var total=lines.length*this.lh,cy=this.dir>0?h*0.34:h*0.64;
+  var total=lines.length*this.lh,cy=this.dir>0?h*0.36:h*0.62;
   this.top=cy-total/2;
-  this.cv.setAttribute('aria-label',this.text);
+  this.cv.setAttribute('aria-label',parsed.plain);
   this.computePieces();this.cl=[];this.seed();this.dirty=true;
 };
+/* 문구 전체를 조각으로 나눈다. 같은 구간(또는 구간 밖)에 속한 연속된 글자만 한 조각이 된다 */
 CloneFx.prototype.computePieces=function(){
   var ctx=this.ctx,self=this,w=this.w;
   ctx.font='700 '+this.fs+'px '+FONT;this.pieces=[];this.off=null;
   this.lines.forEach(function(ln,i){
-    var cy=self.top+(i+.5)*self.lh,lw=ctx.measureText(ln).width,x0=w/2-lw/2;
-    if(self.unit==='line'){if(ln)self.pieces.push({t:ln,cx:w/2,cy:cy,w:lw});return;}
-    if(self.unit==='word'){
-      var start=0;
-      ln.split(' ').forEach(function(wd){
-        if(wd){
-          var pre=ctx.measureText(ln.slice(0,start)).width,ww=ctx.measureText(wd).width;
-          self.pieces.push({t:wd,cx:x0+pre+ww/2,cy:cy,w:ww});
-        }
-        start+=wd.length+1;
-      });
-      return;
+    var cy=self.top+(i+.5)*self.lh,chars=Array.from(ln.text),n=chars.length;
+    var lw=ctx.measureText(ln.text).width,x0=w/2-lw/2,k;
+    var seg=chars.map(function(ch,q){return ln.idx[q]>=0?self.tagAt[ln.idx[q]]:null;});
+    for(k=0;k<n;k++){
+      if(seg[k]===null)seg[k]=(k>0&&k<n-1&&seg[k-1]===seg[k+1])?seg[k-1]:-2;
     }
-    var pos=0;
-    Array.from(ln).forEach(function(ch){
-      if(ch!==' '){
-        var pre=ctx.measureText(ln.slice(0,pos)).width,cw=ctx.measureText(ch).width;
-        self.pieces.push({t:ch,cx:x0+pre+cw/2,cy:cy,w:cw});
+    var runs=[],a,b,s0,q;
+    if(self.unit==='char'){
+      for(k=0;k<n;k++)if(chars[k]!==' ')runs.push([k,k+1,seg[k]]);
+    }else if(self.unit==='word'){
+      k=0;
+      while(k<n){
+        if(chars[k]===' '){k++;continue;}
+        a=k;while(k<n&&chars[k]!==' ')k++;
+        s0=a;
+        for(q=a+1;q<=k;q++){if(q===k||seg[q]!==seg[s0]){runs.push([s0,q,seg[s0]]);s0=q;}}
       }
-      pos+=ch.length;
+    }else{
+      s0=0;
+      for(q=1;q<=n;q++){if(q===n||seg[q]!==seg[s0]){runs.push([s0,q,seg[s0]]);s0=q;}}
+    }
+    runs.forEach(function(r){
+      var text=chars.slice(r[0],r[1]).join('');
+      if(!text.trim())return;
+      var pre=ctx.measureText(chars.slice(0,r[0]).join('')).width,ww=ctx.measureText(text).width;
+      var key=r[2]>=0?self.segs[r[2]].key:null;
+      self.pieces.push({t:text,cx:x0+pre+ww/2,cy:cy,w:ww,seg:r[2],key:key});
     });
   });
 };
-CloneFx.prototype.spawn=function(){
-  if(!this.pieces.length)return null;
-  for(var k=0;k<8;k++){
-    var i=(Math.random()*this.pieces.length)|0;
+/* 구간 si 안의 조각 하나에서 분신을 만든다. 분신은 그 구간의 프리셋 값을 쓴다 */
+CloneFx.prototype.spawn=function(si){
+  var sg=this.segs[si],pr=sg&&this.pp[sg.key];
+  if(!pr)return null;
+  var cand=[];
+  this.pieces.forEach(function(pc,i){if(pc.seg===si)cand.push(i);});
+  for(var k=0;k<8&&cand.length;k++){
+    var i=cand[(Math.random()*cand.length)|0];
     if(this.cl.some(function(c){return c.i===i;}))continue;
-    var c={i:i,t:0,hang:this.p.hang*rand(.8,1.2),phase:'hang',fall:0,vy:0,sg:Math.random()<.5?-1:1,ph:rand(0,TAU)};
+    var c={i:i,pr:pr,t:0,hang:pr.hang*rand(.8,1.2),phase:'hang',fall:0,vy:0,sg:Math.random()<.5?-1:1,ph:rand(0,TAU)};
     this.cl.push(c);return c;
   }
   return null;
 };
 CloneFx.prototype.seed=function(){
-  for(var i=0;i<4;i++){
-    var c=this.spawn();if(!c)continue;
-    if(i<2)c.t=c.hang*rand(.3,.9);
-    else{c.phase='fall';c.fall=rand(15,70);c.vy=this.dir*rand(150,300);}
-  }
+  var self=this;
+  this.segs.forEach(function(sg,si){
+    for(var i=0;i<3;i++){
+      var c=self.spawn(si);if(!c)continue;
+      if(i<2)c.t=c.hang*rand(.3,.9);
+      else{c.phase='fall';c.fall=rand(15,70);c.vy=self.dir*rand(150,300);}
+    }
+  });
 };
 CloneFx.prototype.update=function(dt){
-  this.t+=dt;var self=this,p=this.p,dir=this.dir,maxV=dir>0?900:300;
-  if(this.cl.length<16&&Math.random()<p.rate*dt)this.spawn();
+  this.t+=dt;var self=this,dir=this.dir,maxV=dir>0?900:300;
+  this.segs.forEach(function(sg,si){
+    var pr=self.pp[sg.key];
+    if(pr&&self.cl.length<16&&Math.random()<pr.rate*dt)self.spawn(si);
+  });
   this.cl.forEach(function(c){
+    var p=c.pr;
     if(c.phase==='hang'){
       c.t+=dt;
       if(c.t>=c.hang){
         c.base=self.off&&self.off[c.i]?self.off[c.i].y:0;
         c.phase='fall';c.vy=dir*30;c.fall=0;
         /* 떨어져 나가는 순간 양옆 글자가 약하게 딸려간다 */
-        if(p.touch)self.neighbors(c.i).forEach(function(n){self.kickPiece(n[0],dir*p.touch*9*n[1],n[1]*.6);});
+        if(p.touch)self.neighbors(c.i).forEach(function(n){self.kickPiece(n[0],dir*p.touch*9*n[1],n[1]*.6,p.bounce);});
       }
     }else{
       c.vy+=dir*p.gravity*dt;
@@ -389,13 +442,13 @@ CloneFx.prototype.update=function(dt){
   this.touch();
   this.stepSpring(dt);
 };
-/* 분신이 지나가며 겹친 다른 글자를 건드린다: 진행 방향으로 밀려났다가 돌아오고, 잠깐 밝아진다 */
+/* 분신이 지나가며 겹친 다른 글자를 건드린다(구간 밖 글자도 포함): 진행 방향으로 밀려났다가 돌아오고, 잠깐 밝아진다 */
 CloneFx.prototype.touch=function(){
-  var p=this.p,self=this,fs=this.fs,dir=this.dir;
-  if(!p.touch||!this.off)return;
+  var self=this,fs=this.fs,dir=this.dir;
+  if(!this.off)return;
   this.cl.forEach(function(c){
-    var A=self.pieces[c.i];
-    if(c.phase!=='fall'||c.px==null||!A||c.fall>=p.dist)return;
+    var p=c.pr,A=self.pieces[c.i];
+    if(!p.touch||c.phase!=='fall'||c.px==null||!A||c.fall>=p.dist)return;
     if(!c.hit)c.hit={};
     var s=clamp(Math.abs(c.vy)/(dir>0?600:220),0,1);
     self.pieces.forEach(function(B,j){
@@ -405,14 +458,15 @@ CloneFx.prototype.touch=function(){
       if(!over)return;
       c.hit[j]=1;
       var v0=dir*p.touch*18*(.5+.5*s);
-      self.kickPiece(j,v0,1);
-      self.neighbors(j).forEach(function(n){self.kickPiece(n[0],v0*n[1],n[1]);});
+      self.kickPiece(j,v0,1,p.bounce);
+      self.neighbors(j).forEach(function(n){self.kickPiece(n[0],v0*n[1],n[1],p.bounce);});
     });
   });
 };
-CloneFx.prototype.kickPiece=function(j,v,fl){
+CloneFx.prototype.kickPiece=function(j,v,fl,b){
   var o=this.off&&this.off[j];if(!o)return;
   o.v+=v;o.vx+=(Math.random()-.5)*Math.abs(v)*.6;o.fl=Math.max(o.fl,fl);
+  if(b!=null)o.b=b;
 };
 CloneFx.prototype.neighbors=function(j){
   var self=this,out=[],pj=this.pieces[j];
@@ -427,16 +481,19 @@ CloneFx.prototype.neighbors=function(j){
 /* 분리 직전 원본 글자가 방향 쪽으로 밀려났다가, 분리되면 스프링처럼 제자리로 돌아온다 */
 CloneFx.prototype.stepSpring=function(dt){
   if(!this.pieces.length)return;
-  if(!this.off||this.off.length!==this.pieces.length)this.off=this.pieces.map(function(){return {y:0,v:0,x:0,vx:0,fl:0};});
-  var p=this.p,dir=this.dir,tgt=this.pieces.map(function(){return 0;});
-  var sag=p.sag||0,zeta=1-.85*clamp(p.bounce==null?.5:p.bounce,0,1),k=160,damp=2*Math.sqrt(k)*zeta;
+  var base=this.pp.m?this.pp.m.bounce:.5;
+  if(!this.off||this.off.length!==this.pieces.length)this.off=this.pieces.map(function(){return {y:0,v:0,x:0,vx:0,fl:0,b:base};});
+  var dir=this.dir,off=this.off,tgt=this.pieces.map(function(){return 0;});
   this.cl.forEach(function(c){
-    if(c.phase==='hang')tgt[c.i]=dir*sag*ease(clamp(c.t/c.hang,0,1));
+    if(c.phase==='hang'){
+      tgt[c.i]=dir*(c.pr.sag||0)*ease(clamp(c.t/c.hang,0,1));
+      off[c.i].b=c.pr.bounce;
+    }
   });
-  var n=2,h=dt/n;
+  var k=160,n=2,h=dt/n;
   for(var s=0;s<n;s++){
     for(var i=0;i<tgt.length;i++){
-      var o=this.off[i];
+      var o=off[i],zeta=1-.85*clamp(o.b==null?.5:o.b,0,1),damp=2*Math.sqrt(k)*zeta;
       o.v+=(k*(tgt[i]-o.y)-damp*o.v)*h;o.y+=o.v*h;
       o.vx+=(k*(0-o.x)-damp*o.vx)*h;o.x+=o.vx*h;
       o.fl=Math.max(0,o.fl-h*2.4);
@@ -444,7 +501,7 @@ CloneFx.prototype.stepSpring=function(dt){
   }
 };
 CloneFx.prototype.drawPiece=function(c,lag,mul){
-  var ctx=this.ctx,p=this.p,dir=this.dir,pc=this.pieces[c.i],fs=this.fs;
+  var ctx=this.ctx,p=c.pr,dir=this.dir,pc=this.pieces[c.i],fs=this.fs;
   if(!pc)return;
   var by=c.phase==='hang'?(this.off&&this.off[c.i]?this.off[c.i].y:0):(c.base||0);
   var ay=pc.cy+by-dir*fs*.5,sx,sy,a,dx,dy,rot;
@@ -486,8 +543,8 @@ CloneFx.prototype.draw=function(){
     }
   });
   c.fillStyle=this.ink.clone;c.shadowBlur=12;
-  var trail=Math.round(this.p.trail||0);
   this.cl.forEach(function(cl){
+    var trail=Math.round(cl.pr.trail||0);
     if(cl.phase==='fall'){
       for(var k=trail;k>=1;k--)self.drawPiece(cl,k*(10+Math.abs(cl.vy)*.035),.5/k);
     }
@@ -502,25 +559,13 @@ function samplePal(rgb,pos){
   var a=rgb[i%n],b=rgb[(i+1)%n];
   return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,a[2]+(b[2]-a[2])*f];
 }
-function parseGradTags(s){
-  var re=/<\$grad_([a-z]+)>([\s\S]*?)<\/\$grad_\1>/g,plain='',segs=[],last=0,m;
-  while((m=re.exec(s))!==null){
-    plain+=s.slice(last,m.index);
-    var start=Array.from(plain).length;
-    plain+=m[2];
-    segs.push({start:start,end:Array.from(plain).length,key:m[1]});
-    last=m.index+m[0].length;
-  }
-  plain+=s.slice(last);
-  return {plain:plain,segs:segs};
-}
 function GradFx(o){
   this.box=o.box;this.p=o.params;this.mode='flow';
   this.t=0;this.playing=!reduce;this.visible=true;this.dirty=true;
   this.setText(o.text);
 }
 GradFx.prototype.setText=function(t){
-  var self=this,r=parseGradTags(t);
+  var self=this,r=parseTags(t,'grad');
   this.chars=Array.from(r.plain);this.segs=r.segs;this.box.textContent='';
   this.spans=this.chars.map(function(c){var s=document.createElement('span');s.textContent=c;self.box.appendChild(s);return s;});
   this.box.setAttribute('aria-label',r.plain);
@@ -570,33 +615,36 @@ function frame(now){
 
 /* ---------- 조립 ---------- */
 function setupDrip(key,dir,defs){
-  var params=paramsOf(defs);
+  var PRE=PRESETS[key],pp={};
+  ['s','m','l'].forEach(function(k){pp[k]=Object.assign({},PRE[k]);});
   var cv=document.getElementById('cv-'+key),stage=document.getElementById('stage-'+key);
   var txt=document.getElementById('txt-'+key);
-  var fx=new CloneFx({canvas:cv,dir:dir,params:params,text:txt.value});
+  var fx=new CloneFx({canvas:cv,dir:dir,kind:key,presets:pp,text:txt.value});
   var slBox=document.getElementById('sl-'+key),specBox=document.getElementById('spec-'+key);
   var hint=document.getElementById('hint-'+key),valsBox=document.getElementById('vals-'+key);
-  var PRE=PRESETS[key],curPre='m',modified=false;
+  var curPre='m',modified={s:false,m:false,l:false};
   function showHint(){
     var name='$'+key+'_'+curPre;
-    hint.textContent=modified?name+' 에서 값을 바꾼 상태예요. 아래 버튼으로 값을 복사해 보내 주세요.':name+' 값을 쓰고 있어요. 슬라이더로 값을 바꿔 볼 수 있어요.';
+    hint.textContent=modified[curPre]?name+' 값을 바꾼 상태예요. 아래 버튼으로 값을 복사해 보내 주세요.':name+' 값을 조절하는 중이에요. 문구의 태그 이름이 같은 프리셋에 바로 반영돼요.';
   }
-  function onTune(){modified=true;showHint();valsBox.hidden=true;}
+  function onTune(){modified[curPre]=true;showHint();valsBox.hidden=true;}
   function build(){
     slBox.textContent='';
-    defs.forEach(function(d){slBox.appendChild(slider(key+'-'+d.key,d,params,onTune).el);});
+    defs.forEach(function(d){slBox.appendChild(slider(key+'-'+d.key,d,pp[curPre],onTune).el);});
   }
   specBox.innerHTML=specHtml(key,defs);
   function applyPreset(name){
-    curPre=name;modified=false;
-    Object.keys(PRE[name]).forEach(function(k){params[k]=PRE[name][k];});
+    curPre=name;
+    var v=txt.value,any=new RegExp('<(\\/?)\\$'+key+'_[a-z]+>','g');
+    if(any.test(v))v=v.replace(any,function(m,slash){return '<'+slash+'$'+key+'_'+name+'>';});
+    else v='<$'+key+'_'+name+'>'+v+'</$'+key+'_'+name+'>';
+    txt.value=v;fx.setText(v);
     build();showHint();valsBox.hidden=true;
-    fx.cl=[];if(fx.w)fx.seed();fx.dirty=true;
   }
   group(document.getElementById('unit-'+key),[{k:'char',n:'글자'},{k:'word',n:'단어'},{k:'line',n:'줄'}],function(b,it){b.textContent=it.n;},0,function(u){fx.setUnit(u.k);fx.dirty=true;});
   group(document.getElementById('preset-'+key),['s','m','l'],function(b,it){b.textContent='$'+key+'_'+it;},1,function(it){applyPreset(it);});
   document.getElementById('copy-'+key).addEventListener('click',function(){
-    var lines=['$'+key+'_'+curPre+(modified?' (수정됨)':''),'unit='+fx.unit].concat(defs.map(function(d){return d.key+'='+fmt(params[d.key]);}));
+    var lines=['$'+key+'_'+curPre+(modified[curPre]?' (수정됨)':''),'unit='+fx.unit].concat(defs.map(function(d){return d.key+'='+fmt(pp[curPre][d.key]);}));
     var text=lines.join('\n');
     valsBox.textContent=text;valsBox.hidden=false;
     try{navigator.clipboard.writeText(text).catch(function(){});}catch(e){}
