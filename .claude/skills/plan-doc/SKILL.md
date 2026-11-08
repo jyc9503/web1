@@ -7,6 +7,21 @@ description: 기획서(spec.md)를 프로그래머·아트팀에 보여줄 HTML(
 
 기준 샘플: `assets/spec-sample.html` (사용자가 디자인 방향을 확인함). 새 문서는 이 샘플의 구조와 스타일을 복제해서 시작한다. 색·폰트·간격을 임의로 바꾸지 않는다.
 
+## 0. 빌드 도구 (spec.md → spec.html)
+
+`spec.html`은 직접 쓰지 않고 스크립트로 만든다. 폴리싱 때 md만 고치면 되어서 폰 작업에 맞다.
+
+```bash
+python3 tools/build_spec.py plans/<슬러그>                       # spec.html 생성
+python3 tools/build_spec.py plans/<슬러그> --artifact <경로>.html  # Artifact 게시용 조각도 생성
+python3 tools/artifact_fragment.py 입력.html 출력.html            # proto, mockups, summary 를 게시용 조각으로 변환
+```
+
+- 필요 패키지: `pip install markdown`
+- spec.md 작성 규칙은 `tools/build_spec.py` 맨 위 설명을 따른다(front matter, `{확정}` `{검증필요}` `{미정}` 배지, `[[svg:파일]]` 흐름도, `>` 전달사항 박스).
+- 게시용 조각은 스크래치패드에 만들고 Artifact로 올린다. 저장소에는 넣지 않는다.
+- 참고 사례: `plans/story-map-pin-move/` (spec.md, flow.svg, mockups, proto, summary 한 세트)
+
 ## 1. spec.md 구조
 
 | 순서 | 섹션 | 내용 |

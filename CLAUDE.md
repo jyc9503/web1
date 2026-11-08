@@ -51,7 +51,8 @@
 ```
 plans/<기획-슬러그>/
   spec.md          기획서 원본 (수정은 항상 여기서 시작)
-  spec.html        프로그래머·아트 공유용 출력물
+  spec.html        프로그래머·아트 공유용 출력물 (tools/build_spec.py 로 생성)
+  flow.svg         spec.md 가 삽입하는 흐름도
   decisions.md     확정된 결정과 날짜 (짧게)
   HANDOFF.md       회사 Claude에게 넘기는 검증 요청서 (spec 전문 포함, 이 파일만으로 완결)
   mockups/         화면 시안 HTML
@@ -60,7 +61,7 @@ plans/<기획-슬러그>/
 ```
 
 - 폴더 이름은 영문 소문자와 하이픈으로 짓는다(예: `plans/summer-event/`). 한글 제목은 문서 안에 쓴다.
-- **원본은 항상 `spec.md`다.** HTML은 출력물이므로 직접 고치지 않고, md를 고친 뒤 다시 만든다.
+- **원본은 항상 `spec.md`다.** HTML은 출력물이므로 직접 고치지 않고, md를 고친 뒤 `python3 tools/build_spec.py plans/<슬러그>`로 다시 만든다. 사용법은 `plan-doc` 스킬에 있다.
 - 새 세션에서 이어 작업할 때는 먼저 해당 기획의 `decisions.md`와 `spec.md`를 읽는다.
 
 ## 결과물 공통 규칙
