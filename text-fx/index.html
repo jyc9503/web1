@@ -180,6 +180,7 @@ function rand(a,b){return a+Math.random()*(b-a);}
 function ease(t){return t*t*(3-2*t);}
 function fmt(v){return Number.isInteger(v)?String(v):String(Math.round(v*100)/100);}
 /* 글자 하나 = 사용자가 한 글자로 보는 단위(이모지, 결합 문자 포함) */
+var TOUCH_GAIN=20;
 var SEG=(typeof Intl!=='undefined'&&Intl.Segmenter)?new Intl.Segmenter(undefined,{granularity:'grapheme'}):null;
 function gr(s){return SEG?Array.from(SEG.segment(s),function(x){return x.segment;}):Array.from(s);}
 var reduce=false;
@@ -192,10 +193,24 @@ function ensureFont(text){
 }
 
 var INKS=[
-  {n:'원령 흰색',fill:'#eaf2ff',glow:'rgba(140,180,255,.65)',clone:'#9fc0ff'},
-  {n:'한 맺힌 붉은색',fill:'#ff8f8f',glow:'rgba(255,70,70,.55)',clone:'#ff5a5a'},
-  {n:'청록',fill:'#9ff0e0',glow:'rgba(60,220,200,.5)',clone:'#4fe0c8'}
+  {n:'원령 흰색',fill:'#eaf2ff',glow:'rgba(140,180,255,.65)'},
+  {n:'한 맺힌 붉은색',fill:'#ff8f8f',glow:'rgba(255,70,70,.55)'},
+  {n:'청록',fill:'#9ff0e0',glow:'rgba(60,220,200,.5)'}
 ];
+INKS.forEach(function(i){i.clone=autoClone(i.fill);});
+/* 분신 색: 원본 색의 색조는 두고 채도 ×1.25(최대 1), 명도 ×0.82 */
+function autoClone(h){
+  var c=hex(h),r=c[0]/255,g=c[1]/255,b=c[2]/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,s=0,hh=0,d=mx-mn;
+  if(d){
+    s=d/(1-Math.abs(2*l-1));
+    if(mx===r)hh=((g-b)/d)%6;else if(mx===g)hh=(b-r)/d+2;else hh=(r-g)/d+4;
+    hh*=60;if(hh<0)hh+=360;
+  }
+  s=Math.min(1,s*1.25);l=l*.82;
+  var C=(1-Math.abs(2*l-1))*s,X=C*(1-Math.abs((hh/60)%2-1)),m=l-C/2,q;
+  if(hh<60)q=[C,X,0];else if(hh<120)q=[X,C,0];else if(hh<180)q=[0,C,X];else if(hh<240)q=[0,X,C];else if(hh<300)q=[X,0,C];else q=[C,0,X];
+  return '#'+q.map(function(v){var n=Math.round((v+m)*255);return (n<16?'0':'')+n.toString(16);}).join('');
+}
 function hex(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
 var PALS=[
   {k:'op',n:'주황-보라',stops:['#ffb347','#ff5e7e','#8e5bff']},
@@ -234,7 +249,7 @@ var CLONE_RISE_DEFS=[
   {key:'trail',label:'잔상 수',unit:'개',min:0,max:4,step:1,val:2,desc:'분신 뒤에 남는 흐린 복제본 수'},
   {key:'tilt',label:'기울기',unit:'°',min:0,max:25,step:1,val:6,desc:'떠오르며 기울어지는 최대 각도'}
 ];
-/* 기획서의 프리셋 정의표와 같은 값. m 은 시안에서 확인한 값, s·l 은 초안 */
+/* 기획서의 프리셋 정의표와 같은 값(확정) */
 var PRESETS={
   drop:{
     s:{rate:.8,hang:1.1,stretch:1.3,sag:3,bounce:.3,touch:4,gravity:500,dist:90,alpha:.55,trail:1,tilt:5,fade:.2},
@@ -456,14 +471,13 @@ CloneFx.prototype.touch=function(){
     var p=c.pr,A=self.pieces[c.i];
     if(!p.touch||c.phase!=='fall'||c.px==null||!A||c.fall>=p.dist*k)return;
     if(!c.hit)c.hit={};
-    var s=clamp(Math.abs(c.vy)/((dir>0?600:220)*k),0,1);
     self.pieces.forEach(function(B,j){
       if(j===c.i||c.hit[j])return;
       var oy=self.off[j]?self.off[j].y:0;
       var over=Math.abs(c.px-B.cx)<(A.w+B.w)/2*.8&&Math.abs(c.py-(B.cy+oy))<fs*.55;
       if(!over)return;
       c.hit[j]=1;
-      var v0=dir*p.touch*18*k*(.5+.5*s);
+      var v0=dir*p.touch*TOUCH_GAIN*k;
       self.kickPiece(j,v0,1,p.bounce);
       self.neighbors(j).forEach(function(n){self.kickPiece(n[0],v0*n[1],n[1],p.bounce);});
     });
