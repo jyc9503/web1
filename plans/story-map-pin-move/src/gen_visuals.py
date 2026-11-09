@@ -104,8 +104,8 @@ def bg():
 
 
 # 장면별 장소 마크 등장 방식 (프로토 예시와 같음). 없으면 처음부터 보임
-S1_PLACES = {"관측소": ("arrive", 0), "탑": ("hidden",)}
-S2_PLACES = {"탑": ("arrive", 0)}
+S1_PLACES = {"탑": ("hidden",)}
+S2_PLACES = {"탑": ("new",)}  # 이어가기에서 새로 보임: 0ms부터 페이드인
 
 
 def place_alpha(modes, name, t, base, scene, edit):
@@ -114,9 +114,8 @@ def place_alpha(modes, name, t, base, scene, edit):
         return .35 if edit else 0
     if edit or t is None:
         return 1
-    if m[0] == "arrive":
-        p = scene[m[1]]
-        return max(0, min(1, (t - (base + p["delay"] + p["dur"])) / .4))
+    if m[0] == "new":
+        return max(0, min(1, (t - base) / .4))
     return 1
 
 
@@ -289,10 +288,10 @@ HEAD = """<!doctype html>
 
 def mockups():
     cuts = [
-        ("① 핀 등장", "장면 1 · 0ms", game(S1, 0.8, modes=S1_PLACES), "배경과 장소 마크가 보이고 핀이 시작 위치에 서 있다. 앞으로 갈 경로는 게임에서 보이지 않는다. 관측소는 아직 숨어 있다."),
+        ("① 핀 등장", "장면 1 · 0ms", game(S1, 0.8, modes=S1_PLACES), "배경과 장소 마크가 보이고 핀이 시작 위치에 서 있다. 앞으로 갈 경로는 게임에서 보이지 않는다. 탑은 이 장면에서 숨김이다."),
         ("② 이동 중", "장면 1 · 1500ms", game(S1, 2.3, modes=S1_PLACES), "핀이 지나온 구간만 점선으로 남는다. 이동 중인 핀에 진행 방향 삼각형이 붙는다."),
-        ("③ 전원 도착", "장면 1 · 3200ms", game(S1, 4.0, modes=S1_PLACES), "모든 핀이 도착했다. A가 도착하면서 관측소 마크가 나타났다(등장: 핀 도착 시). 1.0초 뒤 대사가 이어지고 맵은 뒤에 남는다."),
-        ("④ 이어가기", "장면 2 · 1000ms", game(S2, 1.0, PREV, True, modes=S2_PLACES), "대사 뒤 map_play로 장면 2가 열린 맵에서 바로 이어진다. 장면 1 궤적은 흐린 점선. B는 A가 도착하면 출발하고, 탑은 A가 도착할 때 나타난다."),
+        ("③ 전원 도착", "장면 1 · 3200ms", game(S1, 4.0, modes=S1_PLACES), "모든 핀이 장소에 도착했다. 도착 표시 없이 장소 마크로 위치를 읽는다. 1000ms 뒤 대사가 이어지고 맵은 뒤에 남는다."),
+        ("④ 이어가기", "장면 2 · 1000ms", game(S2, 1.0, PREV, True, modes=S2_PLACES), "대사 뒤 map_play로 장면 2가 열린 맵에서 바로 이어진다. 장면 1 궤적은 흐린 점선. B는 A가 도착하면 출발한다. 이 장면에서 새로 보이게 된 탑은 0ms에 나타났다."),
     ]
     cards = "".join(f'<figure class="card"><div class="shot">{s}</div><figcaption><b>{n}</b> <span class="mono">{m}</span><p>{d}</p></figcaption></figure>' for n, m, s, d in cuts)
     css = """
@@ -323,7 +322,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
 """
     html = HEAD.format(title="맵 핀 이동 화면 시안", layout="Layout: 장면 컷 4장, 게임/편집 보기 비교, 해부도, 리소스 요청표를 위에서 아래로.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
-  <span class="tag">카제나 · 스토리 연출 · v0.6 시안</span>
+  <span class="tag">카제나 · 스토리 연출 · v0.7 시안</span>
   <h1>맵 핀 이동 화면 시안</h1>
   <p class="sub">아트팀과 배경 담당에게 보여주는 장면 컷과 리소스 요청 내용입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다. 화면은 가로 16:9로 확정했고, 스토리 화면의 실제 UI(대사창 위치 등)는 확인 전입니다. <span class="badge b-warn">검증필요</span></p>
 
@@ -359,7 +358,8 @@ td.spec{font-family:var(--f-mono);font-size:13px}
     <tbody>
       <tr><td>배경 이미지</td><td class="spec">16:9 / 2048×1152 (추천)</td><td>배경</td><td><span class="badge b-tbd">미정</span></td></tr>
       <tr><td>장소 마크 세트</td><td class="spec">배경마다 장소 이름과 위치 목록. 편집 툴에서 관리</td><td>기획</td><td><span class="badge b-ok">확정</span></td></tr>
-      <tr><td>핀 아이콘</td><td class="spec">핀 규격 원형 128×128. 캐릭터 얼굴, 함대·탈것 등 대상 아이콘. 기존 리소스 테이블 확인</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
+      <tr><td>핀 아이콘</td><td class="spec">원형 128×128. Actor 테이블의 리소스 경로 사용. 함대 등 대상 Actor의 핀 아이콘 유무 확인</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
+      <tr><td>로그 아이콘</td><td class="spec">대사 로그 「위치 정보 확인」 줄의 전용 아이콘 1종</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
       <tr><td>핀 링 / 방향 삼각형</td><td class="spec">코드 도형. 아트 스타일 지정 시 이미지로 교체</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
       <tr><td>이름표 바탕</td><td class="spec">알약 9-slice, 높이 26px 기준</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
       <tr><td>장소 마크 점과 글꼴</td><td class="spec">점 아이콘 24×24 또는 코드 도형, 이름 글꼴과 외곽선 색</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
@@ -406,7 +406,7 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
     html += f"""<div class="wrap">
   <header class="top">
     <div>
-      <span class="tag">카제나 · 스토리 연출 · v0.6</span>
+      <span class="tag">카제나 · 스토리 연출 · v0.7</span>
       <h1>맵 핀 이동 연출</h1>
       <p class="one">스토리 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 움직여, 누가 어디서 어디로 갔는지 보여준다. 스토리 테이블로 맵을 열고 닫으며, 열린 맵에서 다음 이동을 이어간다.</p>
     </div>
@@ -422,9 +422,10 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
       <section class="block">
         <h2>핵심 규칙</h2>
         <ul class="rules">
-          <li><span class="id">R-01~03</span><span>배경 위 핀(캐릭터·대상)이 지정한 경로로 이동</span><span class="badge b-ok">확정</span></li>
+          <li><span class="id">R-01~03</span><span>배경 위 핀(Actor)이 지정한 경로로 이동</span><span class="badge b-ok">확정</span></li>
+          <li><span class="id">R-07</span><span>자동 곡선 + 필요한 점만 베지어 핸들</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-09</span><span>게임에는 지나온 구간만 점선. 앞 경로·도착 지점은 툴에서만</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-21</span><span>장소 마크: 처음부터 / 시간 / 핀 도착 시 등장</span><span class="badge b-ok">확정</span></li>
+          <li><span class="id">R-21</span><span>장소 마크는 연출마다 보임/숨김</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-26</span><span>맵은 map_close 전까지 대사 뒤에 남음</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-22</span><span>열린 맵에서 이어가기, 툴에서 버튼 하나로 가져옴</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-08</span><span>이동 시간은 속도 프리셋으로 자동 계산, 출발 조건으로 순서 지정</span><span class="badge b-ok">확정</span></li>
@@ -453,7 +454,7 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
   <section>
     <h2>남은 확인</h2>
     <div class="decide">
-      <div class="block"><h3><span class="id">R-33</span>핀 리소스 테이블 <span class="badge b-warn">회사 확인</span></h3><p><b>확인</b> 핀 규격 리소스 테이블이 있는지, 없으면 어느 테이블을 확장할지.</p></div>
+      <div class="block"><h3><span class="id">R-45</span>로그 다시 재생 <span class="badge b-warn">회사 확인</span></h3><p><b>제안</b> 로그의 「위치 정보 확인」을 누르면 팝업으로 그 연출을 다시 재생. 기존 로그 UI에 넣을 수 있는지 확인.</p></div>
       <div class="block"><h3><span class="id">R-32</span>스토리 명령 <span class="badge b-warn">회사 확인</span></h3><p><b>제안</b> <code>map_play &lt;ID&gt;</code>, <code>map_close</code>. 기존 명령 규칙에 맞춰 이름을 정한다.</p></div>
       <div class="block"><h3><span class="id">R-18</span>배경 규격 <span class="badge b-tbd">미정</span></h3><p><b>추천</b> 가로 16:9, 2048×1152. 배경 담당과 합의 필요.</p></div>
       <div class="block"><h3><span class="id">R-16</span>카메라 연출 <span class="badge b-ok">나중에</span></h3><p><b>예정</b> 이번 버전은 고정. 기능을 다 만든 뒤 다시 검토한다.</p></div>

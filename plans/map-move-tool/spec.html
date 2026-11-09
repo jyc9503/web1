@@ -154,10 +154,10 @@ td code{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기와 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.5 초안</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.6 초안</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">35건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">31건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -303,19 +303,19 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">K-01</td>
-<td>핀 리소스는 회사 리소스 테이블의 핀 규격 리소스 목록에서 검색해 고른다(캐릭터, 함대, 오브젝트 등). 저장 열: <code>PinResID</code>.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td>핀 대상은 회사 Actor 테이블에서 검색해 고른다(캐릭터, 함대, 오브젝트 등). 이름과 아이콘은 Actor 테이블에서 가져와 보여준다. 저장 열: <code>ActorID</code>.</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">K-02</td>
-<td>이름표 글자를 문자열 키로 바꾸거나 끌 수 있다. 비워 두면 리소스 이름을 쓴다. 저장 열: <code>LabelKey</code>, <code>ShowLabel</code>.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td>이름표 글자를 문자열 키로 바꾸거나 끌 수 있다. 비워 두면 Actor 이름을 쓴다. 저장 열: <code>LabelKey</code>, <code>ShowLabel</code>.</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">K-03</td>
-<td>핀은 핀 번호(1~99)로 구분한다. 이어가기 연출 사이에서 같은 번호가 같은 핀이다. 새 핀은 이어가기 연결 전체에서 쓰지 않은 가장 작은 번호를 받는다.</td>
+<td>핀은 핀 번호로 구분한다. 이어가기 연출 사이에서 같은 번호가 같은 핀이다. 새 핀은 이어가기 연결 전체에서 쓰지 않은 가장 작은 번호를 받는다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
@@ -374,11 +374,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">P-03</td>
 <td>곡선 (기본)</td>
-<td>모든 점을 지나는 부드러운 곡선(Catmull-Rom). 핸들 조작 없이 점만으로 모양이 정해진다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td>점만 찍으면 모든 점을 지나는 부드러운 곡선(Catmull-Rom)이 자동으로 나온다. 모양을 더 잡고 싶은 점에서만 베지어 핸들을 꺼낸다(P-17).</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">P-04</td>
@@ -386,16 +386,16 @@ td code{white-space:nowrap}
 <td>점과 점을 직선으로 잇는다. 길·복도처럼 꺾이는 이동에 쓴다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
-<tr data-s="tbd">
+<tr data-s="ok">
 <td class="id">P-05</td>
 <td>구간별 형태</td>
-<td>한 경로 안에서 구간마다 직선/곡선을 다르게 지정할지.</td>
-<td><span class="badge b-tbd">미정</span></td>
+<td>한 경로 안에서 구간마다 직선/곡선을 다르게 지정할지. 점별 핸들(P-17)로 대부분 해결되므로 이번 버전은 넣지 않는다.</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
-<div class="note dev"><p><strong>곡선 방식 선택 이유</strong></p>
-<p>베지어 곡선은 점마다 핸들 두 개를 조절해야 해서 폰과 마우스 모두 손이 많이 간다. Catmull-Rom은 점만 찍으면 그 점을 모두 지나는 곡선이 나와서 "여기를 지나간다"는 기획 의도가 그대로 데이터가 된다. 대신 곡선이 점 사이에서 살짝 부풀 수 있어, 모양을 더 잡고 싶으면 점을 하나 더 넣는다(P-06).</p></div>
+<div class="note dev"><p><strong>곡선 방식: 자동 곡선 + 필요한 점만 베지어 핸들</strong></p>
+<p>모든 점에 베지어 핸들을 두면 모양은 정확하지만 점마다 손이 간다. 자동 곡선(Catmull-Rom)은 점만 찍으면 되지만 모양을 세밀하게 잡기 어렵다. 그래서 기본은 자동 곡선으로 빠르게 만들고, 모양이 마음에 들지 않는 점에서만 핸들을 꺼내 다듬는다. 자동 곡선은 내부적으로 핸들을 자동 계산한 베지어와 같으므로, 핸들을 꺼내는 순간 모양이 바뀌지 않고 그 자리에서 조절이 시작된다.</p></div>
 <h3>점 편집</h3>
 <div class="tablewrap"><table>
 <thead>
@@ -422,7 +422,7 @@ td code{white-space:nowrap}
 <tr data-s="warn">
 <td class="id">P-08</td>
 <td>자유 그리기 단순화</td>
-<td>그린 선을 Douglas-Peucker 방식으로 줄인다. 허용 오차는 <code>MAP_TOOL_SIMPLIFY_PX</code>(배경 16px)부터 키우며 점이 12개 이하가 될 때까지 반복한다.</td>
+<td>그린 선을 Douglas-Peucker 방식으로 줄인다. 허용 오차는 <code>MAP_TOOL_SIMPLIFY_PX</code>(배경 16px).</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -454,6 +454,12 @@ td code{white-space:nowrap}
 <td>경로 뒤집기</td>
 <td>경로의 시작과 끝을 바꾼다. 왕복 이동을 만들 때 쓴다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">P-17</td>
+<td>베지어 핸들</td>
+<td>점을 선택하고 「핸들 꺼내기」를 누르면 지금 곡선 모양 그대로 양쪽 핸들이 나온다. 핸들을 끌면 반대쪽도 대칭으로 움직이고, <code>Alt</code>를 누른 채 끌면 한쪽만 움직인다. 「자동으로 되돌리기」로 핸들을 지운다. 저장 열: <code>InX</code>, <code>InY</code>, <code>OutX</code>, <code>OutY</code>(점 기준 상대 px).</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -553,7 +559,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">M-04</td>
-<td>연출마다 마크의 등장 방식을 고른다: 처음부터 / 시간 지정(ms, 이동 시작 기준) / 핀 도착 시 / 숨김. <code>MapScenePlace</code> 테이블에 저장한다. 이어가기 연출에서는 앞 연출 끝에 보이던 마크가 자동으로 보이고, 바뀐 것만 저장한다.</td>
+<td>연출마다 마크의 보임/숨김을 체크로 고른다. <code>MapScenePlace</code> 테이블에 저장한다. 이어가기 연출에서는 앞 연출 끝에 보이던 마크가 자동으로 보이고, 바뀐 것만 저장한다. 숨긴 마크는 편집 보기에서 흐리게 보인다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
@@ -639,7 +645,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">T-07</td>
-<td>저장 전에 검사한다: 핀·점 한도 초과, 배경 범위 밖 좌표, 경로가 빈 핀, 이름 키가 없는 장소 마크, 다른 배경의 장소를 가리키는 점·등장, 도착할 핀이 지워진 장소 마크, 앞 연출에 없는 <code>FromPrev</code> 핀, 앞 연출과 다른 배경, 없는 기준 핀, 서로를 기다리는 출발 조건, 끊긴 이어가기 연결, 속도 경고(P-16), 권장 길이 초과(<code>MAP_RECOMMEND_MAX_MS</code>), 대사창 영역 안의 도착 지점(V-05). 오류는 저장을 막고, 경고는 목록만 보여준다.</td>
+<td>저장 전에 검사한다: 배경 범위 밖 좌표, 경로가 빈 핀, 이름 키가 없는 장소 마크, 다른 배경의 장소를 가리키는 점·장소 보임, 앞 연출에 없는 <code>FromPrev</code> 핀, 앞 연출과 다른 배경, 없는 기준 핀, 서로를 기다리는 출발 조건, 끊긴 이어가기 연결, 없는 Actor, 속도 경고(P-16), 권장 길이 초과(<code>MAP_RECOMMEND_MAX_MS</code>), 대사창 영역 안의 도착 지점(V-05). 오류는 저장을 막고, 경고는 목록만 보여준다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
@@ -653,30 +659,12 @@ td code{white-space:nowrap}
 <section id="s9"><h2><span class="sec">§9</span>검증·미결 목록</h2>
 <ul class="check">
 <li><span class="mono">□</span><span>별도 툴의 플랫폼(PC 에디터인지, 웹인지)과 스토리 데이터에서 연출 맵 ID를 참조하는 방식 확인 (T-08, C-07)</span></li>
-<li><span class="mono">□</span><span>구간별 직선/곡선이 실제로 필요한지, 점 추가로 충분한지 (P-05)</span></li>
 <li><span class="mono">□</span><span>자유 그리기가 실제 작업에서 쓰일지 (P-02)</span></li>
 <li><span class="mono">□</span><span>속도 프리셋 값과 종류가 연출 의도와 맞는지 (P-15)</span></li>
 <li><span class="mono">□</span><span>타임라인 막대(K-05)가 필요한지</span></li>
 </ul>
-<h3>결정 필요 항목과 추천안</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>항목</th>
-<th>추천</th>
-<th>이유</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="id">P-05</td>
-<td>구간별 형태</td>
-<td>이번 버전은 경로 단위로만 지정한다</td>
-<td>대부분 점 추가로 해결된다. 필요가 확인되면 추가한다</td>
-</tr>
-</tbody>
-</table></div>
+<h3>결정 필요 항목</h3>
+<p>지금은 없다.</p>
 </section>
 <section id="s10"><h2><span class="sec">§10</span>변경 이력</h2>
 <div class="tablewrap"><table>
@@ -688,6 +676,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.6</td>
+<td>2026-11-09</td>
+<td>Actor 테이블 참조(K-01), 곡선은 자동 + 점별 베지어 핸들(P-03, P-17), 구간별 형태 제외(P-05), 장소 마크 보임/숨김만(M-04), 한도 검사 제거(T-07)</td>
+</tr>
 <tr>
 <td>v0.5</td>
 <td>2026-11-08</td>
