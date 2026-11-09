@@ -163,7 +163,7 @@ code.block{display:block; white-space:pre-wrap; overflow-wrap:anywhere; font-fam
     </div>
     <div class="controls" id="ctl-grad">
       <div class="field wide"><button type="button" class="play" id="play-grad">일시정지</button></div>
-      <div class="field wide"><label class="field-name" for="txt-grad">문구 (태그 포함)</label><textarea id="txt-grad" rows="2" maxlength="200" spellcheck="false">그 날의 하늘은 &lt;$grad_orangepurple&gt;유난히 붉었다&lt;/$grad_orangepurple&gt;</textarea><p class="hint">구간은 &lt;$grad_이름&gt; … &lt;/$grad_이름&gt; 태그로 정해요. 프리셋 버튼을 누르면 태그 이름이 바뀝니다.</p></div>
+      <div class="field wide"><label class="field-name" for="txt-grad">문구 (태그 포함)</label><textarea id="txt-grad" rows="2" maxlength="200" spellcheck="false">그 날의 하늘은 &lt;$grad_op&gt;유난히 붉었다&lt;/$grad_op&gt;</textarea><p class="hint">구간은 &lt;$grad_이름&gt; … &lt;/$grad_이름&gt; 태그로 정해요. 프리셋 버튼을 누르면 태그 이름이 바뀝니다.</p></div>
       <div class="field wide"><span class="field-name" id="presetlbl-grad">프리셋</span><div class="seg wrap" id="preset-grad" role="group" aria-labelledby="presetlbl-grad"></div></div>
       <div class="field"><span class="field-name" id="modelbl">변화 방식</span><div class="seg" id="mode-grad" role="group" aria-labelledby="modelbl"></div></div>
     </div>
@@ -195,9 +195,9 @@ var INKS=[
 ];
 function hex(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
 var PALS=[
-  {k:'orangepurple',n:'주황-보라',stops:['#ffb347','#ff5e7e','#8e5bff']},
-  {k:'teallavender',n:'청록-연보라',stops:['#7ef0e0','#9db8ff','#e5d4ff']},
-  {k:'yellowred',n:'노랑-빨강',stops:['#fff3a0','#ff9a3c','#e0342b']}
+  {k:'op',n:'주황-보라',stops:['#ffb347','#ff5e7e','#8e5bff']},
+  {k:'tl',n:'청록-연보라',stops:['#7ef0e0','#9db8ff','#e5d4ff']},
+  {k:'yr',n:'노랑-빨강',stops:['#fff3a0','#ff9a3c','#e0342b']}
 ].map(function(p){p.rgb=p.stops.map(hex);return p;});
 var BASE=hex('#d9e0ec');
 
@@ -726,7 +726,7 @@ setupDrip('rise',-1,CLONE_RISE_DEFS);
     '<li>흐르기: 구간 안에서 팔레트가 글자를 따라 한쪽으로 흐른다.</li>'+
     '<li>동시에: 구간 전체가 같은 색으로 함께 변한다.</li></ol>'+
     '<h3>태그 표기</h3>'+
-    '<code class="block">그 날의 하늘은 &lt;$grad_orangepurple&gt;유난히 붉었다&lt;/$grad_orangepurple&gt;\n&lt;$grad_teallavender&gt;아직 떠나지 못했어요&lt;/$grad_teallavender&gt;</code>';
+    '<code class="block">그 날의 하늘은 &lt;$grad_op&gt;유난히 붉었다&lt;/$grad_op&gt;\n&lt;$grad_tl&gt;아직 떠나지 못했어요&lt;/$grad_tl&gt;</code>';
 })();
 
 requestAnimationFrame(function(t){last=t;requestAnimationFrame(frame);});
