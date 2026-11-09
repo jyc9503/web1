@@ -179,6 +179,9 @@ function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
 function rand(a,b){return a+Math.random()*(b-a);}
 function ease(t){return t*t*(3-2*t);}
 function fmt(v){return Number.isInteger(v)?String(v):String(Math.round(v*100)/100);}
+/* 글자 하나 = 사용자가 한 글자로 보는 단위(이모지, 결합 문자 포함) */
+var SEG=(typeof Intl!=='undefined'&&Intl.Segmenter)?new Intl.Segmenter(undefined,{granularity:'grapheme'}):null;
+function gr(s){return SEG?Array.from(SEG.segment(s),function(x){return x.segment;}):Array.from(s);}
 var reduce=false;
 try{reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
 var FONT='"Nanum Myeongjo","Noto Serif KR",serif';
@@ -284,9 +287,9 @@ function parseTags(s,kind){
   var re=new RegExp('<\\$'+kind+'_([a-z_]+)>([\\s\\S]*?)<\\/\\$'+kind+'_\\1>','g'),plain='',segs=[],last=0,m;
   while((m=re.exec(s))!==null){
     plain+=s.slice(last,m.index);
-    var start=Array.from(plain).length;
+    var start=gr(plain).length;
     plain+=m[2];
-    segs.push({start:start,end:Array.from(plain).length,key:m[1]});
+    segs.push({start:start,end:gr(plain).length,key:m[1]});
     last=m.index+m[0].length;
   }
   plain+=s.slice(last);
@@ -295,7 +298,7 @@ function parseTags(s,kind){
 
 /* ---------- 줄바꿈: 줄바꿈 문자와 폭 기준으로 줄을 나누고, 각 글자가 원래 몇 번째인지 기억한다 ---------- */
 function wrapLines(ctx,text,maxW){
-  var chars=Array.from(text),lines=[],paras=[],start=0,k;
+  var chars=gr(text),lines=[],paras=[],start=0,k;
   for(k=0;k<=chars.length;k++){
     if(k===chars.length||chars[k]==='\n'){paras.push([start,k]);start=k+1;}
   }
@@ -344,7 +347,7 @@ CloneFx.prototype.layout=function(){
   var ctx=this.ctx;ctx.setTransform(dpr,0,0,dpr,0,0);
   var parsed=parseTags(this.text,this.kind);
   this.plain=parsed.plain;this.segs=parsed.segs;
-  this.tagAt=Array.from(parsed.plain).map(function(){return -1;});
+  this.tagAt=gr(parsed.plain).map(function(){return -1;});
   parsed.segs.forEach(function(sg,si){for(var k=sg.start;k<sg.end;k++)self.tagAt[k]=si;});
   var maxW=w*0.86,fs=clamp(w*0.105,26,44),lines,maxLines=Math.max(2,parsed.plain.split('\n').length);
   for(;;){
@@ -364,7 +367,7 @@ CloneFx.prototype.computePieces=function(){
   var ctx=this.ctx,self=this,w=this.w;
   ctx.font='700 '+this.fs+'px '+FONT;this.pieces=[];this.off=null;
   this.lines.forEach(function(ln,i){
-    var cy=self.top+(i+.5)*self.lh,chars=Array.from(ln.text),n=chars.length;
+    var cy=self.top+(i+.5)*self.lh,chars=gr(ln.text),n=chars.length;
     var lw=ctx.measureText(ln.text).width,x0=w/2-lw/2,k;
     var seg=chars.map(function(ch,q){return ln.idx[q]>=0?self.tagAt[ln.idx[q]]:null;});
     for(k=0;k<n;k++){
@@ -569,7 +572,7 @@ function GradFx(o){
 }
 GradFx.prototype.setText=function(t){
   var self=this,r=parseTags(t,'grad');
-  this.chars=Array.from(r.plain);this.segs=r.segs;this.box.textContent='';
+  this.chars=gr(r.plain);this.segs=r.segs;this.box.textContent='';
   this.spans=this.chars.map(function(c){var s=document.createElement('span');s.textContent=c;self.box.appendChild(s);return s;});
   this.box.setAttribute('aria-label',r.plain);
   this.dirty=true;
