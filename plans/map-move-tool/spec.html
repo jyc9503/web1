@@ -155,10 +155,10 @@ td code{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기와 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.9 초안</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.10 초안</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">11건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">12건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -338,6 +338,16 @@ td code{white-space:nowrap}
 <tr data-s="warn">
 <td class="id">E-08</td>
 <td><strong>되돌리기 안내</strong>: 점 추가·끼워 넣기·삭제 직후 "Ctrl+Z 되돌리기" 안내를 띄운다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">E-10</td>
+<td><strong>누른 대상에 따라 편집 대상 전환</strong>: 핀·경로 편집 중 장소 마크(점이나 이름 글자)를 한 번 누르면 그 장소를 선택하고 장소 편집으로 바꾼다. 장소 위 더블클릭(장소에 붙은 점 추가)과 구분하려고 더블클릭 판정 시간(350ms)이 지난 뒤 바꾼다. 장소 편집 중 핀이나 점을 누르면 그 핀을 선택하고 핀·경로 편집으로 바꾼다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">E-11</td>
+<td><strong>겹칠 때 우선순위</strong>: 핀·경로 편집에서는 핀과 점이 장소보다 먼저 잡힌다. 장소 편집에서는 장소 이름 글자 → 핀 → 점 → 장소 점 순서다. 핀이 장소 위에 서 있어도 핀을 누르면 핀이, 이름 글자를 누르면 장소가 잡힌다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -729,6 +739,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.10</td>
+<td>2026-11-11</td>
+<td>사용자 제안: 장소를 누르면 장소 편집으로, 핀·점을 누르면 핀·경로 편집으로 자동 전환(E-10). 겹칠 때 우선순위(E-11)</td>
+</tr>
 <tr>
 <td>v0.9</td>
 <td>2026-11-11</td>
