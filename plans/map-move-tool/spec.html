@@ -134,13 +134,14 @@ td code{white-space:nowrap}
     <a href="#s1">개요</a>
 <a href="#s2">화면 구성</a>
 <a href="#s3">보기 모드</a>
-<a href="#s4">핀 설정</a>
-<a href="#s5">경로 그리기</a>
-<a href="#s6">장소 마크 편집</a>
-<a href="#s7">이어가기</a>
-<a href="#s8">저장과 검증</a>
-<a href="#s9">회사 확인·회의 안건</a>
-<a href="#s10">변경 이력</a>
+<a href="#s4">편집 조작 (실수 방지)</a>
+<a href="#s5">핀 설정</a>
+<a href="#s6">경로 그리기</a>
+<a href="#s7">장소 마크 편집</a>
+<a href="#s8">이어가기</a>
+<a href="#s9">저장과 검증</a>
+<a href="#s10">회사 확인·회의 안건</a>
+<a href="#s11">변경 이력</a>
     <div class="legend">
       <span><span class="badge b-ok">확정</span> 그대로 구현</span>
       <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
@@ -154,10 +155,10 @@ td code{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기와 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.7 초안</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.8 초안</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">5건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">14건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -293,7 +294,66 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s4"><h2><span class="sec">§4</span>핀 설정</h2>
+<section id="s4"><h2><span class="sec">§4</span>편집 조작 (실수 방지)</h2>
+<p>편집 화면에서 "고르려고 눌렀는데 점이 찍히는" 실수를 막는 규칙이다. 점이 생기는 동작은 명시적인 도구에서만 일어나게 한다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>요구</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="warn">
+<td class="id">E-01</td>
+<td><strong>도구 분리</strong>: 선택 도구(기본)와 점 추가 도구를 나눈다. 점은 점 추가 도구에서만 생긴다. 장소 마크 탭도 선택 / 장소 추가로 나눈다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">E-02</td>
+<td><strong>누르기 우선순위</strong>: 선택한 점의 핸들 → 선택한 핀의 점 → 핀 본체 → 다른 핀의 점 → (점 추가 도구일 때만) 점 추가 → 경로 선 → 빈 곳. 다른 핀이나 그 핀의 점을 누르면 그 핀을 선택할 뿐, 점을 추가하지 않는다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">E-03</td>
+<td><strong>끌기 문턱</strong>: 6px 이상 움직여야 끌기로 본다. 그보다 작게 움직인 누르기는 선택만 하고, 실행 취소 기록에도 남지 않는다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">E-04</td>
+<td><strong>점 추가 미리보기</strong>: 점 추가 도구에서 마우스를 올리면 생길 점 위치, 마지막 점에서 이어지는 선, 장소 마크에 붙는지, 끼워 넣기인지를 미리 보여준다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">E-05</td>
+<td><strong>빈 곳 누르기</strong>: 선택 도구에서는 선택 해제, 점 추가 도구에서는 점 추가. 경로 선을 누르면 선택 도구에서는 그 핀 선택, 점 추가 도구에서는 끼워 넣기.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">E-06</td>
+<td><strong>도구 자동 전환</strong>: 핀을 새로 추가하거나 이어가기 연출을 만들면 점 추가 도구로 바뀐다. 장소를 하나 추가하면 선택 도구로 돌아온다. <code>Esc</code>는 언제나 선택 도구로 돌아오고 선택을 푼다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">E-07</td>
+<td><strong>재생 중 입력</strong>: 편집 보기에서 재생 중에 캔버스를 누르면 일시정지만 하고 편집하지 않는다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">E-08</td>
+<td><strong>되돌리기 안내</strong>: 점 추가·끼워 넣기·삭제 직후 "Ctrl+Z 되돌리기" 안내를 띄운다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">E-09</td>
+<td><strong>커서</strong>: 점 추가 도구에서는 십자 커서, 선택 도구에서는 기본 커서.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="s5"><h2><span class="sec">§5</span>핀 설정</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -336,7 +396,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s5"><h2><span class="sec">§5</span>경로 그리기</h2>
+<section id="s6"><h2><span class="sec">§6</span>경로 그리기</h2>
 <p>경로는 <strong>점(웨이포인트)을 찍어서</strong> 만든다. 직선·곡선은 그리는 방법이 아니라 경로의 속성이다. 같은 점으로 직선과 곡선을 오가며 비교할 수 있다.</p>
 <h3>그리기 방식</h3>
 <div class="tablewrap"><table>
@@ -352,7 +412,7 @@ td code{white-space:nowrap}
 <tr data-s="ok">
 <td class="id">P-01</td>
 <td>점 찍기 (기본)</td>
-<td>캔버스를 탭할 때마다 경로 끝에 점을 추가한다.</td>
+<td>점 추가 도구에서 빈 곳을 누를 때마다 경로 끝에 점을 추가한다(E-01).</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="tbd">
@@ -410,13 +470,13 @@ td code{white-space:nowrap}
 <tr data-s="ok">
 <td class="id">P-06</td>
 <td>점 삽입</td>
-<td>경로 선 위를 탭하면 그 위치에 점을 끼워 넣는다.</td>
+<td>점 추가 도구에서 선택한 핀의 경로 선 위를 누르면 그 위치에 점을 끼워 넣는다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">P-07</td>
 <td>점 이동 / 삭제</td>
-<td>점을 끌어서 옮긴다. 점을 선택하고 삭제 키(폰은 길게 누르기)로 지운다.</td>
+<td>선택 도구에서 점을 끌어서 옮긴다(E-03 문턱). 점을 선택하고 「선택한 점 삭제」 또는 <code>Delete</code>로 지운다. 폰은 길게 누르면 삭제 메뉴가 나온다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="tbd">
@@ -514,6 +574,14 @@ td code{white-space:nowrap}
 <td>실행 취소 / 다시 실행</td>
 </tr>
 <tr>
+<td><code>V</code> / <code>A</code></td>
+<td>선택 도구 / 점 추가(장소 추가) 도구</td>
+</tr>
+<tr>
+<td><code>Esc</code></td>
+<td>선택 도구로 돌아가고 선택 해제</td>
+</tr>
+<tr>
 <td><code>Delete</code></td>
 <td>선택한 점 삭제</td>
 </tr>
@@ -532,7 +600,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s6"><h2><span class="sec">§6</span>장소 마크 편집</h2>
+<section id="s7"><h2><span class="sec">§7</span>장소 마크 편집</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -544,12 +612,12 @@ td code{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td class="id">M-01</td>
-<td>장소 마크 탭에서 캔버스를 탭하면 마크를 추가하고 이름 입력란에 커서를 둔다. 이름은 문자열 키로 저장하고, 툴에는 번역 전 원문을 보여준다.</td>
+<td>「장소 추가」 도구에서 빈 곳을 누르면 마크를 추가하고 이름 입력란에 커서를 둔다. 추가 후에는 선택 도구로 돌아온다. 이름은 문자열 키로 저장하고, 툴에는 번역 전 원문을 보여준다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">M-02</td>
-<td>마크를 끌어 옮기고, 이름을 바꾸고, 지운다.</td>
+<td>선택 도구에서 마크를 눌러 고르고 끌어서 옮긴다(E-03 문턱). 이름을 바꾸고 지운다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -570,7 +638,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s7"><h2><span class="sec">§7</span>이어가기</h2>
+<section id="s8"><h2><span class="sec">§8</span>이어가기</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -623,7 +691,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s8"><h2><span class="sec">§8</span>저장과 검증</h2>
+<section id="s9"><h2><span class="sec">§9</span>저장과 검증</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -656,7 +724,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s9"><h2><span class="sec">§9</span>회사 확인·회의 안건</h2>
+<section id="s10"><h2><span class="sec">§10</span>회사 확인·회의 안건</h2>
 <ul>
 <li>툴 플랫폼(엔진 에디터 확장 / 웹 툴): 회사에서 판단 (T-08)</li>
 <li>스토리 데이터에서 연출 맵 ID를 참조하는 방식 (C-07)</li>
@@ -665,7 +733,7 @@ td code{white-space:nowrap}
 <li>속도 프리셋 값은 시작값. 실제 연출을 만들며 튜닝 (P-15)</li>
 </ul>
 </section>
-<section id="s10"><h2><span class="sec">§10</span>변경 이력</h2>
+<section id="s11"><h2><span class="sec">§11</span>변경 이력</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -675,6 +743,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.8</td>
+<td>2026-11-11</td>
+<td>편집 조작 실수 방지(E-01~E-09): 선택/점 추가 도구 분리, 누르기 우선순위, 끌기 문턱 6px, 점 추가 미리보기, 재생 중 입력은 일시정지만. P-01·P-06·P-07·M-01·M-02와 단축키 갱신</td>
+</tr>
 <tr>
 <td>v0.7</td>
 <td>2026-11-11</td>
