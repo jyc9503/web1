@@ -98,7 +98,7 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · v0.11 프로토타입</span>
+    <span class="tag">카제나 · 스토리 연출 · v0.12 프로토타입</span>
     <h1>맵 핀 이동 연출</h1>
     <p>게임 보기는 게임과 같은 화면, 편집 보기는 툴 화면입니다. 「스토리 흐름 재생」은 스토리 테이블 명령 순서를 재현합니다. 편집 보기의 「테이블로 보기」는 현재 장면을 기획서의 테이블 형식으로 보여줍니다. 배경, 핀, 장소 이름은 자리표시용입니다.</p>
   </header>
@@ -148,6 +148,10 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
     </div>
 
     <div id="editor" hidden>
+      <div class="tools" style="margin-bottom:10px">
+        <button class="btn sm" id="b-undo" type="button">실행 취소 (Ctrl+Z)</button>
+        <button class="btn sm" id="b-redo" type="button">다시 실행</button>
+      </div>
       <div class="seg full" role="group" aria-label="편집 대상" style="margin-bottom:12px">
         <button class="btn" id="t-path" type="button" aria-pressed="true">핀·경로</button>
         <button class="btn" id="t-place" type="button" aria-pressed="false">장소 마크</button>
@@ -174,8 +178,6 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
         </div>
         <div class="info" id="speed"></div>
         <div class="tools">
-          <button class="btn sm" id="b-undo" type="button">실행 취소</button>
-          <button class="btn sm" id="b-redo" type="button">다시 실행</button>
           <button class="btn sm" id="b-pop" type="button">선택한 점 삭제 (Del)</button>
           <button class="btn sm" id="b-clear" type="button">경로 비우기</button>
         </div>
@@ -194,6 +196,7 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
         <div class="chips" id="pchips"></div>
         <div class="form">
           <label for="p-name">이름(원문)</label><input type="text" id="p-name" maxlength="10" placeholder="장소 이름">
+          <label for="p-x">위치 (배경 px)</label><div class="pair"><input type="number" id="p-x" min="0" step="1" aria-label="X"><input type="number" id="p-y" min="0" step="1" aria-label="Y"></div>
           <label for="p-mode">이 장면에서</label><select id="p-mode"></select>
         </div>
         <div class="tools"><button class="btn sm" id="b-delplace" type="button">마크 삭제</button></div>
@@ -665,11 +668,19 @@ function syncForm(){
   state.places.forEach(function(pl,i){var m=pst[pl.id];pb.appendChild(chipBtn(pl.name+(!m||m==='HIDE'?' · 안 보임':(m==='NEW'?' · 새로 보임':'')),null,i===psel,function(){psel=i;syncForm();}));});
   var pl=state.places[psel],own=pl&&sc.places[pl.id];
   document.getElementById('p-name').value=pl?pl.name:'';
+  syncPlaceXY();
   var pm=document.getElementById('p-mode');pm.innerHTML='';
   opt(pm,'',sc.prev?'(기본) 앞 장면 상태 이어받기':'(기본) 안 보임');opt(pm,'SHOW','보임');opt(pm,'HIDE','숨김');
   pm.value=own?(own.visible?'SHOW':'HIDE'):'';
   document.getElementById('prevwrap').hidden=!sc.prev;document.getElementById('showprev').checked=sc.show_prev;
   document.getElementById('b-undo').disabled=!undo.length;document.getElementById('b-redo').disabled=!redo.length;
+}
+function syncPlaceXY(){ /* 장소 위치 입력칸 (툴 M-06) */
+  var pl=state.places[psel],px=document.getElementById('p-x'),py=document.getElementById('p-y');
+  px.max=BG.w;py.max=BG.h;
+  if(document.activeElement!==px)px.value=pl?pl.x:'';
+  if(document.activeElement!==py)py.value=pl?pl.y:'';
+  px.title='X: 0~'+BG.w;py.title='Y: 0~'+BG.h;
 }
 function syncAll(){syncScenes();syncForm();hint();setPlay();drawStory();}
 
@@ -692,6 +703,11 @@ var pName=document.getElementById('p-name');
 pName.addEventListener('focus',commit);
 pName.addEventListener('input',function(){var pl=state.places[psel];if(pl)pl.name=pName.value;});
 pName.addEventListener('change',syncForm);
+['p-x','p-y'].forEach(function(id){var el=document.getElementById(id);
+  el.addEventListener('focus',commit);
+  el.addEventListener('input',function(){var pl=state.places[psel];if(!pl||el.value==='')return;
+    var v=Math.round(+el.value);if(id==='p-x')pl.x=clamp(v,0,BG.w);else pl.y=clamp(v,0,BG.h);});
+  el.addEventListener('change',function(){syncPlaceXY();say('위치를 바꿨습니다. 이 장소를 지나는 경로도 따라갑니다.');});});
 function placeSet(fn){var pl=state.places[psel];if(!pl)return;commit();var sc=S();fn(sc,pl.id);syncForm();}
 document.getElementById('p-mode').addEventListener('change',function(e){placeSet(function(sc,id){
   var v=e.target.value;if(!v)delete sc.places[id];else sc.places[id]={visible:v==='SHOW'};});});
@@ -779,7 +795,7 @@ cv.addEventListener('pointermove',function(e){
   var q=ptr(e);
   if(!drag)return;
   if(!drag.moved){if(Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)<DRAG_PX)return;drag.moved=true;commit();} /* E-03 끌기 문턱 */
-  if(drag.type==='place'){var pl=state.places[drag.i];pl.x=Math.round(q.x*BG.w);pl.y=Math.round(q.y*BG.h);return;}
+  if(drag.type==='place'){var pl=state.places[drag.i];pl.x=Math.round(q.x*BG.w);pl.y=Math.round(q.y*BG.h);syncPlaceXY();return;}
   var pp=S().pins[sel],old=pp.pts[drag.k];
   if(drag.type==='handle'){var q0=ptOf(old),hx=Math.round((q.x-q0[0])*BG.w),hy=Math.round((q.y-q0[1])*BG.h);
     old[drag.h]={x:hx,y:hy};if(!e.altKey){var o=drag.h==='hin'?'hout':'hin';old[o]={x:-hx,y:-hy};}return;}

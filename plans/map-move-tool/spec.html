@@ -155,10 +155,10 @@ td code{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기와 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.10 초안</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.11 초안</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">12건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">13건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -245,7 +245,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td>속성 패널</td>
-<td>선택한 핀 또는 장소 마크의 속성</td>
+<td>선택한 핀 또는 장소 마크의 속성. 실행 취소·다시 실행 버튼은 핀·경로 편집과 장소 편집에 공통으로 보인다</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -631,6 +631,16 @@ td code{white-space:nowrap}
 <td>마크 이름은 최대 10자. 이름이 겹치거나 비면 저장 전에 알린다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
+<tr data-s="ok">
+<td class="id">M-06</td>
+<td>장소 속성 패널에 위치 입력칸 X, Y(배경 원본 px)를 둔다. 숫자를 고치면 화면에서 바로 움직이고, 끌어서 옮기면 숫자도 함께 바뀐다. 범위는 불러온 배경의 원본 해상도(0~Width, 0~Height)다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">M-07</td>
+<td>배경 이미지를 해상도가 다른 파일로 바꾸면, 그 배경의 장소 마크와 웨이포인트 좌표·핸들을 새 해상도 비율로 함께 바꿀지 묻는다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
 </tbody>
 </table></div>
 </section>
@@ -739,6 +749,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.11</td>
+<td>2026-11-11</td>
+<td>장소 위치 입력칸(M-06), 배경 해상도 교체 시 좌표 변환(M-07), 실행 취소 버튼을 두 편집 화면 공통으로</td>
+</tr>
 <tr>
 <td>v0.10</td>
 <td>2026-11-11</td>

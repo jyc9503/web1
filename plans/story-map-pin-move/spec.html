@@ -765,13 +765,13 @@ td code{white-space:nowrap}
 <td>Width</td>
 <td>int</td>
 <td>2048</td>
-<td>원본 가로 px</td>
+<td>원본 가로 px. 툴이 배경 이미지를 불러올 때 읽어 채운다</td>
 </tr>
 <tr>
 <td>Height</td>
 <td>int</td>
 <td>1152</td>
-<td>원본 세로 px</td>
+<td>원본 세로 px. 툴이 배경 이미지를 불러올 때 읽어 채운다</td>
 </tr>
 <tr>
 <td>Memo</td>
@@ -814,13 +814,13 @@ td code{white-space:nowrap}
 <td>X</td>
 <td>int</td>
 <td>1597</td>
-<td>배경 px</td>
+<td>배경 원본 px (0~Width). 툴에서 끌거나 숫자로 입력</td>
 </tr>
 <tr>
 <td>Y</td>
 <td>int</td>
 <td>346</td>
-<td>배경 px</td>
+<td>배경 원본 px (0~Height)</td>
 </tr>
 <tr>
 <td>Memo</td>
@@ -2060,6 +2060,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.8.1</td>
+<td>2026-11-11</td>
+<td>MapBackground 해상도는 툴이 이미지에서 읽어 채움, MapPlace 좌표 범위 명시</td>
+</tr>
 <tr>
 <td>v0.8</td>
 <td>2026-11-11</td>
