@@ -179,8 +179,6 @@ def game(scene, t, prev=None, seamless=False, dialog=True, modes=None):
 def edit(scene, sel=0, prev=None, modes=None):
     """편집 보기: 앞으로 갈 경로(파선), 도착 링, 선택한 핀의 점 번호, 대사창 영역."""
     o = svg_open("툴 편집 화면") + bg() + places(modes, edit=True)
-    o += ('<rect x="25.6" y="295" width="588.8" height="50" rx="6" fill="none" stroke="rgba(255,255,255,.35)" stroke-dasharray="4 4"/>'
-          '<text x="610" y="307" text-anchor="end" font-size="8" fill="rgba(255,255,255,.5)">대사창 영역 · 맵 유지 중 가려짐</text>')
     for c, pts in (prev or []):
         o += poly(pts, COL[c], DOT[0], DOT[1], .4)
     for k, p in enumerate(scene):
@@ -190,12 +188,13 @@ def edit(scene, sel=0, prev=None, modes=None):
         if len(p["path"]) > 1:
             ex, ey = pts[-1]
             o += f'<circle cx="{ex * W:.1f}" cy="{ey * H:.1f}" r="{R * .55:.1f}" fill="none" stroke="{COL[p["c"]]}" stroke-width="2.2" opacity="{1 if on else .45}"/>'
-    p = scene[sel]
-    for n, q in enumerate(p["path"]):
-        if n == 0:
-            continue
-        o += (f'<circle cx="{q[0] * W:.1f}" cy="{q[1] * H:.1f}" r="6.5" fill="#0e1118" stroke="{COL[p["c"]]}" stroke-width="2.2"/>'
-              f'<text x="{q[0] * W:.1f}" y="{q[1] * H + 3:.1f}" text-anchor="middle" font-size="7.5" font-weight="700" fill="{COL[p["c"]]}">{n + 1}</text>')
+    for k, p in enumerate(scene):  # 모든 핀의 점과 번호, 선택 안 한 핀은 흐리게 (툴 V-01)
+        a = 1 if k == sel else .45
+        for n, q in enumerate(p["path"]):
+            if n == 0:
+                continue
+            o += (f'<g opacity="{a}"><circle cx="{q[0] * W:.1f}" cy="{q[1] * H:.1f}" r="6.5" fill="#0e1118" stroke="{COL[p["c"]]}" stroke-width="2.2"/>'
+                  f'<text x="{q[0] * W:.1f}" y="{q[1] * H + 3:.1f}" text-anchor="middle" font-size="7.5" font-weight="700" fill="{COL[p["c"]]}">{n + 1}</text></g>')
     for k, p2 in enumerate(scene):
         o += pinsvg(p2["c"], p2["path"][0][0], p2["path"][0][1], None, 1 if k == sel else .75, k == sel)
     o += ('<rect x="10" y="10" width="118" height="20" rx="4" fill="rgba(10,12,18,.7)"/>'
@@ -322,7 +321,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
 """
     html = HEAD.format(title="맵 핀 이동 화면 시안", layout="Layout: 장면 컷 4장, 게임/편집 보기 비교, 해부도, 리소스 요청표를 위에서 아래로.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
-  <span class="tag">카제나 · 스토리 연출 · v0.7 시안</span>
+  <span class="tag">카제나 · 스토리 연출 · v0.8 시안</span>
   <h1>맵 핀 이동 화면 시안</h1>
   <p class="sub">아트팀과 배경 담당에게 보여주는 장면 컷과 리소스 요청 내용입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다. 화면은 가로 16:9로 확정했고, 스토리 화면의 실제 UI(대사창 위치 등)는 확인 전입니다. <span class="badge b-warn">검증필요</span></p>
 
@@ -334,7 +333,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
   <p>같은 장면 1입니다. 앞으로 갈 경로, 도착 링, 점 번호는 툴에서만 보입니다 (R-09).</p>
   <div class="pair">
     <figure class="card"><div class="shot">{game(S1, 4.0, dialog=False, modes=S1_PLACES)}</div><figcaption><b>게임 보기</b><p>지나온 궤적(점선), 장소 마크, 핀만 보인다.</p></figcaption></figure>
-    <figure class="card"><div class="shot">{edit(S1, 0, modes=S1_PLACES)}</div><figcaption><b>편집 보기</b><p>모든 핀의 경로(파선)와 도착 링, 선택한 핀의 점 번호, 숨긴 장소 마크(흐리게), 대사창 영역이 보인다.</p></figcaption></figure>
+    <figure class="card"><div class="shot">{edit(S1, 0, modes=S1_PLACES)}</div><figcaption><b>편집 보기</b><p>모든 핀의 경로(파선), 도착 링, 점과 번호가 보인다. 선택하지 않은 핀과 숨긴 장소 마크는 흐리게. 대사창 영역 가이드는 켜고 끌 수 있다(기본 꺼짐).</p></figcaption></figure>
   </div>
 
   <h2>핀과 장소 마크 해부도</h2>
@@ -356,14 +355,14 @@ td.spec{font-family:var(--f-mono);font-size:13px}
   <div class="tablewrap"><table>
     <thead><tr><th>리소스</th><th>규격</th><th>담당</th><th>상태</th></tr></thead>
     <tbody>
-      <tr><td>배경 이미지</td><td class="spec">16:9 / 2048×1152 (추천)</td><td>배경</td><td><span class="badge b-tbd">미정</span></td></tr>
+      <tr><td>배경 이미지</td><td class="spec">비율 16:9, 해상도 자유 (권장 2048×1152 이상)</td><td>배경</td><td><span class="badge b-ok">확정</span></td></tr>
       <tr><td>장소 마크 세트</td><td class="spec">배경마다 장소 이름과 위치 목록. 편집 툴에서 관리</td><td>기획</td><td><span class="badge b-ok">확정</span></td></tr>
       <tr><td>핀 아이콘</td><td class="spec">원형 128×128. Actor 테이블의 리소스 경로 사용. 함대 등 대상 Actor의 핀 아이콘 유무 확인</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
       <tr><td>로그 아이콘</td><td class="spec">대사 로그 「위치 정보 확인」 줄의 전용 아이콘 1종</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
-      <tr><td>핀 링 / 방향 삼각형</td><td class="spec">코드 도형. 아트 스타일 지정 시 이미지로 교체</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
-      <tr><td>이름표 바탕</td><td class="spec">알약 9-slice, 높이 26px 기준</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
-      <tr><td>장소 마크 점과 글꼴</td><td class="spec">점 아이콘 24×24 또는 코드 도형, 이름 글꼴과 외곽선 색</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
-      <tr><td>궤적 점선</td><td class="spec">코드로 그림. 두께 4px, 간격 9px (1280px 기준)</td><td>-</td><td><span class="badge b-warn">검증필요</span></td></tr>
+      <tr><td>핀 링 / 방향 삼각형</td><td class="spec">코드 도형. 아트 스타일 지정 시 이미지로 교체</td><td>아트</td><td><span class="badge b-ok">확정</span></td></tr>
+      <tr><td>이름표 바탕</td><td class="spec">알약 9-slice, 높이 26px 기준</td><td>아트</td><td><span class="badge b-ok">확정</span></td></tr>
+      <tr><td>장소 마크 점과 글꼴</td><td class="spec">점 아이콘 24×24 또는 코드 도형, 이름 글꼴과 외곽선 색</td><td>아트</td><td><span class="badge b-ok">확정</span></td></tr>
+      <tr><td>궤적 점선</td><td class="spec">코드로 그림. 두께 4px, 간격 9px (1280px 기준)</td><td>-</td><td><span class="badge b-ok">확정</span></td></tr>
     </tbody>
   </table></div>
 </div>
@@ -406,7 +405,7 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
     html += f"""<div class="wrap">
   <header class="top">
     <div>
-      <span class="tag">카제나 · 스토리 연출 · v0.7</span>
+      <span class="tag">카제나 · 스토리 연출 · v0.8</span>
       <h1>맵 핀 이동 연출</h1>
       <p class="one">스토리 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 움직여, 누가 어디서 어디로 갔는지 보여준다. 스토리 테이블로 맵을 열고 닫으며, 열린 맵에서 다음 이동을 이어간다.</p>
     </div>
@@ -456,7 +455,7 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
     <div class="decide">
       <div class="block"><h3><span class="id">R-45</span>로그 다시 재생 <span class="badge b-warn">회사 확인</span></h3><p><b>제안</b> 로그의 「위치 정보 확인」을 누르면 팝업으로 그 연출을 다시 재생. 기존 로그 UI에 넣을 수 있는지 확인.</p></div>
       <div class="block"><h3><span class="id">R-32</span>스토리 명령 <span class="badge b-warn">회사 확인</span></h3><p><b>제안</b> <code>map_play &lt;ID&gt;</code>, <code>map_close</code>. 기존 명령 규칙에 맞춰 이름을 정한다.</p></div>
-      <div class="block"><h3><span class="id">R-18</span>배경 규격 <span class="badge b-tbd">미정</span></h3><p><b>추천</b> 가로 16:9, 2048×1152. 배경 담당과 합의 필요.</p></div>
+      <div class="block"><h3><span class="id">회의</span>프로그램실 안건 <span class="badge b-warn">회의</span></h3><p><b>안건</b> 툴 플랫폼, 편의 기능 범위(경로 복사·뒤집기·이어서 미리보기·단축키), 자유 그리기 필요 여부.</p></div>
       <div class="block"><h3><span class="id">R-16</span>카메라 연출 <span class="badge b-ok">나중에</span></h3><p><b>예정</b> 이번 버전은 고정. 기능을 다 만든 뒤 다시 검토한다.</p></div>
     </div>
   </section>

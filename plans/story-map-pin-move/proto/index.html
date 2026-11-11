@@ -98,7 +98,7 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · v0.7 프로토타입</span>
+    <span class="tag">카제나 · 스토리 연출 · v0.8 프로토타입</span>
     <h1>맵 핀 이동 연출</h1>
     <p>게임 보기는 게임과 같은 화면, 편집 보기는 툴 화면입니다. 「스토리 흐름 재생」은 스토리 테이블 명령 순서를 재현합니다. 편집 보기의 「테이블로 보기」는 현재 장면을 기획서의 테이블 형식으로 보여줍니다. 배경, 핀, 장소 이름은 자리표시용입니다.</p>
   </header>
@@ -155,11 +155,8 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
 
       <div id="pathtab" style="display:grid;gap:10px">
         <div class="chips" id="chips"></div>
-        <div class="seg full" role="group" aria-label="그리기 방식">
-          <button class="btn sm" id="d-point" type="button" aria-pressed="true">점 찍기</button>
-          <button class="btn sm" id="d-free" type="button" aria-pressed="false">자유 그리기</button>
-        </div>
         <label class="check"><input type="checkbox" id="snap" checked> 장소 마크에 붙이기 (장소 ID로 저장)</label>
+        <label class="check"><input type="checkbox" id="guide"> 대사창 영역 표시 (V-05)</label>
         <div class="form">
           <label for="f-res">Actor</label><select id="f-res"></select>
           <label for="f-label">이름표</label><input type="text" id="f-label" maxlength="10">
@@ -190,7 +187,7 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
           <button class="btn sm" id="b-addpin" type="button">핀 추가</button>
           <button class="btn sm" id="b-delpin" type="button">핀 삭제</button>
         </div>
-        <p class="note">빈 곳을 탭하면 끝에 점 추가, 경로 선을 탭하면 점 삽입, 점을 끌면 이동합니다. 장소에 붙은 점은 ◆로 표시되고 장소를 옮기면 따라갑니다. 점을 누르고 「핸들 꺼내기」로 곡선을 다듬을 수 있습니다(Alt+끌기는 한쪽만). 이어가기 핀의 시작점(🔒)은 앞 장면에서 오며 저장하지 않습니다. 아래 점선 상자는 대사창 영역입니다.</p>
+        <p class="note">빈 곳을 탭하면 끝에 점 추가, 경로 선을 탭하면 점 삽입, 점을 끌면 이동합니다. 장소에 붙은 점은 ◆로 표시되고 장소를 옮기면 따라갑니다. 점을 누르고 「핸들 꺼내기」로 곡선을 다듬을 수 있습니다(Alt+끌기는 한쪽만). 이어가기 핀의 시작점(🔒)은 앞 장면에서 오며 저장하지 않습니다. 재생은 보기를 바꾸지 않으므로 편집 보기에서 경로를 보며 재생할 수 있습니다.</p>
       </div>
 
       <div id="placetab" hidden style="display:grid;gap:10px">
@@ -455,48 +452,60 @@ function renderGame(tt){
   st.forEach(function(s){if(s.a>0)pinBody(s.p,s.pos.x*W,s.pos.y*H,s.a,(s.local>0&&s.local<1)?s.pos.a:null,false);});
   st.forEach(function(s){if(s.a>0&&s.p.show_label)tag(labelOf(s.p),s.pos.x*W,s.pos.y*H+pinR()+5,s.a);});
 }
-function renderEdit(){
-  var sc=S(),d=dots(),pst=placeState(sc);
-  drawBg(1);
-  state.places.forEach(function(pl,i){var m=pst[pl.id];drawPlace(pl,(!m||m==='HIDE')?0.35:1,tab==='place'&&i===psel);});
-  prevTrails(sc).forEach(function(tr){line(tr.pts,res(tr.res)[2],d.w,d.dash,sc.show_prev?CFG.PREV_ALPHA:0.15);});
+function renderEdit(){ /* 편집 보기. 재생 중이면 게임 화면 위에 경로·점을 겹쳐 보여준다 (V-03) */
+  var sc=S(),d=dots(),pst=placeState(sc),moving=playing||tapping||t>0;
+  if(moving)renderGame(displayTime());
+  else{
+    drawBg(1);
+    state.places.forEach(function(pl,i){var m=pst[pl.id];drawPlace(pl,(!m||m==='HIDE')?0.35:1,tab==='place'&&i===psel);});
+    prevTrails(sc).forEach(function(tr){line(tr.pts,res(tr.res)[2],d.w,d.dash,sc.show_prev?CFG.PREV_ALPHA:0.15);});
+  }
+  var k=moving?0.6:1;
   sc.pins.forEach(function(p,i){
     var r=rpath(sc,p);if(!r.length)return;
     var c=build(sc,p),col=res(p.res)[2],on=tab==='path'&&i===sel;
-    line(c.pts,col,on?2.5:2,[9,7],on?0.95:0.45);
-    if(r.length>1){var e=c.pts[c.pts.length-1];ctx.save();ctx.globalAlpha=on?1:.45;ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(e.x*W,e.y*H,pinR()*.55,0,Math.PI*2);ctx.stroke();ctx.restore();}
+    line(c.pts,col,on?2.5:2,[9,7],(on?0.95:0.45)*k);
+    if(r.length>1){var e=c.pts[c.pts.length-1];ctx.save();ctx.globalAlpha=(on?1:.45)*k;ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(e.x*W,e.y*H,pinR()*.55,0,Math.PI*2);ctx.stroke();ctx.restore();}
   });
-  ctx.save();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.setLineDash([5,5]);ctx.lineWidth=1.5;rr(W*0.04,H*0.82,W*0.92,H*0.14,8);ctx.stroke();
-  ctx.fillStyle='rgba(255,255,255,.45)';ctx.font='500 '+Math.max(10,W*0.011)+'px "Noto Sans KR",sans-serif';ctx.textAlign='right';ctx.textBaseline='top';
-  ctx.fillText('대사창 영역 · 맵 유지 중 가려짐',W*0.955,H*0.83);ctx.restore();
-  if(tab==='path')handles();
-  sc.pins.forEach(function(p,i){var r=rpath(sc,p);if(r.length)pinBody(p,r[0][0]*W,r[0][1]*H,((tab==='path'&&i!==sel)?0.75:1)*(p.show_from==='ON_DEPART'&&!p.from_prev?0.5:1),null,tab==='path'&&i===sel);});
-  sc.pins.forEach(function(p){var r=rpath(sc,p);if(r.length&&p.show_label)tag(labelOf(p),r[0][0]*W,r[0][1]*H+pinR()+5,1);});
+  if(document.getElementById('guide').checked){
+    ctx.save();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.setLineDash([5,5]);ctx.lineWidth=1.5;rr(W*0.04,H*0.82,W*0.92,H*0.14,8);ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.45)';ctx.font='500 '+Math.max(10,W*0.011)+'px "Noto Sans KR",sans-serif';ctx.textAlign='right';ctx.textBaseline='top';
+    ctx.fillText('대사창 영역 · 맵 유지 중 가려짐',W*0.955,H*0.83);ctx.restore();
+  }
+  if(tab==='path')handles(k);
+  if(!moving){
+    sc.pins.forEach(function(p,i){var r=rpath(sc,p);if(r.length)pinBody(p,r[0][0]*W,r[0][1]*H,((tab==='path'&&i!==sel)?0.75:1)*(p.show_from==='ON_DEPART'&&!p.from_prev?0.5:1),null,tab==='path'&&i===sel);});
+    sc.pins.forEach(function(p){var r=rpath(sc,p);if(r.length&&p.show_label)tag(labelOf(p),r[0][0]*W,r[0][1]*H+pinR()+5,1);});
+  }
   if(free&&free.length>1)line(free,'#ffffff',2,[],0.9);
 }
-function handles(){
-  var sc=S(),p=sc.pins[sel];if(!p)return;var col=res(p.res)[2],R=Math.max(8,W*0.011);
-  p.pts.forEach(function(e,k){
-    if(k===0&&!p.from_prev)return; /* 일반 핀의 첫 점은 핀 본체 */
-    var q=ptOf(e),x=q[0]*W,y=q[1]*H,n=p.from_prev?k+2:k+1;
-    ctx.save();ctx.fillStyle='#0e1118';ctx.strokeStyle=col;ctx.lineWidth=3;
-    if(e.place){ctx.beginPath();ctx.moveTo(x,y-R*1.25);ctx.lineTo(x+R*1.25,y);ctx.lineTo(x,y+R*1.25);ctx.lineTo(x-R*1.25,y);ctx.closePath();}
-    else{ctx.beginPath();ctx.arc(x,y,R,0,Math.PI*2);}
-    ctx.fill();ctx.stroke();
-    ctx.fillStyle=col;ctx.font='700 '+Math.max(9,R*1.05)+'px "JetBrains Mono",monospace';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(String(n),x,y+.5);ctx.restore();
+function handles(k){ /* 모든 핀의 점과 번호. 선택하지 않은 핀은 흐리게 (V-01) */
+  var sc=S(),R=Math.max(8,W*0.011);
+  sc.pins.forEach(function(p,pi){
+    var on=pi===sel,col=res(p.res)[2];
+    p.pts.forEach(function(e,j){
+      if(j===0&&!p.from_prev)return; /* 일반 핀의 첫 점은 핀 본체 */
+      var q=ptOf(e),x=q[0]*W,y=q[1]*H,n=p.from_prev?j+2:j+1,r=on?R:R*0.8;
+      ctx.save();ctx.globalAlpha=(on?1:0.45)*k;ctx.fillStyle='#0e1118';ctx.strokeStyle=col;ctx.lineWidth=on?3:2;
+      if(e.place){ctx.beginPath();ctx.moveTo(x,y-r*1.25);ctx.lineTo(x+r*1.25,y);ctx.lineTo(x,y+r*1.25);ctx.lineTo(x-r*1.25,y);ctx.closePath();}
+      else{ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);}
+      ctx.fill();ctx.stroke();
+      ctx.fillStyle=col;ctx.font='700 '+Math.max(8,r*1.05)+'px "JetBrains Mono",monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(String(n),x,y+.5);ctx.restore();
+    });
   });
+  var p=sc.pins[sel];if(!p)return;
   if(selPt>=0&&p.pts[selPt]&&p.curve==='SMOOTH'){ /* 선택한 점의 베지어 핸들 */
     var e0=p.pts[selPt],q0=ptOf(e0),X0=q0[0]*W,Y0=q0[1]*H;
     ctx.save();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(X0,Y0,R+5,0,Math.PI*2);ctx.stroke();
-    ['hin','hout'].forEach(function(k){var h=e0[k];if(!h)return;var hx=X0+h.x/BG.w*W,hy=Y0+h.y/BG.h*H;
+    ['hin','hout'].forEach(function(h){var v=e0[h];if(!v)return;var hx=X0+v.x/BG.w*W,hy=Y0+v.y/BG.h*H;
       ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(X0,Y0);ctx.lineTo(hx,hy);ctx.stroke();
       ctx.fillStyle='#fff';ctx.fillRect(hx-6,hy-6,12,12);});
     ctx.restore();
   }
-  var r=rpath(sc,p);
-  if(p.from_prev&&r.length){
-    var x0=r[0][0]*W+pinR()*.8,y0=r[0][1]*H-pinR()*.8;
+  var r0=rpath(sc,p);
+  if(p.from_prev&&r0.length){
+    var x0=r0[0][0]*W+pinR()*.8,y0=r0[0][1]*H-pinR()*.8;
     ctx.save();ctx.fillStyle='#fff';ctx.strokeStyle='#0e1118';ctx.lineWidth=2;
     rr(x0-6,y0-2,12,10,2);ctx.fill();ctx.stroke();
     ctx.beginPath();ctx.arc(x0,y0-2,4,Math.PI,0);ctx.strokeStyle='#fff';ctx.lineWidth=2.5;ctx.stroke();ctx.restore();
@@ -516,12 +525,12 @@ function render(){
     renderGame(tt);
     if(flow&&flow.closeA!==undefined){ctx.globalAlpha=1-flow.closeA;ctx.fillStyle='#0e1118';ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;}
   }
-  var now=view==='edit'?-P0:Math.round(Math.min(shown,T)-P0);
+  var now=Math.round(Math.min(shown,T)-P0);
   document.getElementById('time').textContent=(now>0?'':'')+now+' / '+Math.round(T-P0)+'ms';
   var sc=document.getElementById('scrub');
-  if(document.activeElement!==sc){sc.max=T;sc.value=view==='edit'?0:shown;}
+  if(document.activeElement!==sc){sc.max=T;sc.value=shown;}
   document.getElementById('dialog').classList.toggle('off',view==='edit'||(playing&&!flowTalking()));
-  drawBars(view==='edit'?null:Math.min(shown,T)-P0);
+  drawBars(Math.min(shown,T)-P0);
 }
 function drawBars(nowMs){ /* 핀별 이동 구간 (툴 K-05) */
   var box=document.getElementById('bars'),sc=S(),sch=schedule(sc),end=Math.max(1,moveEnd(sc,sch)+CFG.OUTRO),html='';
@@ -570,7 +579,7 @@ function nextStep(){flow.k++;startStep();}
 /* ---------- 재생 ---------- */
 function frame(now){
   var dt=Math.min(50,now-last);last=now;frameDt=dt;
-  if(playing&&view==='game'){
+  if(playing){
     var s=flow&&flow.steps[flow.k];
     if(s&&s.type!=='play'){
       if(s.type==='close')flow.closeA=1-clamp((now-flow.from)/(s.dur/speed),0,1);
@@ -587,7 +596,6 @@ function finish(){if(flow){openId=S().id;nextStep();return;}playing=false;setPla
 function setPlay(){document.getElementById('play').textContent=playing?'일시정지':(t>=total()-1?'다시 재생':'재생');}
 function stopFlow(){if(flow){flow=null;drawStory();document.getElementById('dialog').textContent='대사창 자리';}}
 document.getElementById('play').addEventListener('click',function(){
-  if(view==='edit')setView('game');
   if(!playing&&t>=total()-1&&!flow)t=0;
   playing=!playing;setPlay();
 });
@@ -596,7 +604,7 @@ document.getElementById('chain').addEventListener('click',function(){setView('ga
 document.getElementById('b-fast').addEventListener('click',function(e){ /* 스토리 배속 켬/끔 (R-13). 배율 2배는 가정 */
   speed=speed===1?2:1;e.currentTarget.setAttribute('aria-pressed',speed!==1);e.currentTarget.textContent=speed!==1?'배속 켬 (2배 가정)':'배속 끔';});
 var scrub=document.getElementById('scrub');
-scrub.addEventListener('input',function(){if(view==='edit')setView('game');stopFlow();tapping=null;playing=false;t=parseFloat(scrub.value);setPlay();});
+scrub.addEventListener('input',function(){stopFlow();tapping=null;playing=false;t=parseFloat(scrub.value);setPlay();});
 
 /* ---------- 보기·탭 ---------- */
 function setView(v){
@@ -605,18 +613,15 @@ function setView(v){
   document.getElementById('m-edit').setAttribute('aria-pressed',v==='edit');
   document.getElementById('editor').hidden=v!=='edit';
   document.getElementById('gameinfo').hidden=v==='edit';
-  if(v==='edit'){stopFlow();playing=false;tapping=null;t=0;setPlay();syncForm();}
+  if(v==='edit'){if(flow){stopFlow();playing=false;}setPlay();syncForm();}
   hint();
 }
 function setTab(x){tab=x;document.getElementById('t-path').setAttribute('aria-pressed',x==='path');document.getElementById('t-place').setAttribute('aria-pressed',x==='place');
   document.getElementById('pathtab').hidden=x!=='path';document.getElementById('placetab').hidden=x!=='place';syncForm();hint();}
-function setDraw(x){draw=x;document.getElementById('d-point').setAttribute('aria-pressed',x==='point');document.getElementById('d-free').setAttribute('aria-pressed',x==='free');hint();}
 document.getElementById('m-game').addEventListener('click',function(){setView('game');});
 document.getElementById('m-edit').addEventListener('click',function(){setView('edit');});
 document.getElementById('t-path').addEventListener('click',function(){setTab('path');});
 document.getElementById('t-place').addEventListener('click',function(){setTab('place');});
-document.getElementById('d-point').addEventListener('click',function(){setDraw('point');});
-document.getElementById('d-free').addEventListener('click',function(){setDraw('free');});
 
 /* ---------- 패널 ---------- */
 function opt(sel,v,t){var o=document.createElement('option');o.value=v;o.textContent=t;sel.appendChild(o);}

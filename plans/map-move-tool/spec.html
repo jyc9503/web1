@@ -139,7 +139,7 @@ td code{white-space:nowrap}
 <a href="#s6">장소 마크 편집</a>
 <a href="#s7">이어가기</a>
 <a href="#s8">저장과 검증</a>
-<a href="#s9">검증·미결 목록</a>
+<a href="#s9">회사 확인·회의 안건</a>
 <a href="#s10">변경 이력</a>
     <div class="legend">
       <span><span class="badge b-ok">확정</span> 그대로 구현</span>
@@ -154,10 +154,10 @@ td code{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기와 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.6 초안</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.7 초안</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">31건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">5건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -222,35 +222,35 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
-<tr data-s="warn">
+<tr data-s="ok">
 <td>연출 목록</td>
 <td>묶음(<code>group</code>)별 연출 맵 목록, 순번 순서. 이어가기로 연결된 연출은 들여쓰기로 표시</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td>캔버스</td>
 <td>배경 위에서 경로와 장소 마크를 편집</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td>보기 전환</td>
 <td>편집 보기 / 게임 보기</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td>레이어 탭</td>
 <td>경로 / 장소 마크</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td>속성 패널</td>
 <td>선택한 핀 또는 장소 마크의 속성</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td>재생 바</td>
 <td>재생, 처음으로, 배속, 시간 이동</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -267,7 +267,7 @@ td code{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td class="id">V-01</td>
-<td><strong>편집 보기</strong>: 모든 핀의 앞으로 갈 경로(핀 색 파선), 도착 지점(링), 선택한 핀의 웨이포인트와 번호를 보여준다.</td>
+<td><strong>편집 보기</strong>: 모든 핀의 앞으로 갈 경로(핀 색 파선), 도착 지점(링), 웨이포인트와 번호를 보여준다. 선택하지 않은 핀은 흐리게 보인다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -275,20 +275,20 @@ td code{white-space:nowrap}
 <td><strong>게임 보기</strong>: 게임과 같은 화면만 보여준다. 지나온 궤적은 점선, 앞으로 갈 경로와 도착 지점은 안 보인다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">V-03</td>
-<td>재생 버튼을 누르면 게임 보기로 바뀌어 재생된다. 편집을 시작하면 편집 보기로 돌아온다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td>보기는 사용자가 직접 바꾼다. 재생해도 보기는 그대로이고, 편집 보기에서 재생하면 경로·점을 보면서 핀이 움직인다.</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">V-04</td>
 <td>선택하지 않은 핀의 경로는 흐리게(불투명도 45%) 보여 주어 선택한 핀이 눈에 띄게 한다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">V-05</td>
-<td>편집 보기에 대사창 영역을 점선 상자로 표시한다. 맵이 대사 뒤에 남을 때(연출 R-26) 가려지는 곳이라, 중요한 장소와 도착 지점을 피해서 배치하도록 돕는다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td>대사창 영역 점선 상자를 켜고 끌 수 있다(기본 꺼짐). 맵이 대사 뒤에 남을 때(연출 R-26) 가려지는 곳을 확인하는 용도이며 저장 경고는 없다.</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -313,25 +313,25 @@ td code{white-space:nowrap}
 <td>이름표 글자를 문자열 키로 바꾸거나 끌 수 있다. 비워 두면 Actor 이름을 쓴다. 저장 열: <code>LabelKey</code>, <code>ShowLabel</code>.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">K-03</td>
 <td>핀은 핀 번호로 구분한다. 이어가기 연출 사이에서 같은 번호가 같은 핀이다. 새 핀은 이어가기 연결 전체에서 쓰지 않은 가장 작은 번호를 받는다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">K-04</td>
 <td><strong>출발 조건</strong>: 시간 / 다른 핀 출발 후 / 다른 핀 도착 후 + 오프셋(ms). 기준 핀은 같은 연출의 핀 목록에서 고른다. 저장 열: <code>StartType</code>, <code>StartPinNo</code>, <code>StartOffsetMs</code>.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">K-05</td>
-<td><strong>타임라인 막대</strong>: 재생 바 위에 핀별 이동 구간을 막대로 보여준다. 출발 조건으로 묶인 핀은 화살표로 잇는다. 막대를 끌면 지연(ms)이 바뀐다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><strong>타임라인 막대</strong>: 재생 바 위에 핀별 이동 구간을 막대로 보여준다. 보기 전용이며, 수정은 속성 패널에서 한다.</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">K-06</td>
 <td><strong>등장 시점</strong>: 처음부터(기본) / 출발할 때. 출발할 때 등장하는 핀은 편집 보기에서 반투명으로 보인다. 저장 열: <code>ShowFrom</code>.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -349,17 +349,17 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">P-01</td>
 <td>점 찍기 (기본)</td>
 <td>캔버스를 탭할 때마다 경로 끝에 점을 추가한다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="tbd">
 <td class="id">P-02</td>
 <td>자유 그리기</td>
-<td>손가락이나 마우스로 선을 그리면 놓는 순간 점 몇 개로 자동 변환한다(P-08). 이후에는 점 찍기와 같은 방식으로 다듬는다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td>이번 버전에서 제외한다. 프로그램실 회의에서 필요 여부를 확인한다.</td>
+<td><span class="badge b-tbd">미정</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -380,11 +380,11 @@ td code{white-space:nowrap}
 <td>점만 찍으면 모든 점을 지나는 부드러운 곡선(Catmull-Rom)이 자동으로 나온다. 모양을 더 잡고 싶은 점에서만 베지어 핸들을 꺼낸다(P-17).</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">P-04</td>
 <td>직선</td>
 <td>점과 점을 직선으로 잇는다. 길·복도처럼 꺾이는 이동에 쓴다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">P-05</td>
@@ -407,52 +407,52 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">P-06</td>
 <td>점 삽입</td>
 <td>경로 선 위를 탭하면 그 위치에 점을 끼워 넣는다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">P-07</td>
 <td>점 이동 / 삭제</td>
 <td>점을 끌어서 옮긴다. 점을 선택하고 삭제 키(폰은 길게 누르기)로 지운다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="tbd">
 <td class="id">P-08</td>
 <td>자유 그리기 단순화</td>
-<td>그린 선을 Douglas-Peucker 방식으로 줄인다. 허용 오차는 <code>MAP_TOOL_SIMPLIFY_PX</code>(배경 16px).</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td>자유 그리기(P-02)를 넣을 때만 필요하다. 넣는다면 Douglas-Peucker 방식, 허용 오차 <code>MAP_TOOL_SIMPLIFY_PX</code>(배경 16px).</td>
+<td><span class="badge b-tbd">미정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">P-09</td>
 <td>장소 마크 스냅</td>
 <td>점을 장소 마크 근처(<code>MAP_TOOL_SNAP_PX</code>, 배경 40px 이내)에 놓으면 마크에 붙는다. 붙은 점은 좌표 대신 장소 ID로 저장되어, 장소를 옮기면 경로도 따라간다(연출 R-40). 붙은 점은 다이아몬드 모양으로 표시한다. 켜고 끌 수 있다(기본 켬).</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">P-10</td>
 <td>시작점 고정</td>
 <td><code>FromPrev</code> 핀의 시작점은 앞 연출에서 온다. 저장하지 않고 자물쇠로 표시하며 옮기거나 지울 수 없다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">P-11</td>
 <td>실행 취소 / 다시 실행</td>
 <td>최소 50단계. 점 추가, 이동, 삭제, 속성 변경, 이어가기 가져오기를 모두 포함한다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">P-12</td>
 <td>경로 복사</td>
-<td>선택한 핀의 경로를 다른 핀에 붙여 넣는다. 함께 이동하는 무리를 만들 때 쓴다. 붙여 넣은 경로는 조금 옆으로 비켜 놓는다.</td>
+<td>선택한 핀의 경로를 다른 핀에 붙여 넣는다. 함께 이동하는 무리를 만들 때 쓴다. 붙여 넣은 경로는 조금 옆으로 비켜 놓는다. 범위는 프로그램실과 논의해 확정한다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">P-13</td>
 <td>경로 뒤집기</td>
-<td>경로의 시작과 끝을 바꾼다. 왕복 이동을 만들 때 쓴다.</td>
+<td>경로의 시작과 끝을 바꾼다. 왕복 이동을 만들 때 쓴다. 범위는 프로그램실과 논의해 확정한다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
@@ -474,25 +474,25 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">P-14</td>
 <td>속성 패널에 경로 길이(px), 속도(px/초), 계산된 이동 시간(ms)을 표시한다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">P-15</td>
 <td><strong>속도 프리셋</strong>: 핀마다 프리셋(걷기, 달리기, 고속)을 고른다. 기본은 걷기. 「시간 고정」을 켜면 이동 시간(ms)을 직접 입력하고 프리셋은 무시한다. 저장 열: <code>SpeedPreset</code>, <code>DurationMs</code>.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">P-16</td>
 <td>속도가 <code>MAP_SPEED_WARN_PX</code>(1600px/초)를 넘는 핀은 경고 표시한다(순간이동처럼 보임). 시간 고정 핀에서 주로 생긴다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
 <h3>PC 단축키</h3>
-<p>툴이 PC에서 돌아갈 때의 단축키다. <code>검증필요</code></p>
+<p>툴이 PC에서 돌아갈 때의 단축키다. 넣기로 했고, 범위는 프로그램실과 논의해 확정한다. <code>검증필요</code></p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -542,15 +542,15 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">M-01</td>
 <td>장소 마크 탭에서 캔버스를 탭하면 마크를 추가하고 이름 입력란에 커서를 둔다. 이름은 문자열 키로 저장하고, 툴에는 번역 전 원문을 보여준다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">M-02</td>
 <td>마크를 끌어 옮기고, 이름을 바꾸고, 지운다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">M-03</td>
@@ -562,10 +562,10 @@ td code{white-space:nowrap}
 <td>연출마다 마크의 보임/숨김을 체크로 고른다. <code>MapScenePlace</code> 테이블에 저장한다. 이어가기 연출에서는 앞 연출 끝에 보이던 마크가 자동으로 보이고, 바뀐 것만 저장한다. 숨긴 마크는 편집 보기에서 흐리게 보인다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">M-05</td>
 <td>마크 이름은 최대 10자. 이름이 겹치거나 비면 저장 전에 알린다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -585,40 +585,40 @@ td code{white-space:nowrap}
 <td>「앞 연출에서 이어가기」 버튼. 같은 묶음(C-07)에서 바로 앞 순번의 연출을 기본으로 추천하고, 목록에서 다른 연출도 고를 수 있다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">C-02</td>
 <td>가져오는 것: 배경, 앞 연출 ID, 그리고 앞 연출 핀마다 같은 번호·리소스·이름표·속도 설정의 <code>FromPrev</code> 핀. 시작 위치, 앞 궤적, 장소 마크 표시는 <strong>저장하지 않고</strong> 앞 연출에서 계산해 보여준다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">C-03</td>
 <td>저장하는 이어가기 정보는 <code>PrevSceneID</code> 하나다(연출 R-27).</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">C-04</td>
 <td>앞 연출을 고치면 뒤 연출의 시작 위치·앞 궤적이 자동으로 바뀐다. 저장할 때 "뒤 연출 N개의 시작 위치가 바뀝니다"를 알리고, 뒤 연출에서 깨지는 핀(앞 연출에서 사라진 핀 번호)을 오류 목록에 띄운다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">C-05</td>
-<td>연출 목록에서 이어가기 연결(1 → 2 → 3)을 보여주고, 사이에 대사가 있는 것처럼 연결된 연출을 차례로 미리보기 재생할 수 있다(맵 유지 포함).</td>
+<td>연출 목록에서 이어가기 연결(1 → 2 → 3)을 보여주고, 사이에 대사가 있는 것처럼 연결된 연출을 차례로 미리보기 재생할 수 있다(맵 유지 포함). 범위는 프로그램실과 논의해 확정한다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">C-06</td>
 <td>앞 연출에서 사라짐(on_end: 사라짐)으로 끝난 핀은 가져오지 않는다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">C-07</td>
 <td>별도 툴이라 스토리 순서를 모른다. 그래서 <code>MapScene</code>의 <code>Group</code>(예: C03_MOVE)과 <code>Order</code>로 툴 안에서 목록 순서를 관리한다. 스토리 테이블은 <code>map_play &lt;SceneID&gt;</code>로만 참조하고, 게임은 순서 정보 없이 "열린 맵"으로 이어가기를 판단한다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">C-08</td>
 <td>다른 연출이 <code>PrevSceneID</code>로 참조 중인 연출은 지울 수 없다. 지우려면 뒤 연출의 연결을 먼저 끊는다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -633,20 +633,20 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">T-05</td>
 <td>툴 안에서 미리보기 재생(재생·일시정지·처음으로·배속·시간 이동). 결과는 게임과 같아야 한다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">T-06</td>
 <td>연출 기획서 「테이블 설계」 형식(MapScene, MapPin, MapWaypoint, MapScenePlace, MapPlace)으로 저장하고 불러온다. 「테이블로 보기」는 현재 연출의 행을 탭 구분 텍스트로 보여주어 엑셀에 그대로 붙여 넣을 수 있다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">T-07</td>
-<td>저장 전에 검사한다: 배경 범위 밖 좌표, 경로가 빈 핀, 이름 키가 없는 장소 마크, 다른 배경의 장소를 가리키는 점·장소 보임, 앞 연출에 없는 <code>FromPrev</code> 핀, 앞 연출과 다른 배경, 없는 기준 핀, 서로를 기다리는 출발 조건, 끊긴 이어가기 연결, 없는 Actor, 속도 경고(P-16), 권장 길이 초과(<code>MAP_RECOMMEND_MAX_MS</code>), 대사창 영역 안의 도착 지점(V-05). 오류는 저장을 막고, 경고는 목록만 보여준다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td>저장 전에 검사한다: 배경 범위 밖 좌표, 경로가 빈 핀, 이름 키가 없는 장소 마크, 다른 배경의 장소를 가리키는 점·장소 보임, 앞 연출에 없는 <code>FromPrev</code> 핀, 앞 연출과 다른 배경, 없는 기준 핀, 서로를 기다리는 출발 조건, 끊긴 이어가기 연결, 없는 Actor, 속도 경고(P-16), 권장 길이 초과(<code>MAP_RECOMMEND_MAX_MS</code>). 오류는 저장을 막고, 경고는 목록만 보여준다.</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">T-08</td>
@@ -656,15 +656,14 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s9"><h2><span class="sec">§9</span>검증·미결 목록</h2>
-<ul class="check">
-<li><span class="mono">□</span><span>별도 툴의 플랫폼(PC 에디터인지, 웹인지)과 스토리 데이터에서 연출 맵 ID를 참조하는 방식 확인 (T-08, C-07)</span></li>
-<li><span class="mono">□</span><span>자유 그리기가 실제 작업에서 쓰일지 (P-02)</span></li>
-<li><span class="mono">□</span><span>속도 프리셋 값과 종류가 연출 의도와 맞는지 (P-15)</span></li>
-<li><span class="mono">□</span><span>타임라인 막대(K-05)가 필요한지</span></li>
+<section id="s9"><h2><span class="sec">§9</span>회사 확인·회의 안건</h2>
+<ul>
+<li>툴 플랫폼(엔진 에디터 확장 / 웹 툴): 회사에서 판단 (T-08)</li>
+<li>스토리 데이터에서 연출 맵 ID를 참조하는 방식 (C-07)</li>
+<li>편의 기능 범위: 경로 복사(P-12), 경로 뒤집기(P-13), 이어서 미리보기(C-05), PC 단축키. 넣기로 했고 범위는 프로그램실과 논의</li>
+<li>자유 그리기(P-02): 이번 버전 제외, 회의에서 프로그램실 의견 확인</li>
+<li>속도 프리셋 값은 시작값. 실제 연출을 만들며 튜닝 (P-15)</li>
 </ul>
-<h3>결정 필요 항목</h3>
-<p>지금은 없다.</p>
 </section>
 <section id="s10"><h2><span class="sec">§10</span>변경 이력</h2>
 <div class="tablewrap"><table>
@@ -676,6 +675,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.7</td>
+<td>2026-11-11</td>
+<td>미결 정리: 모든 핀의 점 표시(V-01), 보기 수동 전환·편집 보기 재생(V-03), 대사창 가이드는 옵션(V-05), 타임라인 막대 보기 전용(K-05), 자유 그리기 제외(P-02), 편의 기능은 범위 논의, 나머지 세부 동작 확정</td>
+</tr>
 <tr>
 <td>v0.6</td>
 <td>2026-11-09</td>
