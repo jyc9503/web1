@@ -98,7 +98,7 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · v0.9 프로토타입</span>
+    <span class="tag">카제나 · 스토리 연출 · v0.10 프로토타입</span>
     <h1>맵 핀 이동 연출</h1>
     <p>게임 보기는 게임과 같은 화면, 편집 보기는 툴 화면입니다. 「스토리 흐름 재생」은 스토리 테이블 명령 순서를 재현합니다. 편집 보기의 「테이블로 보기」는 현재 장면을 기획서의 테이블 형식으로 보여줍니다. 배경, 핀, 장소 이름은 자리표시용입니다.</p>
   </header>
@@ -154,10 +154,6 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
       </div>
 
       <div id="pathtab" style="display:grid;gap:10px">
-        <div class="seg full" role="group" aria-label="도구">
-          <button class="btn sm" id="tool-select" type="button" aria-pressed="true">선택 (V)</button>
-          <button class="btn sm" id="tool-add" type="button" aria-pressed="false">점 추가 (A)</button>
-        </div>
         <div class="chips" id="chips"></div>
         <label class="check"><input type="checkbox" id="snap" checked> 장소 마크에 붙이기 (장소 ID로 저장)</label>
         <label class="check"><input type="checkbox" id="guide"> 대사창 영역 표시 (V-05)</label>
@@ -191,21 +187,17 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
           <button class="btn sm" id="b-addpin" type="button">핀 추가</button>
           <button class="btn sm" id="b-delpin" type="button">핀 삭제</button>
         </div>
-        <p class="note"><b>선택</b> 도구: 점·핀·경로를 눌러 고르고, 끌어서 옮깁니다. 빈 곳을 누르면 선택이 풀립니다. <b>점 추가</b> 도구: 빈 곳을 누르면 끝에 점, 선택한 경로 선 위를 누르면 그 자리에 끼워 넣습니다. 6px 이상 끌어야 움직이므로 누르기만 해서는 바뀌지 않습니다. 재생 중에 무대를 누르면 일시정지만 합니다. 장소에 붙은 점은 ◆로 표시되고 장소를 옮기면 따라갑니다. 점을 누르고 「핸들 꺼내기」로 곡선을 다듬을 수 있습니다(Alt+끌기는 한쪽만). 이어가기 핀의 시작점(🔒)은 앞 장면에서 오며 저장하지 않습니다. 재생은 보기를 바꾸지 않으므로 편집 보기에서 경로를 보며 재생할 수 있습니다.</p>
+        <p class="note"><b>한 번 누르기</b>: 점·핀·경로를 고르고, 끌어서 옮깁니다(6px 이상 끌어야 움직임). 빈 곳은 선택 해제. <b>더블클릭</b>(폰은 더블탭): 빈 곳이면 끝에 점 추가, 선택한 경로 선 위면 그 자리에 끼워 넣기. 장소에 붙은 점은 ◆로 표시되고 장소를 옮기면 따라갑니다. 점을 누르고 「핸들 꺼내기」로 곡선을 다듬을 수 있습니다(Alt+끌기는 한쪽만). 이어가기 핀의 시작점(🔒)은 앞 장면에서 오며 저장하지 않습니다. 재생 중에 무대를 누르면 일시정지만 합니다.</p>
       </div>
 
       <div id="placetab" hidden style="display:grid;gap:10px">
-        <div class="seg full" role="group" aria-label="장소 도구">
-          <button class="btn sm" id="ptool-select" type="button" aria-pressed="true">선택 (V)</button>
-          <button class="btn sm" id="ptool-add" type="button" aria-pressed="false">장소 추가 (A)</button>
-        </div>
         <div class="chips" id="pchips"></div>
         <div class="form">
           <label for="p-name">이름(원문)</label><input type="text" id="p-name" maxlength="10" placeholder="장소 이름">
           <label for="p-mode">이 장면에서</label><select id="p-mode"></select>
         </div>
         <div class="tools"><button class="btn sm" id="b-delplace" type="button">마크 삭제</button></div>
-        <p class="note">「장소 추가」 도구에서 빈 곳을 누르면 마크를 추가합니다. 선택 도구에서는 마크를 눌러 고르고 끌어서 옮깁니다. 위치와 이름은 배경(MapPlace)에 저장되어 모든 장면이 함께 씁니다. 보임/숨김은 장면마다(MapScenePlace) 정하며, 이어가기 장면은 앞 장면에서 보이던 마크를 그대로 이어받고 새로 보이는 마크만 0ms에 나타납니다.</p>
+        <p class="note">빈 곳을 <b>더블클릭</b>하면 마크를 추가합니다. 마크를 한 번 누르면 고르고, 끌어서 옮깁니다. 위치와 이름은 배경(MapPlace)에 저장되어 모든 장면이 함께 씁니다. 보임/숨김은 장면마다(MapScenePlace) 정하며, 이어가기 장면은 앞 장면에서 보이던 마크를 그대로 이어받고 새로 보이는 마크만 0ms에 나타납니다.</p>
       </div>
 
       <hr style="margin:12px 0">
@@ -481,15 +473,6 @@ function renderEdit(){ /* 편집 보기. 재생 중이면 게임 화면 위에 �
     ctx.fillText('대사창 영역 · 맵 유지 중 가려짐',W*0.955,H*0.83);ctx.restore();
   }
   if(tab==='path')handles(k);
-  if(hover&&tool==='add'&&tab==='path'&&!moving){ /* 점 추가 미리보기 (E-04) */
-    var hp=sc.pins[sel];
-    if(hp){var tg=snapTo(hover),tq=ptOf(tg),ins=hitSegment(sc,hp,hover),rr0=rpath(sc,hp),col0=res(hp.res)[2];
-      ctx.save();ctx.globalAlpha=.85;ctx.strokeStyle=col0;ctx.setLineDash([4,5]);ctx.lineWidth=1.5;
-      if(ins<0&&rr0.length){var lp=rr0[rr0.length-1];ctx.beginPath();ctx.moveTo(lp[0]*W,lp[1]*H);ctx.lineTo(tq[0]*W,tq[1]*H);ctx.stroke();}
-      ctx.setLineDash([]);ctx.fillStyle='rgba(255,255,255,.9)';ctx.beginPath();ctx.arc(tq[0]*W,tq[1]*H,tg.place?9:6,0,Math.PI*2);ctx.stroke();
-      ctx.font='700 12px "JetBrains Mono",monospace';ctx.textAlign='left';ctx.textBaseline='bottom';
-      ctx.fillText(ins>=0?'+ 끼워 넣기':(tg.place?'+ 장소에 붙음':'+'),tq[0]*W+10,tq[1]*H-6);ctx.restore();}
-  }
   if(!moving){
     sc.pins.forEach(function(p,i){var r=rpath(sc,p);if(r.length)pinBody(p,r[0][0]*W,r[0][1]*H,((tab==='path'&&i!==sel)?0.75:1)*(p.show_from==='ON_DEPART'&&!p.from_prev?0.5:1),null,tab==='path'&&i===sel);});
     sc.pins.forEach(function(p){var r=rpath(sc,p);if(r.length&&p.show_label)tag(labelOf(p),r[0][0]*W,r[0][1]*H+pinR()+5,1);});
@@ -560,8 +543,8 @@ function flowTalking(){return !!(flow&&flow.steps[flow.k]&&flow.steps[flow.k].ty
 function hint(){
   var h=document.getElementById('hint');
   if(view==='game'){h.textContent=S().name+' ('+S().id+')'+(S().prev?(seamless()?' · 열린 맵에서 바로 이어짐':' · 맵이 닫혀 있어 일반 등장'):'')+' · 게임 보기';return;}
-  if(tab==='place'){h.textContent=tool==='add'?'편집 · 장소 추가: 빈 곳을 누르면 추가 · Esc 취소':'편집 · 선택: 마크를 눌러 고르고 끌어서 이동 · A 장소 추가';return;}
-  h.textContent=tool==='add'?'편집 · 점 추가: 빈 곳=끝에 추가, 선 위=끼워 넣기 · Esc 선택 도구':'편집 · 선택: 점·핀을 눌러 고르고 끌어서 이동 · A 점 추가';
+  if(tab==='place'){h.textContent='편집 · 장소: 누르면 선택·끌어서 이동 · 빈 곳 더블클릭으로 추가';return;}
+  h.textContent='편집 · 누르면 선택·끌어서 이동 · 더블클릭: 빈 곳=점 추가, 선 위=끼워 넣기';
 }
 
 /* ---------- 스토리 흐름 ---------- */
@@ -632,10 +615,9 @@ function setView(v){
   document.getElementById('editor').hidden=v!=='edit';
   document.getElementById('gameinfo').hidden=v==='edit';
   if(v==='edit'){if(flow){stopFlow();playing=false;}setPlay();syncForm();}
-  cv.style.cursor=v==='edit'&&tool==='add'?'crosshair':'default';
   hint();
 }
-function setTab(x){tab=x;tool='select';setTool('select');document.getElementById('t-path').setAttribute('aria-pressed',x==='path');document.getElementById('t-place').setAttribute('aria-pressed',x==='place');
+function setTab(x){tab=x;lastTap=null;document.getElementById('t-path').setAttribute('aria-pressed',x==='path');document.getElementById('t-place').setAttribute('aria-pressed',x==='place');
   document.getElementById('pathtab').hidden=x!=='path';document.getElementById('placetab').hidden=x!=='place';syncForm();hint();}
 document.getElementById('m-game').addEventListener('click',function(){setView('game');});
 document.getElementById('m-edit').addEventListener('click',function(){setView('edit');});
@@ -716,7 +698,7 @@ document.getElementById('p-mode').addEventListener('change',function(e){placeSet
 document.getElementById('showprev').addEventListener('change',function(e){commit();S().show_prev=e.target.checked;});
 
 /* ---------- 무대 입력 ---------- */
-var drag=null,free=null,tool='select',hover=null,DRAG_PX=6; /* tool: select | add (툴 E-01) */
+var drag=null,free=null,hover=null,lastTap=null,DRAG_PX=6,DBL_MS=350,DBL_PX=10; /* 생성은 더블클릭만 (툴 E-01) */
 function ptr(e){var r=cv.getBoundingClientRect();return {x:clamp((e.clientX-r.left)/r.width,0,1),y:clamp((e.clientY-r.top)/r.height,0,1)};}
 function nearN(ax,ay,q,lim){return Math.hypot((ax-q.x)*W,(ay-q.y)*H)<lim;}
 function snapTo(q){ /* 장소 근처면 장소 ID, 아니면 배경 px 정수 (R-05, R-40) */
@@ -737,10 +719,9 @@ function hitPin(sc,q){ /* 핀 본체(시작 위치) */
 function hitPoint(sc,pi,q){ /* 저장된 점 (일반 핀의 첫 점은 핀 본체로 처리) */
   var p=sc.pins[pi],lim=Math.max(12,W*0.016);
   for(var k=p.pts.length-1;k>=0;k--){if(k===0&&!p.from_prev)continue;var pt=ptOf(p.pts[k]);if(nearN(pt[0],pt[1],q,lim))return k;}return -1;}
-function setTool(x){tool=x;
-  ['tool-select','ptool-select'].forEach(function(id){document.getElementById(id).setAttribute('aria-pressed',x==='select');});
-  ['tool-add','ptool-add'].forEach(function(id){document.getElementById(id).setAttribute('aria-pressed',x==='add');});
-  cv.style.cursor=view==='edit'&&x==='add'?'crosshair':'default';hover=null;hint();}
+function isDouble(e){ /* 같은 자리를 350ms 안에 두 번 누르면 더블클릭 */
+  var now=performance.now(),d=lastTap&&now-lastTap.t<DBL_MS&&Math.hypot(e.clientX-lastTap.x,e.clientY-lastTap.y)<DBL_PX;
+  lastTap=d?null:{t:now,x:e.clientX,y:e.clientY};return d;}
 function startDrag(e,o){o.x0=e.clientX;o.y0=e.clientY;o.moved=false;drag=o;cv.setPointerCapture(e.pointerId);}
 cv.addEventListener('pointerdown',function(e){
   var q=ptr(e);
@@ -749,10 +730,10 @@ cv.addEventListener('pointerdown',function(e){
   if(tab==='place'){
     var lim=Math.max(14,W*0.02);
     for(var i=state.places.length-1;i>=0;i--){var pl=state.places[i];if(nearN(pl.x/BG.w,pl.y/BG.h,q,lim)){psel=i;startDrag(e,{type:'place',i:i});syncForm();return;}}
-    if(tool!=='add')return;
+    if(!isDouble(e))return;
     commit();var nid=Math.max.apply(null,state.places.map(function(x){return x.id;}).concat([1000]))+1;
     state.places.push({id:nid,name:'새 장소',x:Math.round(q.x*BG.w),y:Math.round(q.y*BG.h)});
-    psel=state.places.length-1;setTool('select');syncForm();pName.focus();pName.select();say('장소를 추가했습니다. 이름을 입력하세요.');return;
+    psel=state.places.length-1;syncForm();pName.focus();pName.select();say('장소를 추가했습니다. 이름을 입력하세요. (Ctrl+Z 되돌리기)');return;
   }
   var sc=S(),p=sc.pins[sel];
   if(p&&selPt>=0&&p.pts[selPt]){var e0=p.pts[selPt],q0=ptOf(e0); /* 1. 선택한 점의 핸들 */
@@ -767,10 +748,10 @@ cv.addEventListener('pointerdown',function(e){
   }
   for(var i2=0;i2<sc.pins.length;i2++){if(i2===sel)continue;var k2=hitPoint(sc,i2,q);if(k2>=0){sel=i2;selPt=k2;syncForm();say(labelOf(sc.pins[i2])+'의 점 선택');return;}} /* 4. 다른 핀의 점 */
   if(!p)return;
-  if(tool==='add'){ /* 5. 점 추가 도구에서만 점이 생긴다 (E-01) */
+  if(isDouble(e)){ /* 5. 더블클릭에서만 점이 생긴다 (E-01) */
     var ins=hitSegment(sc,p,q);commit();
     if(ins>=0&&!(ins===0&&!p.from_prev)){p.pts.splice(ins,0,snapTo(q));selPt=ins;say('점을 끼워 넣었습니다. (Ctrl+Z 되돌리기)');}
-    else{p.pts.push(snapTo(q));selPt=p.pts.length-1;say('점을 추가했습니다. (Ctrl+Z 되돌리기 · Esc 선택 도구)');}
+    else{p.pts.push(snapTo(q));selPt=p.pts.length-1;say('점을 추가했습니다. (Ctrl+Z 되돌리기)');}
     syncForm();return;
   }
   for(var j=0;j<sc.pins.length;j++){if(hitSegment(sc,sc.pins[j],q)>=0){if(j!==sel){sel=j;selPt=-1;syncForm();say(labelOf(sc.pins[j])+' 선택');}return;}} /* 6. 경로 선: 그 핀 선택 */
@@ -778,7 +759,7 @@ cv.addEventListener('pointerdown',function(e){
 });
 cv.addEventListener('pointermove',function(e){
   var q=ptr(e);
-  if(!drag){hover=(view==='edit'&&tool==='add'&&tab==='path'&&e.pointerType==='mouse'&&!playing)?q:null;return;}
+  if(!drag)return;
   if(!drag.moved){if(Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)<DRAG_PX)return;drag.moved=true;commit();} /* E-03 끌기 문턱 */
   if(drag.type==='place'){var pl=state.places[drag.i];pl.x=Math.round(q.x*BG.w);pl.y=Math.round(q.y*BG.h);return;}
   var pp=S().pins[sel],old=pp.pts[drag.k];
@@ -802,8 +783,6 @@ document.getElementById('b-undo').addEventListener('click',function(){if(!undo.l
 document.getElementById('b-redo').addEventListener('click',function(){if(!redo.length)return;undo.push(snap());restore(redo.pop());say('다시 실행');});
 function delPoint(){var p=S().pins[sel];if(!p||selPt<0||!p.pts[selPt])return say('지울 점을 먼저 선택하세요.',true);commit();p.pts.splice(selPt,1);selPt=Math.min(selPt,p.pts.length-1);if(selPt===0&&!p.from_prev)selPt=-1;syncForm();say('점을 지웠습니다. (Ctrl+Z 되돌리기)');}
 document.getElementById('b-pop').addEventListener('click',delPoint);
-['tool-select','ptool-select'].forEach(function(id){document.getElementById(id).addEventListener('click',function(){setTool('select');});});
-['tool-add','ptool-add'].forEach(function(id){document.getElementById(id).addEventListener('click',function(){setTool('add');});});
 document.addEventListener('keydown',function(e){ /* PC 단축키 (툴 단축키 표) */
   var tg=e.target.tagName;if(tg==='INPUT'||tg==='SELECT'||tg==='TEXTAREA')return;
   var key=e.key.toLowerCase(),mod=e.ctrlKey||e.metaKey;
@@ -811,9 +790,7 @@ document.addEventListener('keydown',function(e){ /* PC 단축키 (툴 단축키 
   if(mod&&key==='y'){e.preventDefault();document.getElementById('b-redo').click();return;}
   if(key===' '){e.preventDefault();document.getElementById('play').click();return;}
   if(view!=='edit')return;
-  if(key==='v')setTool('select');
-  else if(key==='a')setTool('add');
-  else if(key==='escape'){setTool('select');selPt=-1;syncForm();}
+  if(key==='escape'){selPt=-1;syncForm();}
   else if((key==='delete'||key==='backspace')&&tab==='path'){e.preventDefault();delPoint();}
 });
 document.getElementById('b-clear').addEventListener('click',function(){var p=S().pins[sel];if(!p)return;commit();p.pts=[];selPt=-1;syncForm();});
@@ -828,7 +805,7 @@ document.getElementById('b-addpin').addEventListener('click',function(){
   var used={},c=sc,g=0;while(c&&g++<20){c.pins.forEach(function(q){used[q.no]=1;});c=prevOf(c);}
   var no=1;while(used[no])no++;
   var used=sc.pins.map(function(p){return p.res;}),fr=RES.filter(function(c){return used.indexOf(c[0])<0;})[0]||RES[0];
-  commit();sc.pins.push(pin(no,fr[0],[]));sel=sc.pins.length-1;selPt=-1;setTool('add');syncForm();say('핀 '+no+'을 추가했습니다. 점 추가 도구로 바꿨습니다. 시작점부터 찍으세요.');
+  commit();sc.pins.push(pin(no,fr[0],[]));sel=sc.pins.length-1;selPt=-1;syncForm();say('핀 '+no+'을 추가했습니다. 빈 곳을 더블클릭해 시작점부터 찍으세요.');
 });
 document.getElementById('b-delpin').addEventListener('click',function(){
   var sc=S();if(sc.pins.length<=1){say('핀이 최소 1개는 있어야 합니다.',true);return;}
@@ -847,8 +824,8 @@ document.getElementById('b-continue').addEventListener('click',function(){
   var pins=src.pins.filter(function(q){return rpath(src,q).length&&q.on_end!=='FADE';}).map(function(q){
     var np=pin(q.no,q.res,[],{from_prev:true,preset:q.preset,curve:q.curve});np.label=q.label;np.show_label=q.show_label;return np;});
   var s={id:nid,name:'장면 '+(state.scenes.length+1),prev:src.id,show_prev:true,places:{},pins:pins};
-  state.scenes.splice(cur+1,0,s);cur=cur+1;sel=0;selPt=-1;setView('edit');setTab('path');setTool('add');syncAll();
-  say(src.name+'에서 이어가기: 저장되는 것은 앞 장면 ID('+src.id+')뿐입니다. 핀마다 다음 점을 찍으세요.');
+  state.scenes.splice(cur+1,0,s);cur=cur+1;sel=0;selPt=-1;setView('edit');setTab('path');syncAll();
+  say(src.name+'에서 이어가기: 저장되는 것은 앞 장면 ID('+src.id+')뿐입니다. 핀마다 빈 곳을 더블클릭해 다음 점을 찍으세요.');
 });
 
 /* ---------- 테이블로 보기 (탭 구분, 엑셀에 붙여넣기) ---------- */
