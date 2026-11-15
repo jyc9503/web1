@@ -125,7 +125,6 @@ code.block{display:block; white-space:pre-wrap; overflow-wrap:anywhere; font-fam
       <div class="field wide"><button type="button" class="play" id="play-drop">일시정지</button></div>
       <div class="field wide"><label class="field-name" for="txt-drop">문구 (태그 포함)</label><textarea id="txt-drop" rows="3" maxlength="200" spellcheck="false">&lt;$drop_m&gt;나는 아직 여기 있어요&lt;/$drop_m&gt;
 아무도 나를 부르지 않아요</textarea><p class="hint">태그로 감싼 글자만 분신을 만들어요. 태그 밖 글자는 지나가는 분신에 닿으면 반응해요. 줄바꿈도 쓸 수 있어요.</p></div>
-      <div class="field" id="unitbox-drop"><span class="field-name" id="unitlbl-drop">분신 단위</span><div class="seg" id="unit-drop" role="group" aria-labelledby="unitlbl-drop"></div></div>
       <div class="field wide" id="presetbox-drop"><span class="field-name" id="presetlbl-drop">프리셋</span><div class="seg" id="preset-drop" role="group" aria-labelledby="presetlbl-drop"></div><p class="hint" id="hint-drop"></p><button type="button" class="btn" id="copy-drop">현재 값 보기·복사</button><pre class="valbox" id="vals-drop" hidden></pre></div>
       <div class="field wide"><span class="field-name" id="inklbl-drop">글자색</span><div class="swatches" id="ink-drop" role="group" aria-labelledby="inklbl-drop"></div></div>
       <div class="sliders" id="sl-drop"></div>
@@ -145,7 +144,6 @@ code.block{display:block; white-space:pre-wrap; overflow-wrap:anywhere; font-fam
       <div class="field wide"><button type="button" class="play" id="play-rise">일시정지</button></div>
       <div class="field wide"><label class="field-name" for="txt-rise">문구 (태그 포함)</label><textarea id="txt-rise" rows="3" maxlength="200" spellcheck="false">이제야 가벼워졌구나
 &lt;$rise_m&gt;이제 편히 쉬어요&lt;/$rise_m&gt;</textarea><p class="hint">태그로 감싼 글자만 분신을 만들어요. 태그 밖 글자는 지나가는 분신에 닿으면 반응해요. 줄바꿈도 쓸 수 있어요.</p></div>
-      <div class="field" id="unitbox-rise"><span class="field-name" id="unitlbl-rise">분신 단위</span><div class="seg" id="unit-rise" role="group" aria-labelledby="unitlbl-rise"></div></div>
       <div class="field wide" id="presetbox-rise"><span class="field-name" id="presetlbl-rise">프리셋</span><div class="seg" id="preset-rise" role="group" aria-labelledby="presetlbl-rise"></div><p class="hint" id="hint-rise"></p><button type="button" class="btn" id="copy-rise">현재 값 보기·복사</button><pre class="valbox" id="vals-rise" hidden></pre></div>
       <div class="field wide"><span class="field-name" id="inklbl-rise">글자색</span><div class="swatches" id="ink-rise" role="group" aria-labelledby="inklbl-rise"></div></div>
       <div class="sliders" id="sl-rise"></div>
@@ -163,7 +161,7 @@ code.block{display:block; white-space:pre-wrap; overflow-wrap:anywhere; font-fam
     </div>
     <div class="controls" id="ctl-grad">
       <div class="field wide"><button type="button" class="play" id="play-grad">일시정지</button></div>
-      <div class="field wide"><label class="field-name" for="txt-grad">문구 (태그 포함)</label><textarea id="txt-grad" rows="2" maxlength="200" spellcheck="false">그 날의 하늘은 &lt;$grad_op&gt;유난히 붉었다&lt;/$grad_op&gt;</textarea><p class="hint">구간은 &lt;$grad_이름&gt; … &lt;/$grad_이름&gt; 태그로 정해요. 프리셋 버튼을 누르면 태그 이름이 바뀝니다.</p></div>
+      <div class="field wide"><label class="field-name" for="txt-grad">문구 (태그 포함)</label><textarea id="txt-grad" rows="2" maxlength="200" spellcheck="false">그날의 하늘은 &lt;$grad_op&gt;유난히 붉었다&lt;/$grad_op&gt;</textarea><p class="hint">구간은 &lt;$grad_이름&gt; … &lt;/$grad_이름&gt; 태그로 정해요. 프리셋 버튼을 누르면 태그 이름이 바뀝니다.</p></div>
       <div class="field wide"><span class="field-name" id="presetlbl-grad">프리셋</span><div class="seg wrap" id="preset-grad" role="group" aria-labelledby="presetlbl-grad"></div></div>
       <div class="field"><span class="field-name" id="modelbl">변화 방식</span><div class="seg" id="mode-grad" role="group" aria-labelledby="modelbl"></div></div>
     </div>
@@ -345,15 +343,11 @@ function wrapLines(ctx,text,maxW){
 /* ---------- 분신 효과: 태그로 감싼 글자 조각의 복제본이 원본에서 분리되어 떨어지거나 떠오른다 ---------- */
 function CloneFx(o){
   this.cv=o.canvas;this.ctx=this.cv.getContext('2d');
-  this.dir=o.dir;this.kind=o.kind;this.pp=o.presets;this.text=o.text;this.ink=INKS[0];this.unit='char';
+  this.dir=o.dir;this.kind=o.kind;this.pp=o.presets;this.text=o.text;this.ink=INKS[0];
   this.cl=[];this.pieces=[];this.segs=[];this.t=0;this.k=1;this.playing=!reduce;this.visible=true;this.dirty=true;
   this.layout();
 }
 CloneFx.prototype.setText=function(t){this.text=t;this.layout();};
-CloneFx.prototype.setUnit=function(u){
-  this.unit=u;if(!this.w)return;
-  this.computePieces();this.cl=[];this.seed();
-};
 CloneFx.prototype.layout=function(){
   var r=this.cv.getBoundingClientRect();if(r.width<2||r.height<2)return;
   var self=this,w=r.width,h=r.height,dpr=Math.min(window.devicePixelRatio||1,3);
@@ -388,21 +382,8 @@ CloneFx.prototype.computePieces=function(){
     for(k=0;k<n;k++){
       if(seg[k]===null)seg[k]=(k>0&&k<n-1&&seg[k-1]===seg[k+1])?seg[k-1]:-2;
     }
-    var runs=[],a,b,s0,q;
-    if(self.unit==='char'){
-      for(k=0;k<n;k++)if(chars[k]!==' ')runs.push([k,k+1,seg[k]]);
-    }else if(self.unit==='word'){
-      k=0;
-      while(k<n){
-        if(chars[k]===' '){k++;continue;}
-        a=k;while(k<n&&chars[k]!==' ')k++;
-        s0=a;
-        for(q=a+1;q<=k;q++){if(q===k||seg[q]!==seg[s0]){runs.push([s0,q,seg[s0]]);s0=q;}}
-      }
-    }else{
-      s0=0;
-      for(q=1;q<=n;q++){if(q===n||seg[q]!==seg[s0]){runs.push([s0,q,seg[s0]]);s0=q;}}
-    }
+    var runs=[];
+    for(k=0;k<n;k++)if(chars[k]!==' ')runs.push([k,k+1,seg[k]]);
     runs.forEach(function(r){
       var text=chars.slice(r[0],r[1]).join('');
       if(!text.trim())return;
@@ -661,10 +642,9 @@ function setupDrip(key,dir,defs){
     txt.value=v;fx.setText(v);
     build();showHint();valsBox.hidden=true;
   }
-  group(document.getElementById('unit-'+key),[{k:'char',n:'글자'},{k:'word',n:'단어'},{k:'line',n:'줄'}],function(b,it){b.textContent=it.n;},0,function(u){fx.setUnit(u.k);fx.dirty=true;});
   group(document.getElementById('preset-'+key),['s','m','l'],function(b,it){b.textContent='$'+key+'_'+it;},1,function(it){applyPreset(it);});
   document.getElementById('copy-'+key).addEventListener('click',function(){
-    var lines=['$'+key+'_'+curPre+(modified[curPre]?' (수정됨)':''),'unit='+fx.unit].concat(defs.map(function(d){return d.key+'='+fmt(pp[curPre][d.key]);}));
+    var lines=['$'+key+'_'+curPre+(modified[curPre]?' (수정됨)':'')].concat(defs.map(function(d){return d.key+'='+fmt(pp[curPre][d.key]);}));
     var text=lines.join('\n');
     valsBox.textContent=text;valsBox.hidden=false;
     try{navigator.clipboard.writeText(text).catch(function(){});}catch(e){}
@@ -691,7 +671,7 @@ function specHtml(key,defs){
     return '<h3>'+title+'</h3><ol class="steps">'+items.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ol>';
   };
   if(key==='drop')h+=list('처리 순서',[
-    '문구를 글자(또는 단어, 줄) 단위 조각으로 나누고, 각 조각의 위치를 구한다.',
+    '문구를 글자 하나 단위 조각으로 나누고, 각 조각의 위치를 구한다.',
     '조각 하나를 골라 분신을 만든다. 분신은 원본과 겹친 채 투명하게 시작해, 윗면을 고정한 채 아래로 늘어난다.',
     '늘어나는 동안 원본 글자가 아래로 살짝 내려앉는다(내려앉음). 분신은 이 위치에 붙어 있다.',
     '분리 시간이 끝나면 분신이 내려앉은 위치에서 떨어져 나가 낙하한다. 원본 글자는 스프링처럼 제자리로 돌아온다(복귀 탄성).',
@@ -743,7 +723,7 @@ setupDrip('rise',-1,CLONE_RISE_DEFS);
     '<li>흐르기: 구간 안에서 팔레트가 글자를 따라 한쪽으로 흐른다.</li>'+
     '<li>동시에: 구간 전체가 같은 색으로 함께 변한다.</li></ol>'+
     '<h3>태그 표기</h3>'+
-    '<code class="block">그 날의 하늘은 &lt;$grad_op&gt;유난히 붉었다&lt;/$grad_op&gt;\n&lt;$grad_tl&gt;아직 떠나지 못했어요&lt;/$grad_tl&gt;</code>';
+    '<code class="block">그날의 하늘은 &lt;$grad_op&gt;유난히 붉었다&lt;/$grad_op&gt;\n&lt;$grad_tl&gt;아직 떠나지 못했어요&lt;/$grad_tl&gt;</code>';
 })();
 
 requestAnimationFrame(function(t){last=t;requestAnimationFrame(frame);});
