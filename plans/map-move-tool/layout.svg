@@ -1,0 +1,41 @@
+<svg viewBox="0 0 860 350" role="img" aria-label="편집 툴 화면 구성: 왼쪽 연출 목록, 가운데 캔버스와 재생 바, 오른쪽 속성 패널">
+  <rect class="n" x="10" y="10" width="150" height="330" rx="8"/>
+  <text x="24" y="34">연출 목록</text>
+  <rect class="n start" x="20" y="46" width="130" height="30" rx="6"/><text class="sm" x="30" y="66">장면 1</text>
+  <rect class="n" x="20" y="82" width="130" height="30" rx="6"/><text class="sm" x="30" y="102">↳ 장면 2 (이어가기)</text>
+  <rect class="n" x="20" y="118" width="130" height="30" rx="6"/><text class="sm" x="30" y="138">↳ 장면 3 (이어가기)</text>
+  <rect class="n mid" x="20" y="296" width="130" height="34" rx="6"/><text x="85" y="318" text-anchor="middle" style="font-size:12px">앞 연출에서 이어가기</text>
+
+  <rect x="172" y="10" width="468" height="263" rx="8" fill="#1a2233"/>
+  <rect x="182" y="20" width="150" height="26" rx="6" fill="rgba(10,12,18,.7)"/>
+  <text x="197" y="38" style="font-size:12px;fill:#fff">편집 보기</text><text x="262" y="38" style="font-size:12px;fill:#9aa6bd">게임 보기</text>
+  <polyline points="220,220 290,170 370,185 470,110 560,80" fill="none" stroke="#e2576b" stroke-width="2.5" stroke-dasharray="8 6"/>
+  <circle cx="560" cy="80" r="10" fill="none" stroke="#e2576b" stroke-width="2.5"/>
+  <g fill="#0e1118" stroke="#e2576b" stroke-width="2.5"><circle cx="290" cy="170" r="7"/><circle cx="370" cy="185" r="7"/><circle cx="470" cy="110" r="7"/></g>
+  <circle cx="220" cy="220" r="15" fill="#e2576b" stroke="#fff" stroke-width="2.5"/><text x="220" y="225" text-anchor="middle" style="font-size:13px;font-weight:700;fill:#fff">A</text>
+  <polyline points="230,90 330,110 420,140" fill="none" stroke="#3d8bfd" stroke-width="2" stroke-dasharray="8 6" opacity=".45"/>
+  <circle cx="230" cy="90" r="13" fill="#3d8bfd" stroke="#fff" stroke-width="2.5" opacity=".9"/><text x="230" y="95" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#fff">B</text>
+  <circle cx="560" cy="80" r="3" fill="#fff"/><text x="572" y="66" style="font-size:11px;fill:#e6e9f2">관측소</text>
+  <circle cx="220" cy="220" r="3" fill="#fff"/><text x="200" y="250" style="font-size:11px;fill:#e6e9f2">정거장</text>
+
+  <rect class="n" x="172" y="283" width="468" height="57" rx="8"/>
+  <rect class="n start" x="184" y="296" width="54" height="30" rx="6"/><text x="211" y="316" text-anchor="middle" style="font-size:12px">재생</text>
+  <text class="sm" x="252" y="316">처음 · 0.5x 1x 2x</text>
+  <line x1="370" y1="311" x2="560" y2="311" stroke="var(--line)" stroke-width="4" stroke-linecap="round"/>
+  <line x1="370" y1="311" x2="440" y2="311" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+  <text class="sm" x="570" y="316">1.8 / 5.0초</text>
+
+  <rect class="n" x="652" y="10" width="198" height="330" rx="8"/>
+  <rect class="n start" x="664" y="22" width="84" height="28" rx="6"/><text x="706" y="41" text-anchor="middle" style="font-size:12px">경로</text>
+  <rect class="n" x="754" y="22" width="84" height="28" rx="6"/><text x="796" y="41" text-anchor="middle" style="font-size:12px">장소 마크</text>
+  <text class="sm" x="664" y="74">핀: [A] [B] [C] [+]</text>
+  <text class="sm" x="664" y="98">그리기: 점 찍기 | 자유 그리기</text>
+  <text class="sm" x="664" y="122">형태: 곡선 | 직선</text>
+  <text class="sm" x="664" y="146">캐릭터 · 지연 · 이동 시간</text>
+  <text class="sm" x="664" y="170">이징 · 궤적 · 도착 후</text>
+  <text class="sm" x="664" y="194">길이 0.84 · 속도 0.35/초</text>
+  <text class="sm" x="664" y="218">☑ 장소 마크 스냅</text>
+  <rect class="n" x="664" y="240" width="174" height="30" rx="6"/><text x="751" y="260" text-anchor="middle" style="font-size:12px">같은 속도로 맞추기</text>
+  <rect class="n" x="664" y="278" width="84" height="30" rx="6"/><text x="706" y="298" text-anchor="middle" style="font-size:12px">실행 취소</text>
+  <rect class="n" x="754" y="278" width="84" height="30" rx="6"/><text x="796" y="298" text-anchor="middle" style="font-size:12px">JSON</text>
+</svg>
