@@ -34,4 +34,4 @@
 - v0.1 (2026-11-08): 연출 기획서 v0.2에서 분리해 최초 작성
 
 ## 게시 링크 (Artifact, 비공개)
-- 편집 툴 기획서: https://claude.ai/artifact/QGgSYjqvML3ccUusSMXZuD
+- 편집 툴 기획서: https://claude.ai/artifact/JGXZ6HSCYqP6DmyiQdHx3b

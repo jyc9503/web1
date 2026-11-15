@@ -94,7 +94,7 @@
 
 ## 게시 링크 (Artifact, 비공개)
 - 한 장 요약: https://claude.ai/artifact/ATo7ETCCrbn7aebjtBF69D
-- 기획서: https://claude.ai/artifact/BrnH1M2jYhpmMcxwhHe81i
-- 화면 시안: https://claude.ai/artifact/XstMgsdPcXZdAXeZgNJonY
-- 동작 프로토타입: https://claude.ai/artifact/57UeCq3yk8sqn26ctpK48s
-- 편집 툴 기획서: https://claude.ai/artifact/QGgSYjqvML3ccUusSMXZuD
+- 기획서: https://claude.ai/artifact/Pyeta9tKgdRzDXNPwvG8Lq
+- 화면 시안: https://claude.ai/artifact/JYmuQfx4EmzcSKiCpXDR8f
+- 동작 프로토타입: https://claude.ai/artifact/PG9AVSaonaYP694yNCsEzZ
+- 편집 툴 기획서: https://claude.ai/artifact/JGXZ6HSCYqP6DmyiQdHx3b
