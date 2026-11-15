@@ -466,7 +466,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">R-47</td>
-<td>사라지는 핀은 도착하고 <code>MAP_PIN_HOLD_MS</code>(400) 머문 뒤 사라지기 시작한다. 그 핀이 이번 연출에서 그린 궤적도 함께 사라진다.</td>
+<td>사라지는 핀은 도착하고 <code>MAP_PIN_HOLD_MS</code>(400) 머문 뒤 사라지기 시작한다. 그 핀이 이번 연출에서 그린 궤적도 함께 사라진다. 사라짐이 마무리 대기보다 늦게 끝나면 연출 종료를 그때까지 미룬다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
@@ -553,7 +553,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">R-49</td>
-<td>이어가기 연출의 핀 목록에 없는 앞 연출 핀은 0ms부터 <code>MAP_PIN_FADEOUT_MS</code>(400) 동안 사라진다. (툴은 앞 연출 핀을 모두 가져오므로, 기획자가 일부러 지운 핀만 해당한다.)</td>
+<td>이어가기 연출의 핀 목록에 없는 앞 연출 핀은 0ms부터 <code>MAP_PIN_FADEOUT_MS</code>(400) 동안 사라진다. 맵이 닫혀 있다가 일반 등장하는 경우에는 처음부터 보이지 않는다. (툴은 앞 연출 핀을 모두 가져오므로, 기획자가 일부러 지운 핀만 해당한다.)</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">

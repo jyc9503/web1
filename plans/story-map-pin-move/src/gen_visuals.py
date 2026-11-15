@@ -290,7 +290,7 @@ def mockups():
         ("① 핀 등장", "장면 1 · 0ms", game(S1, 0.8, modes=S1_PLACES), "배경과 장소 마크가 보이고 핀이 시작 위치에 서 있다. 앞으로 갈 경로는 게임에서 보이지 않는다. 탑은 이 장면에서 숨김이다."),
         ("② 이동 중", "장면 1 · 1500ms", game(S1, 2.3, modes=S1_PLACES), "핀이 지나온 구간만 점선으로 남는다. 이동 중인 핀에 진행 방향 삼각형이 붙는다."),
         ("③ 전원 도착", "장면 1 · 3200ms", game(S1, 4.0, modes=S1_PLACES), "모든 핀이 장소에 도착했다. 도착 표시 없이 장소 마크로 위치를 읽는다. 1000ms 뒤 대사가 이어지고 맵은 뒤에 남는다."),
-        ("④ 이어가기", "장면 2 · 1000ms", game(S2, 1.0, PREV, True, modes=S2_PLACES), "대사 뒤 map_play로 장면 2가 열린 맵에서 바로 이어진다. 장면 1 궤적은 흐린 점선. B는 A가 도착하면 출발한다. 이 장면에서 새로 보이게 된 탑은 0ms에 나타났다."),
+        ("④ 이어가기", "장면 2 · 1000ms", game(S2, 1.0, PREV, True, modes=S2_PLACES), "대사 뒤 스토리 행의 맵 열기로 장면 2가 열린 맵에서 바로 이어진다. 장면 1 궤적은 흐린 점선. B는 A가 도착하면 출발한다. 이 장면에서 새로 보이게 된 탑은 0ms에 나타났다."),
     ]
     cards = "".join(f'<figure class="card"><div class="shot">{s}</div><figcaption><b>{n}</b> <span class="mono">{m}</span><p>{d}</p></figcaption></figure>' for n, m, s, d in cuts)
     css = """
@@ -321,7 +321,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
 """
     html = HEAD.format(title="맵 핀 이동 화면 시안", layout="Layout: 장면 컷 4장, 게임/편집 보기 비교, 해부도, 리소스 요청표를 위에서 아래로.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
-  <span class="tag">카제나 · 스토리 연출 · v0.8 시안</span>
+  <span class="tag">카제나 · 스토리 연출 · v0.9 시안</span>
   <h1>맵 핀 이동 화면 시안</h1>
   <p class="sub">아트팀과 배경 담당에게 보여주는 장면 컷과 리소스 요청 내용입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다. 화면은 가로 16:9로 확정했고, 스토리 화면의 실제 UI(대사창 위치 등)는 확인 전입니다. <span class="badge b-warn">검증필요</span></p>
 
@@ -405,7 +405,7 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
     html += f"""<div class="wrap">
   <header class="top">
     <div>
-      <span class="tag">카제나 · 스토리 연출 · v0.8</span>
+      <span class="tag">카제나 · 스토리 연출 · v0.9</span>
       <h1>맵 핀 이동 연출</h1>
       <p class="one">스토리 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 움직여, 누가 어디서 어디로 갔는지 보여준다. 스토리 테이블로 맵을 열고 닫으며, 열린 맵에서 다음 이동을 이어간다.</p>
     </div>
@@ -425,7 +425,7 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
           <li><span class="id">R-07</span><span>자동 곡선 + 필요한 점만 베지어 핸들</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-09</span><span>게임에는 지나온 구간만 점선. 앞 경로·도착 지점은 툴에서만</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-21</span><span>장소 마크는 연출마다 보임/숨김</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-26</span><span>맵은 map_close 전까지 대사 뒤에 남음</span><span class="badge b-ok">확정</span></li>
+          <li><span class="id">R-26</span><span>맵은 스토리 행의 맵 닫기 전까지 대사 뒤에 남음</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-22</span><span>열린 맵에서 이어가기, 툴에서 버튼 하나로 가져옴</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-08</span><span>이동 시간은 속도 프리셋으로 자동 계산, 출발 조건으로 순서 지정</span><span class="badge b-ok">확정</span></li>
           <li><span class="id">R-37</span><span>좌표는 배경 px 정수, 시간은 ms, 0ms = 이동 시작</span><span class="badge b-ok">확정</span></li>
@@ -434,17 +434,17 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
       <section class="block">
         <h2>핵심 수치 <span class="badge b-warn" style="margin-left:6px">검증필요</span></h2>
         <div class="stats">
-          <div><b>8</b><span>핀 최대</span></div>
-          <div><b>12</b><span>핀당 점</span></div>
           <div><b>500</b><span>걷기 px/초</span></div>
           <div><b>800</b><span>달리기 px/초</span></div>
+          <div><b>400</b><span>페이드 ms</span></div>
+          <div><b>300</b><span>탭 완료 ms</span></div>
         </div>
       </section>
       <section class="block">
         <h2>함께 보는 문서</h2>
         <ul class="rules">
           <li><span class="id">툴</span><span>「맵 이동 연출 편집 툴」: 경로 그리기, 장소 마크, 이어가기</span><span></span></li>
-          <li><span class="id">테이블</span><span>기획서 「테이블 설계」: 테이블 8개, 설정 키, 예시 데이터</span><span></span></li>
+          <li><span class="id">테이블</span><span>기획서 「데이터 설계」: 엑셀 테이블 5개 + 연출 JSON, 설정 키 28개</span><span></span></li>
         </ul>
       </section>
     </div>
@@ -454,7 +454,7 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
     <h2>남은 확인</h2>
     <div class="decide">
       <div class="block"><h3><span class="id">R-45</span>로그 다시 재생 <span class="badge b-warn">회사 확인</span></h3><p><b>제안</b> 로그의 「위치 정보 확인」을 누르면 팝업으로 그 연출을 다시 재생. 기존 로그 UI에 넣을 수 있는지 확인.</p></div>
-      <div class="block"><h3><span class="id">R-32</span>스토리 명령 <span class="badge b-warn">회사 확인</span></h3><p><b>제안</b> <code>map_play &lt;ID&gt;</code>, <code>map_close</code>. 기존 명령 규칙에 맞춰 이름을 정한다.</p></div>
+      <div class="block"><h3><span class="id">R-46</span>스토리 테이블 열 <span class="badge b-warn">회사 확인</span></h3><p><b>제안</b> 스토리 행에 <code>link_map_scene_id</code>, <code>map_close</code> 열 2개를 더한다. 이름과 형식은 회사 규칙에 맞춘다.</p></div>
       <div class="block"><h3><span class="id">회의</span>프로그램실 안건 <span class="badge b-warn">회의</span></h3><p><b>안건</b> 툴 플랫폼, 편의 기능 범위(경로 복사·뒤집기·이어서 미리보기·단축키), 자유 그리기 필요 여부.</p></div>
       <div class="block"><h3><span class="id">R-16</span>카메라 연출 <span class="badge b-ok">나중에</span></h3><p><b>예정</b> 이번 버전은 고정. 기능을 다 만든 뒤 다시 검토한다.</p></div>
     </div>
