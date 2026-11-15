@@ -135,13 +135,16 @@ td code{white-space:nowrap}
 <a href="#s2">화면 구성</a>
 <a href="#s3">보기 모드</a>
 <a href="#s4">편집 조작 (실수 방지)</a>
-<a href="#s5">핀 설정</a>
-<a href="#s6">경로 그리기</a>
-<a href="#s7">장소 마크 편집</a>
-<a href="#s8">이어가기</a>
-<a href="#s9">저장과 검증</a>
-<a href="#s10">회사 확인·회의 안건</a>
-<a href="#s11">변경 이력</a>
+<a href="#s5">연출 관리</a>
+<a href="#s6">핀 설정</a>
+<a href="#s7">경로 그리기</a>
+<a href="#s8">장소 마크 편집</a>
+<a href="#s9">이어가기</a>
+<a href="#s10">데이터 입출력</a>
+<a href="#s11">저장과 검증</a>
+<a href="#s12">작업 목록</a>
+<a href="#s13">검증·미결 목록</a>
+<a href="#s14">변경 이력</a>
     <div class="legend">
       <span><span class="badge b-ok">확정</span> 그대로 구현</span>
       <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
@@ -153,36 +156,85 @@ td code{white-space:nowrap}
     <header class="doc">
       <span class="sample-tag">카오스 제로 나이트메어 · 초안</span>
       <h1>맵 이동 연출 편집 툴</h1>
-      <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기와 저장을 다룬다.</p>
+      <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기, 데이터 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.11 초안</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.12 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">13건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">35건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
-<p>「스토리 맵 핀 이동 연출」(<code>plans/story-map-pin-move/</code>)의 데이터를 만드는 편집 툴이다. 연출 규칙(R-xx)은 그 기획서를 따르고, 이 문서는 <strong>툴에서 어떻게 만드는지</strong>만 다룬다.</p>
+<p>「스토리 맵 핀 이동 연출」(<code>plans/story-map-pin-move/</code>)의 데이터를 만드는 편집 툴이다. 연출 규칙(R-xx), 계산식(F-xx), 데이터 형식은 그 기획서(이하 "연출 기획서")를 따르고, 이 문서는 <strong>툴에서 어떻게 만드는지</strong>만 다룬다.</p>
 <ul>
 <li><strong>사용자</strong>: 스토리 연출을 만드는 기획자</li>
+<li><strong>대상 기기</strong>: PC(마우스와 키보드). 프로토타입이 폰 터치로도 조작되는 것은 기획 검토를 폰에서 하기 위한 것이고, 툴 요구가 아니다. 터치 기기 지원이 필요해지면 더블탭과 길게 누르기를 같은 규칙으로 쓴다. <code>검증필요</code></li>
 <li><strong>목표</strong>: 연출 하나를 5분 안에 만든다. 점 몇 개를 찍으면 곡선이 나오고, 앞 연출에서 이어갈 때는 버튼 하나로 시작 상태가 채워진다. <code>검증필요</code></li>
-<li><strong>원칙</strong>: 툴에서 보는 미리보기와 게임 화면이 같아야 한다. 결과는 연출 기획서 「테이블 설계」의 테이블로 저장한다.</li>
+<li><strong>원칙</strong>: 툴에서 보는 미리보기와 게임 화면이 같아야 한다. 같은 계산식(연출 기획서 「계산 규칙」)을 쓴다.</li>
+<li><strong>결과물</strong>: 연출 1건당 JSON 1개와 엑셀 테이블 행(<code>map_scene</code>, <code>map_place</code>, <code>map_background</code>). 형식은 연출 기획서 「데이터 설계」에 있다.</li>
 <li><strong>단위</strong>: 툴 화면의 좌표·길이는 배경 px, 시간은 ms, 속도는 px/초로 표시한다(연출 R-05, R-37, R-41).</li>
-<li>동작 프로토타입(<code>plans/story-map-pin-move/proto/</code>)이 이 문서의 주요 기능을 구현해 두었다.</li>
+<li>동작 프로토타입(<code>plans/story-map-pin-move/proto/</code>)의 「편집 툴」 탭이 이 문서의 주요 기능을, 「데이터」 탭이 저장 형식을 구현해 두었다.</li>
+<li>이 문서는 회사 밖에서 회사 데이터 없이 썼다. 테이블·열·필드 이름은 자리표시다.</li>
 </ul>
+<h3>번호 체계</h3>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>머리글자</th>
+<th>뜻</th>
+<th>머리글자</th>
+<th>뜻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V</td>
+<td>보기 모드</td>
+<td>M</td>
+<td>장소 마크 편집</td>
+</tr>
+<tr>
+<td>E</td>
+<td>편집 조작</td>
+<td>C</td>
+<td>이어가기</td>
+</tr>
+<tr>
+<td>S</td>
+<td>연출 관리</td>
+<td>D</td>
+<td>데이터 입출력</td>
+</tr>
+<tr>
+<td>K</td>
+<td>핀 설정</td>
+<td>T</td>
+<td>저장·검증 (T-01, 02, 09~12는 연출 기획서에 있음)</td>
+</tr>
+<tr>
+<td>P</td>
+<td>경로 그리기</td>
+<td>CK</td>
+<td>저장 전 검사 항목</td>
+</tr>
+</tbody>
+</table></div>
+<p>지운 번호는 다시 쓰지 않는다(E-04, E-09는 v0.9에서 삭제).</p>
 </section>
 <section id="s2"><h2><span class="sec">§2</span>화면 구성</h2>
-<div class="flow"><svg viewBox="0 0 860 350" role="img" aria-label="편집 툴 화면 구성: 왼쪽 연출 목록, 가운데 캔버스와 재생 바, 오른쪽 속성 패널">
-  <rect class="n" x="10" y="10" width="150" height="330" rx="8"/>
-  <text x="24" y="34">연출 목록</text>
-  <rect class="n start" x="20" y="46" width="130" height="30" rx="6"/><text class="sm" x="30" y="66">장면 1</text>
-  <rect class="n" x="20" y="82" width="130" height="30" rx="6"/><text class="sm" x="30" y="102">↳ 장면 2 (이어가기)</text>
-  <rect class="n" x="20" y="118" width="130" height="30" rx="6"/><text class="sm" x="30" y="138">↳ 장면 3 (이어가기)</text>
-  <rect class="n mid" x="20" y="296" width="130" height="34" rx="6"/><text x="85" y="318" text-anchor="middle" style="font-size:12px">앞 연출에서 이어가기</text>
+<div class="flow"><svg viewBox="0 0 860 380" role="img" aria-label="편집 툴 화면 구성: 왼쪽 연출 목록, 가운데 캔버스와 재생 바·타임라인 막대, 오른쪽 속성 패널과 검사 결과">
+  <rect class="n" x="10" y="10" width="150" height="360" rx="8"/>
+  <text x="24" y="34">연출 목록</text><text class="sm" x="96" y="34">C03_MOVE</text>
+  <rect class="n start" x="20" y="46" width="130" height="30" rx="6"/><text class="sm" x="30" y="66">30001 장면 1</text>
+  <rect class="n" x="20" y="82" width="130" height="30" rx="6"/><text class="sm" x="30" y="102">↳ 30002 장면 2</text>
+  <rect class="n" x="20" y="118" width="130" height="30" rx="6"/><text class="sm" x="30" y="138">↳ 30003 장면 3</text>
+  <rect class="n" x="20" y="288" width="130" height="30" rx="6"/><text x="85" y="308" text-anchor="middle" style="font-size:12px">새 연출 · 복제</text>
+  <rect class="n mid" x="20" y="326" width="130" height="34" rx="6"/><text x="85" y="348" text-anchor="middle" style="font-size:12px">앞 연출에서 이어가기</text>
 
   <rect x="172" y="10" width="468" height="263" rx="8" fill="#1a2233"/>
   <rect x="182" y="20" width="150" height="26" rx="6" fill="rgba(10,12,18,.7)"/>
   <text x="197" y="38" style="font-size:12px;fill:#fff">편집 보기</text><text x="262" y="38" style="font-size:12px;fill:#9aa6bd">게임 보기</text>
+  <rect x="540" y="20" width="90" height="26" rx="6" fill="rgba(10,12,18,.7)"/><text x="552" y="38" style="font-size:12px;fill:#e6e9f2">100% · 맞춤</text>
   <polyline points="220,220 290,170 370,185 470,110 560,80" fill="none" stroke="#e2576b" stroke-width="2.5" stroke-dasharray="8 6"/>
   <circle cx="560" cy="80" r="10" fill="none" stroke="#e2576b" stroke-width="2.5"/>
   <g fill="#0e1118" stroke="#e2576b" stroke-width="2.5"><circle cx="290" cy="170" r="7"/><circle cx="370" cy="185" r="7"/><circle cx="470" cy="110" r="7"/></g>
@@ -192,26 +244,31 @@ td code{white-space:nowrap}
   <circle cx="560" cy="80" r="3" fill="#fff"/><text x="572" y="66" style="font-size:11px;fill:#e6e9f2">관측소</text>
   <circle cx="220" cy="220" r="3" fill="#fff"/><text x="200" y="250" style="font-size:11px;fill:#e6e9f2">정거장</text>
 
-  <rect class="n" x="172" y="283" width="468" height="57" rx="8"/>
-  <rect class="n start" x="184" y="296" width="54" height="30" rx="6"/><text x="211" y="316" text-anchor="middle" style="font-size:12px">재생</text>
-  <text class="sm" x="252" y="316">처음 · 0.5x 1x 2x</text>
-  <line x1="370" y1="311" x2="560" y2="311" stroke="var(--line)" stroke-width="4" stroke-linecap="round"/>
-  <line x1="370" y1="311" x2="440" y2="311" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
-  <text class="sm" x="570" y="316">1.8 / 5.0초</text>
+  <rect class="n" x="172" y="283" width="468" height="87" rx="8"/>
+  <rect class="n start" x="184" y="294" width="54" height="30" rx="6"/><text x="211" y="314" text-anchor="middle" style="font-size:12px">재생</text>
+  <text class="sm" x="250" y="314">처음 · 배속</text>
+  <line x1="330" y1="309" x2="540" y2="309" stroke="var(--line)" stroke-width="4" stroke-linecap="round"/>
+  <line x1="330" y1="309" x2="410" y2="309" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+  <text class="sm" x="550" y="314">1200 / 4200ms</text>
+  <text class="sm" x="184" y="343">1. A</text><rect x="226" y="335" width="150" height="8" rx="4" fill="#e2576b"/>
+  <text class="sm" x="184" y="360">2. B</text><rect x="270" y="352" width="150" height="8" rx="4" fill="#3d8bfd"/>
+  <text class="sm" x="470" y="352">타임라인 막대 (보기 전용)</text>
 
-  <rect class="n" x="652" y="10" width="198" height="330" rx="8"/>
-  <rect class="n start" x="664" y="22" width="84" height="28" rx="6"/><text x="706" y="41" text-anchor="middle" style="font-size:12px">경로</text>
+  <rect class="n" x="652" y="10" width="198" height="360" rx="8"/>
+  <rect class="n start" x="664" y="22" width="84" height="28" rx="6"/><text x="706" y="41" text-anchor="middle" style="font-size:12px">핀·경로</text>
   <rect class="n" x="754" y="22" width="84" height="28" rx="6"/><text x="796" y="41" text-anchor="middle" style="font-size:12px">장소 마크</text>
-  <text class="sm" x="664" y="74">핀: [A] [B] [C] [+]</text>
-  <text class="sm" x="664" y="98">그리기: 점 찍기 | 자유 그리기</text>
-  <text class="sm" x="664" y="122">형태: 곡선 | 직선</text>
-  <text class="sm" x="664" y="146">캐릭터 · 지연 · 이동 시간</text>
-  <text class="sm" x="664" y="170">이징 · 궤적 · 도착 후</text>
-  <text class="sm" x="664" y="194">길이 0.84 · 속도 0.35/초</text>
-  <text class="sm" x="664" y="218">☑ 장소 마크 스냅</text>
-  <rect class="n" x="664" y="240" width="174" height="30" rx="6"/><text x="751" y="260" text-anchor="middle" style="font-size:12px">같은 속도로 맞추기</text>
-  <rect class="n" x="664" y="278" width="84" height="30" rx="6"/><text x="706" y="298" text-anchor="middle" style="font-size:12px">실행 취소</text>
-  <rect class="n" x="754" y="278" width="84" height="30" rx="6"/><text x="796" y="298" text-anchor="middle" style="font-size:12px">JSON</text>
+  <text class="sm" x="664" y="74">핀: [1] [2] [3] [+]</text>
+  <text class="sm" x="664" y="96">Actor · 이름표 · 등장</text>
+  <text class="sm" x="664" y="118">속도 프리셋 · 출발 조건</text>
+  <text class="sm" x="664" y="140">형태: 곡선 | 직선 · 이징</text>
+  <text class="sm" x="664" y="162">궤적 · 도착 후</text>
+  <text class="sm" x="664" y="184">1632px · 800px/초 · 2000ms</text>
+  <text class="sm" x="664" y="206">☑ 장소 마크에 붙이기</text>
+  <rect class="n" x="664" y="220" width="84" height="30" rx="6"/><text x="706" y="240" text-anchor="middle" style="font-size:12px">핸들 꺼내기</text>
+  <rect class="n" x="754" y="220" width="84" height="30" rx="6"/><text x="796" y="240" text-anchor="middle" style="font-size:12px">점 삭제</text>
+  <rect class="n" x="664" y="258" width="84" height="30" rx="6"/><text x="706" y="278" text-anchor="middle" style="font-size:12px">실행 취소</text>
+  <rect class="n" x="754" y="258" width="84" height="30" rx="6"/><text x="796" y="278" text-anchor="middle" style="font-size:12px">저장</text>
+  <rect class="n mid" x="664" y="300" width="174" height="58" rx="6"/><text x="676" y="320" style="font-size:12px">검사 결과</text><text class="sm" x="676" y="340">오류 0 · 경고 1</text>
 </svg>
 </div>
 <div class="tablewrap"><table>
@@ -225,7 +282,7 @@ td code{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td>연출 목록</td>
-<td>묶음(<code>group</code>)별 연출 맵 목록, 순번 순서. 이어가기로 연결된 연출은 들여쓰기로 표시</td>
+<td>묶음(<code>tool_folder</code>)별 연출 맵 목록, <code>sort_order</code> 순서. 이어가기로 연결된 연출은 들여쓰기로 표시</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -239,8 +296,8 @@ td code{white-space:nowrap}
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
-<td>레이어 탭</td>
-<td>경로 / 장소 마크</td>
+<td>편집 대상 탭</td>
+<td>핀·경로 / 장소 마크</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -250,8 +307,13 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td>재생 바</td>
-<td>재생, 처음으로, 배속, 시간 이동</td>
+<td>재생, 처음으로, 배속, 시간 이동, 핀별 타임라인 막대</td>
 <td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td>검사 결과</td>
+<td>오류와 경고 목록. 줄을 누르면 해당 핀·점·장소를 선택한다</td>
+<td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -291,11 +353,21 @@ td code{white-space:nowrap}
 <td>대사창 영역 점선 상자를 켜고 끌 수 있다(기본 꺼짐). 맵이 대사 뒤에 남을 때(연출 R-26) 가려지는 곳을 확인하는 용도이며 저장 경고는 없다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
+<tr data-s="warn">
+<td class="id">V-06</td>
+<td><strong>확대·이동</strong>: 캔버스를 25~400%로 확대·축소하고(마우스 휠), 확대한 상태에서 끌어서 이동한다(<code>Space</code> + 끌기 또는 가운데 버튼). 「맞춤」 버튼은 배경 전체가 보이게 되돌린다. 확대해도 점·핸들·핀의 화면 크기는 그대로다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">V-07</td>
+<td>캔버스 아래에 커서 위치의 배경 좌표(px)를 표시한다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
 </tbody>
 </table></div>
 </section>
 <section id="s4"><h2><span class="sec">§4</span>편집 조작 (실수 방지)</h2>
-<p>편집 화면에서 "고르려고 눌렀는데 점이 찍히는" 실수를 막는 규칙이다. <strong>한 번 누르기는 선택, 더블클릭은 생성</strong>으로 나눈다. 도구를 바꿀 필요가 없다.</p>
+<p>편집 화면에서 "고르려고 눌렀는데 점이 찍히는" 실수를 막는 규칙이다. <strong>한 번 누르기는 선택, 더블클릭은 생성</strong>으로 나눈다. 도구를 바꿀 필요가 없다. <code>검증필요</code> 항목은 프로토타입에 구현되어 있으며, 써 본 뒤 확정한다.</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -307,7 +379,7 @@ td code{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td class="id">E-01</td>
-<td><strong>생성은 더블클릭</strong>: 점과 장소 마크는 더블클릭(폰은 더블탭, 같은 자리 10px 안에서 350ms 안)으로만 생긴다. 한 번 누르기는 선택만 한다.</td>
+<td><strong>생성은 더블클릭</strong>: 점과 장소 마크는 더블클릭(같은 자리 10px 안에서 350ms 안)으로만 생긴다. 한 번 누르기는 선택만 한다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
@@ -353,7 +425,50 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s5"><h2><span class="sec">§5</span>핀 설정</h2>
+<section id="s5"><h2><span class="sec">§5</span>연출 관리</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>요구</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="warn">
+<td class="id">S-01</td>
+<td><strong>새 연출</strong>: 배경을 고르면 빈 연출을 만든다. id는 D-05 규칙으로 채우고 사용자가 고칠 수 있다. 묶음(<code>tool_folder</code>)은 지금 보고 있는 묶음을 따른다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">S-02</td>
+<td><strong>연출 복제</strong>: 선택한 연출을 새 id로 복사한다. 이어가기 연결(<code>link_prev_map_scene_id</code>)도 그대로 복사한다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">S-03</td>
+<td><strong>연출 삭제</strong>: 확인을 받고 지운다. 다른 연출이 앞 연출로 참조 중이면 지울 수 없다(C-08). 스토리 테이블이 이 연출을 가리키는지는 툴이 알 수 없으므로 "스토리 테이블에서 쓰는지 확인하세요"를 함께 안내한다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">S-04</td>
+<td><strong>목록 순서와 묶음</strong>: 연출을 끌어서 순서를 바꾸면 <code>sort_order</code>를 다시 매긴다. 묶음 이름을 바꾸거나 다른 묶음으로 옮길 수 있다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">S-05</td>
+<td><strong>메모</strong>: 연출마다 한 줄 메모(<code>memo</code>)를 적는다. 목록에 함께 보인다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">S-06</td>
+<td><strong>배경 등록</strong>: 배경 이미지를 고르면 원본 해상도를 읽어 <code>map_background</code> 행을 만든다(D-06).</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="s6"><h2><span class="sec">§6</span>핀 설정</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -365,12 +480,12 @@ td code{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td class="id">K-01</td>
-<td>핀 대상은 회사 Actor 테이블에서 검색해 고른다(캐릭터, 함대, 오브젝트 등). 이름과 아이콘은 Actor 테이블에서 가져와 보여준다. 저장 열: <code>ActorID</code>.</td>
+<td>핀 대상은 회사 Actor 테이블에서 검색해 고른다(캐릭터, 함대, 오브젝트 등). 이름과 아이콘은 Actor 테이블에서 가져와 보여준다. 저장: <code>actor_id</code>.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">K-02</td>
-<td>이름표 글자를 문자열 키로 바꾸거나 끌 수 있다. 비워 두면 Actor 이름을 쓴다. 저장 열: <code>LabelKey</code>, <code>ShowLabel</code>.</td>
+<td>이름표 글자를 문자열 키로 바꾸거나 끌 수 있다. 비워 두면 Actor 이름을 쓴다. 저장: <code>label_key</code>, <code>show_label</code>.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -380,7 +495,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">K-04</td>
-<td><strong>출발 조건</strong>: 시간 / 다른 핀 출발 후 / 다른 핀 도착 후 + 오프셋(ms). 기준 핀은 같은 연출의 핀 목록에서 고른다. 저장 열: <code>StartType</code>, <code>StartPinNo</code>, <code>StartOffsetMs</code>.</td>
+<td><strong>출발 조건</strong>: 시간 / 다른 핀 출발 후 / 다른 핀 도착 후 + 오프셋(ms). 기준 핀은 같은 연출의 핀 목록에서 고른다. 저장: <code>start_type</code>, <code>start_pin_no</code>, <code>start_offset_ms</code>.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -390,13 +505,23 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">K-06</td>
-<td><strong>등장 시점</strong>: 처음부터(기본) / 출발할 때. 출발할 때 등장하는 핀은 편집 보기에서 반투명으로 보인다. 저장 열: <code>ShowFrom</code>.</td>
+<td><strong>등장 시점</strong>: 처음부터(기본) / 출발할 때. 출발할 때 등장하는 핀은 편집 보기에서 반투명으로 보인다. 저장: <code>show_from</code>.</td>
 <td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">K-07</td>
+<td><strong>핀 삭제</strong>: 핀을 지우면 그 핀을 기준으로 삼던 다른 핀의 출발 조건은 "시간, 0ms"로 바뀌고 그 사실을 안내한다. 이어가기 연출에서 앞 연출 핀을 지우면 "이 핀은 연출이 시작될 때 사라집니다"(연출 R-49)를 안내한다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">K-08</td>
+<td><strong>핀 색</strong>: 기본은 핀 번호별 팔레트 색이다. 필요하면 핀마다 색을 직접 고른다. 저장: <code>color</code>.</td>
+<td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
 </table></div>
 </section>
-<section id="s6"><h2><span class="sec">§6</span>경로 그리기</h2>
+<section id="s7"><h2><span class="sec">§7</span>경로 그리기</h2>
 <p>경로는 <strong>점(웨이포인트)을 찍어서</strong> 만든다. 직선·곡선은 그리는 방법이 아니라 경로의 속성이다. 같은 점으로 직선과 곡선을 오가며 비교할 수 있다.</p>
 <h3>그리기 방식</h3>
 <div class="tablewrap"><table>
@@ -455,7 +580,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 <div class="note dev"><p><strong>곡선 방식: 자동 곡선 + 필요한 점만 베지어 핸들</strong></p>
-<p>모든 점에 베지어 핸들을 두면 모양은 정확하지만 점마다 손이 간다. 자동 곡선(Catmull-Rom)은 점만 찍으면 되지만 모양을 세밀하게 잡기 어렵다. 그래서 기본은 자동 곡선으로 빠르게 만들고, 모양이 마음에 들지 않는 점에서만 핸들을 꺼내 다듬는다. 자동 곡선은 내부적으로 핸들을 자동 계산한 베지어와 같으므로, 핸들을 꺼내는 순간 모양이 바뀌지 않고 그 자리에서 조절이 시작된다.</p></div>
+<p>모든 점에 베지어 핸들을 두면 모양은 정확하지만 점마다 손이 간다. 자동 곡선(Catmull-Rom)은 점만 찍으면 되지만 모양을 세밀하게 잡기 어렵다. 그래서 기본은 자동 곡선으로 빠르게 만들고, 모양이 마음에 들지 않는 점에서만 핸들을 꺼내 다듬는다. 자동 곡선은 내부적으로 핸들을 자동 계산한 베지어와 같으므로(연출 F-02), 핸들을 꺼내는 순간 모양이 바뀌지 않고 그 자리에서 조절이 시작된다.</p></div>
 <h3>점 편집</h3>
 <div class="tablewrap"><table>
 <thead>
@@ -476,25 +601,25 @@ td code{white-space:nowrap}
 <tr data-s="ok">
 <td class="id">P-07</td>
 <td>점 이동 / 삭제</td>
-<td>선택 도구에서 점을 끌어서 옮긴다(E-03 문턱). 점을 선택하고 「선택한 점 삭제」 또는 <code>Delete</code>로 지운다. 폰은 길게 누르면 삭제 메뉴가 나온다.</td>
+<td>점을 끌어서 옮긴다(E-03 문턱). 점을 선택하고 「선택한 점 삭제」 또는 <code>Delete</code>로 지운다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="tbd">
 <td class="id">P-08</td>
 <td>자유 그리기 단순화</td>
-<td>자유 그리기(P-02)를 넣을 때만 필요하다. 넣는다면 Douglas-Peucker 방식, 허용 오차 <code>MAP_TOOL_SIMPLIFY_PX</code>(배경 16px).</td>
+<td>자유 그리기(P-02)를 넣을 때만 필요하다. 넣는다면 Douglas-Peucker 방식, 허용 오차 <code>MAP_TOOL_SIMPLIFY_PX</code>(16).</td>
 <td><span class="badge b-tbd">미정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">P-09</td>
 <td>장소 마크 스냅</td>
-<td>점을 장소 마크 근처(<code>MAP_TOOL_SNAP_PX</code>, 배경 40px 이내)에 놓으면 마크에 붙는다. 붙은 점은 좌표 대신 장소 ID로 저장되어, 장소를 옮기면 경로도 따라간다(연출 R-40). 붙은 점은 다이아몬드 모양으로 표시한다. 켜고 끌 수 있다(기본 켬).</td>
+<td>점을 장소 마크 근처(<code>MAP_TOOL_SNAP_PX</code>(40) 이내)에 놓으면 마크에 붙는다. 붙은 점은 좌표 대신 장소 id로 저장되어, 장소를 옮기면 경로도 따라간다(연출 R-40). 붙은 점은 다이아몬드 모양으로 표시한다. 켜고 끌 수 있다(기본 켬).</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">P-10</td>
 <td>시작점 고정</td>
-<td><code>FromPrev</code> 핀의 시작점은 앞 연출에서 온다. 저장하지 않고 자물쇠로 표시하며 옮기거나 지울 수 없다.</td>
+<td><code>from_prev</code> 핀의 시작점은 앞 연출에서 온다. 저장하지 않고 자물쇠로 표시하며 옮기거나 지울 수 없다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -518,13 +643,13 @@ td code{white-space:nowrap}
 <tr data-s="ok">
 <td class="id">P-17</td>
 <td>베지어 핸들</td>
-<td>점을 선택하고 「핸들 꺼내기」를 누르면 지금 곡선 모양 그대로 양쪽 핸들이 나온다. 핸들을 끌면 반대쪽도 대칭으로 움직이고, <code>Alt</code>를 누른 채 끌면 한쪽만 움직인다. 「자동으로 되돌리기」로 핸들을 지운다. 저장 열: <code>InX</code>, <code>InY</code>, <code>OutX</code>, <code>OutY</code>(점 기준 상대 px).</td>
+<td>점을 선택하고 「핸들 꺼내기」를 누르면 지금 곡선 모양 그대로 양쪽 핸들이 나온다. 핸들을 끌면 반대쪽도 대칭으로 움직이고, <code>Alt</code>를 누른 채 끌면 한쪽만 움직인다. 「자동으로 되돌리기」로 핸들을 지운다. 저장: <code>in_x</code>, <code>in_y</code>, <code>out_x</code>, <code>out_y</code>(점 기준 상대 px).</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
 <h3>속도</h3>
-<p>이동 시간은 기본적으로 속도 프리셋과 경로 길이로 자동 계산된다(연출 R-08). 경로를 고쳐도 속도는 그대로다. 특별한 장면만 시간을 직접 고정한다.</p>
+<p>이동 시간은 기본적으로 속도 프리셋과 경로 길이로 자동 계산된다(연출 R-08, F-05). 경로를 고쳐도 속도는 그대로다. 특별한 장면만 시간을 직접 고정한다.</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -536,23 +661,23 @@ td code{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td class="id">P-14</td>
-<td>속성 패널에 경로 길이(px), 속도(px/초), 계산된 이동 시간(ms)을 표시한다.</td>
+<td>속성 패널에 경로 길이(px), 속도(px/초), 계산된 이동 시간(ms), 출발 시각(ms)을 표시한다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">P-15</td>
-<td><strong>속도 프리셋</strong>: 핀마다 프리셋(걷기, 달리기, 고속)을 고른다. 기본은 걷기. 「시간 고정」을 켜면 이동 시간(ms)을 직접 입력하고 프리셋은 무시한다. 저장 열: <code>SpeedPreset</code>, <code>DurationMs</code>.</td>
+<td><strong>속도 프리셋</strong>: 핀마다 프리셋(걷기, 달리기, 고속)을 고른다. 기본은 걷기. 「시간 고정」을 켜면 이동 시간(ms)을 직접 입력하고 프리셋은 무시한다. 저장: <code>speed_preset_id</code>, <code>duration_ms</code>.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">P-16</td>
-<td>속도가 <code>MAP_SPEED_WARN_PX</code>(1600px/초)를 넘는 핀은 경고 표시한다(순간이동처럼 보임). 시간 고정 핀에서 주로 생긴다.</td>
+<td>속도가 <code>MAP_SPEED_WARN_PX</code>(1600)px/초를 넘는 핀은 경고 표시한다(순간이동처럼 보임). 시간 고정 핀에서 주로 생긴다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
 <h3>PC 단축키</h3>
-<p>툴이 PC에서 돌아갈 때의 단축키다. 넣기로 했고, 범위는 프로그램실과 논의해 확정한다. <code>검증필요</code></p>
+<p>넣기로 했고, 범위는 프로그램실과 논의해 확정한다. <code>검증필요</code></p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -566,8 +691,12 @@ td code{white-space:nowrap}
 <td>재생 / 일시정지</td>
 </tr>
 <tr>
+<td><code>Space</code> + 끌기</td>
+<td>캔버스 이동 (V-06)</td>
+</tr>
+<tr>
 <td><code>Alt</code> + 끌기</td>
-<td>장소 마크 스냅을 잠시 끔</td>
+<td>점: 장소 마크 스냅을 잠시 끔. 핸들: 한쪽만 움직임</td>
 </tr>
 <tr>
 <td><code>Ctrl+Z</code> / <code>Ctrl+Shift+Z</code></td>
@@ -582,7 +711,7 @@ td code{white-space:nowrap}
 <td>선택한 점 삭제</td>
 </tr>
 <tr>
-<td><code>Shift</code> + 클릭</td>
+<td><code>Shift</code> + 더블클릭</td>
 <td>직전 점에서 수평·수직·45° 방향으로 맞춰 찍기</td>
 </tr>
 <tr>
@@ -593,10 +722,14 @@ td code{white-space:nowrap}
 <td><code>G</code></td>
 <td>편집 보기 / 게임 보기 전환</td>
 </tr>
+<tr>
+<td><code>Ctrl+S</code></td>
+<td>저장</td>
+</tr>
 </tbody>
 </table></div>
 </section>
-<section id="s7"><h2><span class="sec">§7</span>장소 마크 편집</h2>
+<section id="s8"><h2><span class="sec">§8</span>장소 마크 편집</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -618,12 +751,12 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">M-03</td>
-<td>장소 마크 세트는 기획자가 이 툴에서 관리하고 <code>MapPlace</code> 테이블에 배경별로 저장한다. 같은 배경을 쓰는 모든 연출이 같은 세트를 쓴다. 한 연출에서 마크를 옮기면 그 장소를 지나는 모든 경로와 다른 연출에도 반영된다는 안내를 띄운다.</td>
+<td>장소 마크 세트는 기획자가 이 툴에서 관리하고 <code>map_place</code> 테이블에 배경별로 저장한다. 같은 배경을 쓰는 모든 연출이 같은 세트를 쓴다. 한 연출에서 마크를 옮기면 그 장소를 지나는 모든 경로와 다른 연출에도 반영된다는 안내를 띄운다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">M-04</td>
-<td>연출마다 마크의 보임/숨김을 체크로 고른다. <code>MapScenePlace</code> 테이블에 저장한다. 이어가기 연출에서는 앞 연출 끝에 보이던 마크가 자동으로 보이고, 바뀐 것만 저장한다. 숨긴 마크는 편집 보기에서 흐리게 보인다.</td>
+<td>연출마다 마크의 보임/숨김을 체크로 고른다. 연출 JSON의 <code>places</code>에 저장한다. 이어가기 연출에서는 앞 연출 끝에 보이던 마크가 자동으로 보이고, 바뀐 것만 저장한다. 숨긴 마크는 편집 보기에서 흐리게 보인다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -633,7 +766,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">M-06</td>
-<td>장소 속성 패널에 위치 입력칸 X, Y(배경 원본 px)를 둔다. 숫자를 고치면 화면에서 바로 움직이고, 끌어서 옮기면 숫자도 함께 바뀐다. 범위는 불러온 배경의 원본 해상도(0~Width, 0~Height)다.</td>
+<td>장소 속성 패널에 위치 입력칸 X, Y(배경 원본 px)를 둔다. 숫자를 고치면 화면에서 바로 움직이고, 끌어서 옮기면 숫자도 함께 바뀐다. 범위는 불러온 배경의 원본 해상도(0~<code>width</code>, 0~<code>height</code>)다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
@@ -641,10 +774,15 @@ td code{white-space:nowrap}
 <td>배경 이미지를 해상도가 다른 파일로 바꾸면, 그 배경의 장소 마크와 웨이포인트 좌표·핸들을 새 해상도 비율로 함께 바꿀지 묻는다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
+<tr data-s="warn">
+<td class="id">M-08</td>
+<td>마크를 지우면 그 장소에 붙어 있던 점은 그 자리의 좌표 점으로 바뀌고, 모든 연출의 보임/숨김 목록에서 빠진다. 지우기 전에 영향을 받는 연출 수를 알린다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
 </tbody>
 </table></div>
 </section>
-<section id="s8"><h2><span class="sec">§8</span>이어가기</h2>
+<section id="s9"><h2><span class="sec">§9</span>이어가기</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -661,12 +799,12 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">C-02</td>
-<td>가져오는 것: 배경, 앞 연출 ID, 그리고 앞 연출 핀마다 같은 번호·리소스·이름표·속도 설정의 <code>FromPrev</code> 핀. 시작 위치, 앞 궤적, 장소 마크 표시는 <strong>저장하지 않고</strong> 앞 연출에서 계산해 보여준다.</td>
+<td>가져오는 것: 배경, 앞 연출 id, 그리고 앞 연출 핀마다 같은 번호·Actor·이름표·속도 설정의 <code>from_prev</code> 핀. 시작 위치, 앞 궤적, 장소 마크 표시는 <strong>저장하지 않고</strong> 앞 연출에서 계산해 보여준다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">C-03</td>
-<td>저장하는 이어가기 정보는 <code>PrevSceneID</code> 하나다(연출 R-27).</td>
+<td>저장하는 이어가기 정보는 <code>map_scene.link_prev_map_scene_id</code> 하나다(연출 R-27).</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -681,23 +819,228 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">C-06</td>
-<td>앞 연출에서 사라짐(on_end: 사라짐)으로 끝난 핀은 가져오지 않는다.</td>
+<td>앞 연출에서 사라짐(<code>on_end</code>: <code>FADE</code>)으로 끝난 핀은 가져오지 않는다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">C-07</td>
-<td>별도 툴이라 스토리 순서를 모른다. 그래서 <code>MapScene</code>의 <code>Group</code>(예: C03_MOVE)과 <code>Order</code>로 툴 안에서 목록 순서를 관리한다. 스토리 테이블은 <code>map_play &lt;SceneID&gt;</code>로만 참조하고, 게임은 순서 정보 없이 "열린 맵"으로 이어가기를 판단한다.</td>
+<td>별도 툴이라 스토리 순서를 모른다. 그래서 <code>map_scene</code>의 <code>tool_folder</code>(예: C03_MOVE)와 <code>sort_order</code>로 툴 안에서 목록 순서를 관리한다. 스토리 테이블은 <code>link_map_scene_id</code>로만 참조하고, 게임은 순서 정보 없이 "열린 맵"으로 이어가기를 판단한다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">C-08</td>
-<td>다른 연출이 <code>PrevSceneID</code>로 참조 중인 연출은 지울 수 없다. 지우려면 뒤 연출의 연결을 먼저 끊는다.</td>
+<td>다른 연출이 앞 연출로 참조 중인 연출은 지울 수 없다. 지우려면 뒤 연출의 연결을 먼저 끊는다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
 </section>
-<section id="s9"><h2><span class="sec">§9</span>저장과 검증</h2>
+<section id="s10"><h2><span class="sec">§10</span>데이터 입출력</h2>
+<p>툴이 읽고 쓰는 데이터다. 형식은 연출 기획서 「데이터 설계」를 따른다. 툴 플랫폼이 정해지지 않았으므로 방식은 모두 제안이다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>요구</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="warn">
+<td class="id">D-01</td>
+<td><strong>읽기</strong>: 회사 데이터에서 Actor 테이블(id, 이름, 아이콘), 문자열 테이블, <code>map_background</code>, <code>map_place</code>, <code>map_scene</code>, <code>map_speed_preset</code>, <code>map_config</code>와 연출 JSON을 읽는다. Actor, 문자열, 속도 프리셋, 설정은 읽기만 한다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">D-02</td>
+<td><strong>연출 JSON 쓰기</strong>: 저장하면 연출 JSON 파일을 툴이 직접 쓴다. 기본값인 필드는 생략하고, 필드 순서와 들여쓰기(2칸)를 고정해 버전 관리에서 바뀐 줄만 보이게 한다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="tbd">
+<td class="id">D-03</td>
+<td><strong>엑셀 행 쓰기</strong>: <code>map_scene</code>, <code>map_place</code>, <code>map_background</code>의 바뀐 행을 반영하는 방식은 둘 중 하나로 정한다. (가) 툴이 엑셀 파일에 직접 쓴다. (나) 툴이 붙여넣기용 탭 구분 행을 내보내고 기획자가 엑셀에 붙여 넣는다.</td>
+<td><span class="badge b-tbd">미정</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">D-04</td>
+<td><strong>문자열 추가 목록</strong>: 새로 만들거나 고친 장소 이름·이름표를 (키, 원문) 목록으로 내보낸다. 문자열 테이블에 넣는 절차는 회사 규칙을 따른다. 아직 문자열 테이블에 없는 키는 툴이 보관한 원문으로 보여준다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">D-05</td>
+<td><strong>id 채번</strong>: 새 연출·장소·배경의 id는 그 테이블에서 쓰고 있는 가장 큰 id + 1을 제안한다. 사용자가 고칠 수 있고, 이미 있는 id는 막는다. id 범위는 회사 규칙을 따른다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">D-06</td>
+<td><strong>배경 등록</strong>: 배경 이미지를 고르면 <code>width</code>, <code>height</code>를 읽어 채운다. 비율이 16:9가 아니면 경고한다(CK-16).</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">D-07</td>
+<td><strong>저장 단위</strong>: 저장은 연출 단위다. 저장하지 않은 변경이 있는 연출은 목록에 표시하고, 닫거나 다른 연출로 넘어갈 때 저장할지 묻는다. 여러 사람이 같은 연출을 고칠 때의 충돌은 회사 버전 관리 방식에 맡긴다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">D-08</td>
+<td><strong>데이터 보기</strong>: 현재 연출의 엑셀 행(탭 구분)과 연출 JSON을 화면에서 보고 복사할 수 있다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+</tbody>
+</table></div>
+<h3>속성 패널과 저장 위치</h3>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>패널 항목</th>
+<th>입력 방식</th>
+<th>저장 위치</th>
+<th>비울 때</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Actor</td>
+<td>Actor 검색 선택</td>
+<td>JSON <code>pins[].actor_id</code></td>
+<td>필수. 이어가기 핀은 바꿀 수 없음</td>
+</tr>
+<tr>
+<td>이름표</td>
+<td>글자(원문)</td>
+<td>JSON <code>pins[].label_key</code> + 문자열 추가 목록</td>
+<td>Actor 이름</td>
+</tr>
+<tr>
+<td>이름표 표시</td>
+<td>체크</td>
+<td>JSON <code>pins[].show_label</code></td>
+<td>보임</td>
+</tr>
+<tr>
+<td>등장</td>
+<td>처음부터 / 출발할 때</td>
+<td>JSON <code>pins[].show_from</code></td>
+<td>처음부터</td>
+</tr>
+<tr>
+<td>속도</td>
+<td>프리셋 / 시간 고정</td>
+<td>JSON <code>pins[].speed_preset_id</code></td>
+<td>걷기</td>
+</tr>
+<tr>
+<td>이동 시간(ms)</td>
+<td>숫자 (시간 고정일 때만)</td>
+<td>JSON <code>pins[].duration_ms</code></td>
+<td>자동 계산</td>
+</tr>
+<tr>
+<td>출발 조건</td>
+<td>시간 / 다른 핀 출발 후 / 다른 핀 도착 후</td>
+<td>JSON <code>pins[].start_type</code></td>
+<td>시간</td>
+</tr>
+<tr>
+<td>기준 핀</td>
+<td>같은 연출의 핀</td>
+<td>JSON <code>pins[].start_pin_no</code></td>
+<td>(시간이면 없음)</td>
+</tr>
+<tr>
+<td>오프셋(ms)</td>
+<td>숫자</td>
+<td>JSON <code>pins[].start_offset_ms</code></td>
+<td>0</td>
+</tr>
+<tr>
+<td>경로 형태</td>
+<td>곡선 / 직선</td>
+<td>JSON <code>pins[].curve</code></td>
+<td>곡선</td>
+</tr>
+<tr>
+<td>이징</td>
+<td>천천히 출발·도착 / 일정</td>
+<td>JSON <code>pins[].easing</code></td>
+<td>천천히 출발·도착</td>
+</tr>
+<tr>
+<td>궤적</td>
+<td>체크</td>
+<td>JSON <code>pins[].trail</code></td>
+<td>남김</td>
+</tr>
+<tr>
+<td>도착 후</td>
+<td>유지 / 사라짐</td>
+<td>JSON <code>pins[].on_end</code></td>
+<td>유지</td>
+</tr>
+<tr>
+<td>핀 색</td>
+<td>색 선택</td>
+<td>JSON <code>pins[].color</code></td>
+<td>핀 번호별 기본 색</td>
+</tr>
+<tr>
+<td>경로 점</td>
+<td>캔버스에서 더블클릭·끌기</td>
+<td>JSON <code>pins[].waypoints[]</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td>장소 이름</td>
+<td>글자(원문)</td>
+<td>엑셀 <code>map_place.name_key</code> + 문자열 추가 목록</td>
+<td>필수</td>
+</tr>
+<tr>
+<td>장소 위치 X, Y</td>
+<td>숫자 또는 끌기</td>
+<td>엑셀 <code>map_place.x</code>, <code>y</code></td>
+<td>필수</td>
+</tr>
+<tr>
+<td>이 연출에서 (장소)</td>
+<td>이어받기 / 보임 / 숨김</td>
+<td>JSON <code>places[]</code></td>
+<td>일반 연출은 안 보임, 이어가기는 앞 상태 이어받기</td>
+</tr>
+<tr>
+<td>앞 궤적 남김</td>
+<td>체크</td>
+<td>JSON <code>show_prev_trail</code></td>
+<td>남김</td>
+</tr>
+<tr>
+<td>마무리 대기(ms)</td>
+<td>숫자</td>
+<td>JSON <code>outro_ms</code></td>
+<td><code>MAP_OUTRO_MS</code></td>
+</tr>
+<tr>
+<td>배경</td>
+<td>배경 목록에서 선택</td>
+<td>엑셀 <code>map_scene.link_map_background_id</code></td>
+<td>필수. 이어가기 연출은 바꿀 수 없음</td>
+</tr>
+<tr>
+<td>앞 연출</td>
+<td>「앞 연출에서 이어가기」</td>
+<td>엑셀 <code>map_scene.link_prev_map_scene_id</code></td>
+<td>일반 연출</td>
+</tr>
+<tr>
+<td>묶음, 순서, 메모</td>
+<td>목록에서 편집</td>
+<td>엑셀 <code>map_scene.tool_folder</code>, <code>sort_order</code>, <code>memo</code></td>
+<td>-</td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="s11"><h2><span class="sec">§11</span>저장과 검증</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -714,32 +1057,283 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">T-06</td>
-<td>연출 기획서 「테이블 설계」 형식(MapScene, MapPin, MapWaypoint, MapScenePlace, MapPlace)으로 저장하고 불러온다. 「테이블로 보기」는 현재 연출의 행을 탭 구분 텍스트로 보여주어 엑셀에 그대로 붙여 넣을 수 있다.</td>
+<td>연출 기획서 「데이터 설계」 형식(연출 JSON + 엑셀 행)으로 저장하고 불러온다. 「데이터 보기」(D-08)는 현재 연출의 엑셀 행과 JSON을 보여주어 그대로 복사할 수 있다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">T-07</td>
-<td>저장 전에 검사한다: 배경 범위 밖 좌표, 경로가 빈 핀, 이름 키가 없는 장소 마크, 다른 배경의 장소를 가리키는 점·장소 보임, 앞 연출에 없는 <code>FromPrev</code> 핀, 앞 연출과 다른 배경, 없는 기준 핀, 서로를 기다리는 출발 조건, 끊긴 이어가기 연결, 없는 Actor, 속도 경고(P-16), 권장 길이 초과(<code>MAP_RECOMMEND_MAX_MS</code>). 오류는 저장을 막고, 경고는 목록만 보여준다.</td>
+<td>저장 전에 아래 검사 항목(CK)을 확인한다. 오류는 저장을 막고, 경고는 목록만 보여준다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">T-08</td>
-<td>기존 스토리 툴과 분리된 별도 툴로 만든다. 스토리 노드는 연출 맵 ID로 참조한다.</td>
+<td>기존 스토리 툴과 분리된 별도 툴로 만든다. 스토리 테이블은 연출 맵 id로 참조한다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
+<h3>검사 항목</h3>
+<p>문구는 예시이고 <code>{ }</code> 안은 실제 값으로 바뀐다. 같은 규칙으로 빌드 때 한 번 더 검사한다(연출 기획서 「구현 전달사항」).</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>조건</th>
+<th>종류</th>
+<th>문구</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td class="id">CK-01</td>
+<td>점이나 장소의 좌표가 배경 범위 밖</td>
+<td>오류</td>
+<td>핀 {번호}의 점 {순서}이(가) 배경 밖에 있습니다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-02</td>
+<td>시작점이 없는 핀 (<code>from_prev</code>가 아닌데 점이 없음)</td>
+<td>오류</td>
+<td>핀 {번호}에 시작점이 없습니다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-03</td>
+<td>이름이 빈 장소 마크</td>
+<td>오류</td>
+<td>이름이 없는 장소가 있습니다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-04</td>
+<td>점이나 장소 보임이 다른 배경의 장소를 가리킴</td>
+<td>오류</td>
+<td>핀 {번호}의 점 {순서}이(가) 다른 배경의 장소를 가리킵니다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-05</td>
+<td><code>from_prev</code> 핀인데 앞 연출에 같은 핀 번호가 없거나 사라짐으로 끝남</td>
+<td>오류</td>
+<td>핀 {번호}이(가) 앞 연출에 없거나 사라졌습니다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-06</td>
+<td>이어가기 연출의 배경이 앞 연출과 다름</td>
+<td>오류</td>
+<td>배경이 앞 연출과 다릅니다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-07</td>
+<td>출발 조건의 기준 핀이 연출에 없음</td>
+<td>오류</td>
+<td>핀 {번호}의 기준 핀이 없습니다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-08</td>
+<td>출발 조건이 서로를 기다림</td>
+<td>오류</td>
+<td>핀 {번호}과(와) 핀 {번호}이(가) 서로를 기다립니다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-09</td>
+<td>앞 연출이 없는 id를 가리킴</td>
+<td>오류</td>
+<td>앞 연출 {id}을(를) 찾을 수 없습니다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-10</td>
+<td>Actor 테이블에 없는 <code>actor_id</code></td>
+<td>오류</td>
+<td>핀 {번호}의 Actor {id}을(를) 찾을 수 없습니다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">CK-11</td>
+<td>이어가기 연결이 돌아오거나 <code>MAP_CHAIN_MAX</code>(20)단을 넘음</td>
+<td>오류</td>
+<td>이어가기 연결이 너무 길거나 돌아옵니다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">CK-12</td>
+<td>한 연출에 같은 핀 번호가 둘</td>
+<td>오류</td>
+<td>핀 번호 {번호}이(가) 겹칩니다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-13</td>
+<td>속도가 <code>MAP_SPEED_WARN_PX</code>(1600)px/초를 넘음 (P-16)</td>
+<td>경고</td>
+<td>핀 {번호}이(가) 너무 빠릅니다({속도}px/초).</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-14</td>
+<td>이동 끝 시각이 <code>MAP_RECOMMEND_MAX_MS</code>(8000)를 넘음</td>
+<td>경고</td>
+<td>연출이 권장 길이보다 깁니다({길이}ms).</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">CK-15</td>
+<td>같은 배경에 이름이 같은 장소 마크 (M-05)</td>
+<td>경고</td>
+<td>장소 이름 "{이름}"이(가) 겹칩니다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">CK-16</td>
+<td>배경 비율이 16:9가 아님</td>
+<td>경고</td>
+<td>배경 비율이 16:9가 아닙니다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">CK-17</td>
+<td>쉬는 핀의 이름표가 보이는 장소 마크 글자와 겹침</td>
+<td>경고</td>
+<td>{장소}의 이름이 이름표에 가려집니다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+</tbody>
+</table></div>
 </section>
-<section id="s10"><h2><span class="sec">§10</span>회사 확인·회의 안건</h2>
-<ul>
-<li>툴 플랫폼(엔진 에디터 확장 / 웹 툴): 회사에서 판단 (T-08)</li>
-<li>스토리 데이터에서 연출 맵 ID를 참조하는 방식 (C-07)</li>
-<li>편의 기능 범위: 경로 복사(P-12), 경로 뒤집기(P-13), 이어서 미리보기(C-05), PC 단축키. 넣기로 했고 범위는 프로그램실과 논의</li>
-<li>자유 그리기(P-02): 이번 버전 제외, 회의에서 프로그램실 의견 확인</li>
-<li>속도 프리셋 값은 시작값. 실제 연출을 만들며 튜닝 (P-15)</li>
+<section id="s12"><h2><span class="sec">§12</span>작업 목록</h2>
+<p>우선순위 제안이다. P0은 첫 구현에 꼭 필요한 것, P1은 같은 버전 안에 넣을 것, P2는 여유가 있을 때다. 기간은 회사에서 산정한다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>작업</th>
+<th>관련 번호</th>
+<th>우선</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="warn">
+<td>데이터 읽기, 연출 JSON 저장·불러오기</td>
+<td>D-01, D-02, T-06</td>
+<td>P0</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>캔버스: 배경 표시, 편집 보기 / 게임 보기</td>
+<td>V-01~V-04</td>
+<td>P0</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>핀·경로 편집: 선택·더블클릭 생성, 점 이동·삽입·삭제, 곡선·핸들, 스냅</td>
+<td>E, P-01~P-10, P-17</td>
+<td>P0</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>장소 마크 편집과 보임/숨김</td>
+<td>M-01~M-06</td>
+<td>P0</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>핀 속성 패널과 속도·출발 조건</td>
+<td>K-01~K-06, P-14~P-16</td>
+<td>P0</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>미리보기 재생 (게임과 같은 계산식)</td>
+<td>T-05</td>
+<td>P0</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>앞 연출에서 이어가기</td>
+<td>C-01~C-04, C-06~C-08</td>
+<td>P0</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>실행 취소·다시 실행</td>
+<td>P-11</td>
+<td>P0</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>저장 전 검사와 검사 결과 목록</td>
+<td>T-07, CK</td>
+<td>P0</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>연출 관리(새 연출, 복제, 삭제, 목록 순서), 배경 등록</td>
+<td>S-01~S-06, D-05, D-06</td>
+<td>P1</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>엑셀 행 반영, 문자열 추가 목록, 데이터 보기</td>
+<td>D-03, D-04, D-08</td>
+<td>P1</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>타임라인 막대, 확대·이동, 좌표 표시</td>
+<td>K-05, V-06, V-07</td>
+<td>P1</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>대사창 가이드, 핀 색 지정, 장소 삭제 영향 안내, 배경 교체 좌표 변환</td>
+<td>V-05, K-08, M-08, M-07</td>
+<td>P2</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>경로 복사·뒤집기, 이어서 미리보기, PC 단축키</td>
+<td>P-12, P-13, C-05</td>
+<td>P2</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="s13"><h2><span class="sec">§13</span>검증·미결 목록</h2>
+<h3>회사에서 확인할 것</h3>
+<ul class="check">
+<li><span class="mono">□</span><span>툴 플랫폼(엔진 에디터 확장 / 웹 툴): 회사에서 판단 (T-08)</span></li>
+<li><span class="mono">□</span><span>툴이 읽을 회사 데이터의 위치와 형식: Actor, 문자열, 엑셀 테이블을 내보낸 데이터 (D-01)</span></li>
+<li><span class="mono">□</span><span>연출 JSON을 두는 위치와 이름 규칙 (D-02)</span></li>
+<li><span class="mono">□</span><span>문자열 테이블에 새 키를 넣는 절차 (D-04)</span></li>
+<li><span class="mono">□</span><span>새 id의 범위 규칙 (D-05)</span></li>
+</ul>
+<h3>프로그램실 회의 안건</h3>
+<ul class="check">
+<li><span class="mono">□</span><span>엑셀 행 반영 방식: 직접 쓰기 / 붙여넣기용 행 내보내기 (D-03)</span></li>
+<li><span class="mono">□</span><span>편의 기능 범위: 경로 복사(P-12), 경로 뒤집기(P-13), 이어서 미리보기(C-05), PC 단축키. 넣기로 했고 범위는 프로그램실과 논의</span></li>
+<li><span class="mono">□</span><span>자유 그리기(P-02): 이번 버전 제외, 회의에서 프로그램실 의견 확인</span></li>
+<li><span class="mono">□</span><span>확대·이동(V-06)의 조작 방식을 회사의 다른 툴과 맞출지</span></li>
+</ul>
+<h3>기획자가 정할 것</h3>
+<ul class="check">
+<li><span class="mono">□</span><span>편집 조작 E-02, E-03, E-05~E-08, E-11: 프로토타입을 써 본 뒤 확정</span></li>
+<li><span class="mono">□</span><span>배경 해상도 교체 시 좌표 변환(M-07): 프로토타입 확인 뒤 확정</span></li>
+<li><span class="mono">□</span><span>v0.12에서 추가한 제안(V-06, V-07, S-01~S-06, K-07, K-08, M-08, D-01~D-07, CK-11, CK-12, CK-16, CK-17)</span></li>
+</ul>
+<h3>나중에 다시 볼 것</h3>
+<ul class="check">
+<li><span class="mono">□</span><span>속도 프리셋 값은 시작값. 실제 연출을 만들며 튜닝 (P-15)</span></li>
 </ul>
 </section>
-<section id="s11"><h2><span class="sec">§11</span>변경 이력</h2>
+<section id="s14"><h2><span class="sec">§14</span>변경 이력</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -749,6 +1343,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.12</td>
+<td>2026-11-15</td>
+<td>회사 검토용 정리. 저장 형식을 연출 JSON + 엑셀 행으로 변경(연출 기획서 v0.9)하고 저장 필드 이름을 소문자 + 밑줄로 통일. 「연출 관리」(S), 「데이터 입출력」(D), 속성 패널과 저장 위치 표, 검사 항목 표(CK), 작업 목록 신설. 확대·이동(V-06), 좌표 표시(V-07), 핀 삭제·핀 색(K-07, K-08), 장소 삭제 영향(M-08) 추가. 목록 묶음 열 이름을 <code>tool_folder</code>·<code>sort_order</code>로 변경(C-07). 대상 기기를 PC로 명시</td>
+</tr>
 <tr>
 <td>v0.11</td>
 <td>2026-11-11</td>
@@ -782,12 +1381,12 @@ td code{white-space:nowrap}
 <tr>
 <td>v0.5</td>
 <td>2026-11-08</td>
-<td>핀 번호 1~99·새 번호 규칙(K-03), <code>StartOffsetMs</code>(K-04), 등장 시점(K-06), 스냅·단순화를 배경 px 설정 키로(P-08, P-09), 검사 항목 정리(T-07)</td>
+<td>핀 번호 규칙(K-03), 출발 오프셋(K-04), 등장 시점(K-06), 스냅·단순화를 배경 px 설정 키로(P-08, P-09), 검사 항목 정리(T-07)</td>
 </tr>
 <tr>
 <td>v0.4</td>
 <td>2026-11-08</td>
-<td>단위를 px·ms로, 속도 프리셋(P-15)과 출발 조건(K-04), 타임라인 막대 제안(K-05). 장소 스냅은 장소 ID 저장(P-09). 이어가기는 앞 연출 ID만 저장하고 나머지는 계산(C-02~C-04), 참조 중 연출 삭제 금지(C-08). 테이블 형식 저장·「테이블로 보기」(T-06)</td>
+<td>단위를 px·ms로, 속도 프리셋(P-15)과 출발 조건(K-04), 타임라인 막대 제안(K-05). 장소 스냅은 장소 id 저장(P-09). 이어가기는 앞 연출 id만 저장하고 나머지는 계산(C-02~C-04), 참조 중 연출 삭제 금지(C-08). 테이블 형식 저장·「테이블로 보기」(T-06)</td>
 </tr>
 <tr>
 <td>v0.3</td>

@@ -1,23 +1,29 @@
-<svg viewBox="0 0 870 310" role="img" aria-label="맵 연출 테이블 관계도: 스토리 테이블이 MapScene을 부르고, MapScene은 MapBackground와 앞 연출을 참조하며, MapPin·MapWaypoint·MapScenePlace가 MapScene에 속하고, 웨이포인트와 장소 등장은 MapPlace를 참조한다">
+<svg viewBox="0 0 880 372" role="img" aria-label="데이터 구조: 스토리 테이블 행이 map_scene을 가리키고, map_scene은 map_background와 앞 연출, 연출 JSON을 가리킨다. 연출 JSON 안의 핀과 웨이포인트는 Actor 테이블, map_place, map_speed_preset을 id로 참조한다. map_place는 map_background에 속한다">
   <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
-  <rect class="n" x="20" y="30" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="54" text-anchor="middle">스토리 테이블</text><text class="sm" x="105" y="72" text-anchor="middle">기존 (회사)</text>
-  <rect class="n start" x="240" y="30" width="170" height="56" rx="8"/><text x="325" y="54" text-anchor="middle">MapScene</text><text class="sm" x="325" y="72" text-anchor="middle">연출 맵 · SceneID</text>
-  <rect class="n" x="680" y="30" width="170" height="56" rx="8"/><text x="765" y="54" text-anchor="middle">MapBackground</text><text class="sm" x="765" y="72" text-anchor="middle">배경 · BgID</text>
-  <rect class="n start" x="240" y="130" width="170" height="56" rx="8"/><text x="325" y="154" text-anchor="middle">MapPin</text><text class="sm" x="325" y="172" text-anchor="middle">핀 · SceneID+PinNo</text>
-  <rect class="n start" x="240" y="230" width="170" height="56" rx="8"/><text x="325" y="254" text-anchor="middle">MapWaypoint</text><text class="sm" x="325" y="272" text-anchor="middle">점 · +Seq</text>
-  <rect class="n" x="460" y="130" width="190" height="56" rx="8"/><text x="555" y="154" text-anchor="middle">MapScenePlace</text><text class="sm" x="555" y="172" text-anchor="middle">장소 등장 · SceneID+PlaceID</text>
-  <rect class="n" x="680" y="230" width="170" height="56" rx="8"/><text x="765" y="254" text-anchor="middle">MapPlace</text><text class="sm" x="765" y="272" text-anchor="middle">장소 마크 · PlaceID</text>
-  <rect class="n mid" x="20" y="230" width="170" height="56" rx="8"/><text x="105" y="254" text-anchor="middle">MapSpeedPreset</text><text class="sm" x="105" y="272" text-anchor="middle">속도 · PresetID</text>
-  <rect class="n mid" x="20" y="130" width="170" height="56" rx="8"/><text x="105" y="154" text-anchor="middle">MapConfig</text><text class="sm" x="105" y="172" text-anchor="middle">튜닝 값 · Key</text>
 
-  <path class="e" d="M190 58H238" marker-end="url(#ar2)"/><text class="sm" x="196" y="50">map_play</text>
-  <path class="e" d="M410 58H678" marker-end="url(#ar2)"/><text class="sm" x="520" y="50">BgID</text>
-  <path class="e" d="M300 30C300 4 350 4 350 28" marker-end="url(#ar2)"/><text class="sm" x="360" y="16">PrevSceneID (이어가기)</text>
-  <path class="e" d="M325 130V88" marker-end="url(#ar2)"/><text class="sm" x="331" y="114">SceneID</text>
-  <path class="e" d="M325 230V188" marker-end="url(#ar2)"/><text class="sm" x="331" y="214">SceneID+PinNo</text>
-  <path class="e" d="M240 176L192 236" marker-end="url(#ar2)"/><text class="sm" x="150" y="214">SpeedPreset</text>
-  <path class="e" d="M460 150H432V78H412" marker-end="url(#ar2)"/><text class="sm" x="436" y="122">SceneID</text>
-  <path class="e" d="M610 186V212H740V228" marker-end="url(#ar2)"/><text class="sm" x="616" y="206">PlaceID</text>
-  <path class="e" d="M410 258H678" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="430" y="250">PlaceID (장소를 지날 때)</text>
-  <path class="e" d="M765 230V88" marker-end="url(#ar2)"/><text class="sm" x="771" y="160">BgID</text>
+  <rect class="n" x="20" y="40" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="64" text-anchor="middle">스토리 테이블</text><text class="sm" x="105" y="82" text-anchor="middle">기존 (회사) · 열 2개 추가</text>
+  <rect class="n start" x="320" y="40" width="200" height="56" rx="8"/><text x="420" y="64" text-anchor="middle">map_scene</text><text class="sm" x="420" y="82" text-anchor="middle">엑셀 · 연출 맵 머리 · id</text>
+  <rect class="n" x="690" y="40" width="170" height="56" rx="8"/><text x="775" y="64" text-anchor="middle">map_background</text><text class="sm" x="775" y="82" text-anchor="middle">엑셀 · 배경 · id</text>
+
+  <rect class="n good" x="320" y="150" width="200" height="186" rx="8"/>
+  <text x="336" y="174">연출 JSON</text><text class="sm" x="412" y="174">연출 1건 = 파일 1개</text>
+  <rect class="n" x="334" y="186" width="172" height="40" rx="6"/><text x="346" y="211">pins[]</text><text class="sm" x="396" y="211">핀 · 속도 · 출발</text>
+  <rect class="n" x="334" y="234" width="172" height="40" rx="6"/><text x="346" y="259">waypoints[]</text><text class="sm" x="432" y="259">경로 점</text>
+  <rect class="n" x="334" y="282" width="172" height="40" rx="6"/><text x="346" y="307">places[]</text><text class="sm" x="408" y="307">장소 보임</text>
+
+  <rect class="n" x="690" y="170" width="170" height="56" rx="8"/><text x="775" y="194" text-anchor="middle">map_place</text><text class="sm" x="775" y="212" text-anchor="middle">엑셀 · 장소 마크 · id</text>
+  <rect class="n mid" x="690" y="270" width="170" height="56" rx="8"/><text x="775" y="294" text-anchor="middle">map_speed_preset</text><text class="sm" x="775" y="312" text-anchor="middle">엑셀 · 속도 프리셋 · id</text>
+  <rect class="n" x="20" y="180" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="204" text-anchor="middle">Actor 테이블</text><text class="sm" x="105" y="222" text-anchor="middle">기존 (회사) · 이름 · 리소스</text>
+  <rect class="n mid" x="20" y="270" width="170" height="56" rx="8"/><text x="105" y="294" text-anchor="middle">map_config</text><text class="sm" x="105" y="312" text-anchor="middle">엑셀 · 튜닝 값 · key</text>
+
+  <path class="e" d="M190 68H318" marker-end="url(#ar2)"/><text class="sm" x="254" y="58" text-anchor="middle">link_map_scene_id</text>
+  <path class="e" d="M520 68H688" marker-end="url(#ar2)"/><text class="sm" x="604" y="58" text-anchor="middle">link_map_background_id</text>
+  <path class="e" d="M392 40C392 10 448 10 448 38" marker-end="url(#ar2)"/><text class="sm" x="462" y="22">link_prev_map_scene_id (이어가기)</text>
+  <path class="e" d="M420 96V148" marker-end="url(#ar2)"/><text class="sm" x="428" y="126">scene_json</text>
+  <path class="e" d="M775 170V98" marker-end="url(#ar2)"/><text class="sm" x="767" y="138" text-anchor="end">link_map_background_id</text>
+  <path class="e" d="M520 198H688" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="604" y="190" text-anchor="middle">place_id</text>
+  <path class="e" d="M520 298H688" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="604" y="290" text-anchor="middle">speed_preset_id</text>
+  <path class="e" d="M320 208H192" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="256" y="200" text-anchor="middle">actor_id</text>
+
+  <text class="sm" x="20" y="360">실선: 엑셀의 link 열 · 점선: JSON 안의 id 참조 · 점선 상자: 회사 기존 테이블</text>
 </svg>
