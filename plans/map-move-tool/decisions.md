@@ -39,3 +39,4 @@
 
 ## 게시 링크 (Artifact, 비공개)
 - 편집 툴 기획서: https://claude.ai/artifact/JGXZ6HSCYqP6DmyiQdHx3b
+- 툴 사용 안내: https://claude.ai/artifact/Hyte4xzjAhnT5UwPi3Gw7H

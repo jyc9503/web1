@@ -65,10 +65,11 @@ python3 tools/build_spec.py plans/map-move-tool --md guide.md   # 툴 사용 안
 - **원본은 항상 `spec.md`**. HTML은 직접 고치지 않는다. 시안·요약은 `src/gen_visuals.py`를 고친다.
 - 프로토타입: `plans/story-map-pin-move/proto/index.html` (단일 HTML, 직접 수정, 탭 3개). 고친 뒤에는 Playwright로 오류·폰 폭(400px)·실제 조작을 확인한다. 페이지의 `window.__proto`(state, schedule, jsonText, info 등)로 상태를 읽어 검증할 수 있다. 기획서의 예시 JSON과 프로토의 「데이터」 탭 출력이 같아야 한다.
 - 게시: Artifact로 게시해 사용자가 폰에서 본다. 게시용 조각은 `--artifact <경로>` 옵션이나 `python3 tools/artifact_fragment.py 입력.html 출력.html`로 만든다.
-- 기존 게시물(2026-11-15에 요약만 같은 주소로 갱신했고, 나머지 4개는 새 주소로 다시 게시했다. 같은 주소로 갱신하려면 Artifact 도구에 아래 URL을 넘기고, 먼저 `path` 없이 read로 전체를 읽어야 한다. 파일이 커서 부담되면 새 주소로 게시하고 여기 링크를 바꾼다):
+- 기존 게시물(2026-11-16 기준 최신. 같은 주소로 갱신하려면 Artifact 도구에 아래 URL을 넘기고, 먼저 `path` 없이 read로 전체를 읽어야 한다. 파일이 커서 부담되면 새 주소로 게시하고 여기 링크를 바꾼다):
   - 한 장 요약: https://claude.ai/artifact/ATo7ETCCrbn7aebjtBF69D
   - 기획서: https://claude.ai/artifact/Pyeta9tKgdRzDXNPwvG8Lq
   - 화면 시안: https://claude.ai/artifact/JYmuQfx4EmzcSKiCpXDR8f
   - 동작 프로토타입: https://claude.ai/artifact/PG9AVSaonaYP694yNCsEzZ
   - 편집 툴 기획서: https://claude.ai/artifact/JGXZ6HSCYqP6DmyiQdHx3b
+  - 툴 사용 안내: https://claude.ai/artifact/Hyte4xzjAhnT5UwPi3Gw7H
 - 작업 단위마다 커밋·푸시. 커밋 메시지는 `<슬러그> v0.x: 내용`. PR은 사용자가 요청할 때만.
