@@ -164,10 +164,10 @@ td code{white-space:nowrap}
       <h1>스토리 맵 핀 이동 연출</h1>
       <p class="sub">스토리 진행 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 이동하며 "누가 어디서 어디로 갔는지"를 보여주는 연출 기능.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.10 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.11 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>클라이언트 · 편집 툴 · 데이터</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">14건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">12건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -464,10 +464,10 @@ td code{white-space:nowrap}
 <td>도착 후 핀은 화면에 남는다(기본). 선택하면 <code>MAP_PIN_FADEOUT_MS</code>(400) 동안 사라진다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">R-47</td>
 <td>사라지는 핀은 도착하고 <code>MAP_PIN_HOLD_MS</code>(400) 머문 뒤 사라지기 시작한다. 그 핀이 이번 연출에서 그린 궤적도 함께 사라진다. 사라짐이 마무리 대기보다 늦게 끝나면 연출 종료를 그때까지 미룬다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">R-42</td>
@@ -556,10 +556,10 @@ td code{white-space:nowrap}
 <td>이어가기 연출의 핀 목록에 없는 앞 연출 핀은 0ms부터 <code>MAP_PIN_FADEOUT_MS</code>(400) 동안 사라진다. 맵이 닫혀 있다가 일반 등장하는 경우에는 처음부터 보이지 않는다. (툴은 앞 연출 핀을 모두 가져오므로, 기획자가 일부러 지운 핀만 해당한다.)</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">R-50</td>
 <td>앞 연출 궤적에는 궤적을 끈 핀과 사라짐으로 끝난 핀의 경로를 넣지 않는다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">R-51</td>
@@ -835,12 +835,12 @@ td code{white-space:nowrap}
 <td>닫는 중 → 등장</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td>유지</td>
 <td>맵 열기: 지금 열린 연출과 같은 연출</td>
 <td>페이드 없이 그 연출의 시작 상태로 되돌려 0ms부터 다시 재생한다</td>
 <td>재생</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td>유지</td>
@@ -2915,11 +2915,10 @@ td code{white-space:nowrap}
 <li><span class="mono">□</span><span>로그 아이콘, 이동 효과음 리소스 (아트·사운드)</span></li>
 </ul>
 <h3>기획자가 정할 것</h3>
-<p>v0.9에서 구현 공백을 메우려고 제안한 규칙이다. 그대로 갈지 확인이 필요하다.</p>
+<p>v0.9에서 구현 공백을 메우려고 제안한 규칙 중 남은 것이다. 회사 엔진·데이터 사정에 맞춰 정해도 된다.</p>
 <ul class="check">
-<li><span class="mono">□</span><span>사라지는 핀의 궤적: 함께 사라진다(제안) / 남는다 (R-47)</span></li>
-<li><span class="mono">□</span><span>열린 맵과 같은 연출을 다시 열 때: 처음부터 다시 재생(제안) / 무시 (상태 전이표)</span></li>
-<li><span class="mono">□</span><span>핀끼리 그리는 순서 (R-48), 앞 궤적에서 빼는 핀 (R-50), 이어가기 최대 길이 (R-51)</span></li>
+<li><span class="mono">□</span><span>핀끼리 그리는 순서 (R-48)</span></li>
+<li><span class="mono">□</span><span>이어가기 최대 길이 (R-51, <code>MAP_CHAIN_MAX</code>)</span></li>
 </ul>
 <h3>프로그램실 회의 안건</h3>
 <ul class="check">
@@ -2945,6 +2944,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.11</td>
+<td>2026-11-16</td>
+<td>사용자 결정: 사라지는 핀은 궤적도 함께 사라진다(R-47), 앞 궤적에서 궤적을 끈 핀·사라진 핀은 뺀다(R-50), 열린 맵과 같은 연출을 다시 열면 처음부터 다시 재생(상태 전이표) 확정</td>
+</tr>
 <tr>
 <td>v0.10</td>
 <td>2026-11-16</td>
