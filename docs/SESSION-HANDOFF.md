@@ -28,8 +28,8 @@
 
 | 기획 | 폴더 | 버전 | 상태 |
 |---|---|---|---|
-| 스토리 맵 핀 이동 연출 | `plans/story-map-pin-move/` | v0.9 | 회사 검토용 정리 완료. 제안 규칙 R-46~R-55는 사용자 확인 대기 |
-| 맵 이동 연출 편집 툴 | `plans/map-move-tool/` | v0.12 | 회사 검토용 정리 완료. E-02, E-03, E-05~E-08, E-11, M-07은 새 프로토 확인 뒤 확정 |
+| 스토리 맵 핀 이동 연출 | `plans/story-map-pin-move/` | v0.10 | 회사 검토용 정리 완료. R-49, R-53 확정(2026-11-16). 나머지 제안 규칙은 회사 검토 대상 |
+| 맵 이동 연출 편집 툴 | `plans/map-move-tool/` | v0.13 | 회사 검토용 정리 완료. 편집 조작 규칙 전부 확정(2026-11-16). 사용 안내 문서 `guide.md` 있음 |
 
 ### 기획 요약 (스토리 맵 핀 이동 연출)
 스토리 중 배경 지도 위에서 핀(Actor)이 경로를 따라 이동하며 위치 정보를 보여주는 연출. 장소 마크, 이어가기(앞 연출 끝 상태에서 시작), 스토리 행의 열 2개(`link_map_scene_id`, `map_close`)로 맵 열기·닫기, 속도 프리셋, 출발 조건, 자동 곡선 + 베지어 핸들.
@@ -47,10 +47,10 @@
 - 장소 속성 패널에 X, Y 입력칸(M-06 확정). 방향키 미세 이동과 점 좌표 입력칸은 넣지 않기로 함
 
 ### 남은 것
-- 사용자 확인: 툴 조작 규칙 E-02, E-03, E-05~E-08, E-11, M-07 / 연출 제안 규칙 R-47~R-55(기획서 「기획자가 정할 것」)
+- 사용자 확인: 연출 기획서 「기획자가 정할 것」에 남은 항목(R-47, R-48, R-50, R-51, 같은 연출 다시 열기)
 - 회사 확인: 기획서 「회사 데이터 연결」 표와 「검증·미결 목록」
 - 프로그램실 회의 안건: 툴 플랫폼, 엑셀 행 반영 방식, 편의 기능 범위, 자유 그리기
-- 사용자 결정이 바뀌면 `spec.md` → `HANDOFF.md` 순서로 다시 만든다(HANDOFF는 spec 전문을 담고 있다)
+- 사용자 결정이 바뀌면 `spec.md`를 고친 뒤 `python3 plans/story-map-pin-move/src/gen_handoff.py`로 `HANDOFF.md`를 다시 만든다(HANDOFF는 직접 고치지 않는다)
 
 ## 4. 작업 도구와 절차
 
@@ -58,6 +58,8 @@
 pip install markdown                                   # 처음 한 번
 python3 tools/build_spec.py plans/<슬러그>             # spec.md → spec.html
 python3 plans/story-map-pin-move/src/gen_visuals.py     # 시안·요약 다시 생성
+python3 plans/story-map-pin-move/src/gen_handoff.py     # HANDOFF.md 다시 생성
+python3 tools/build_spec.py plans/map-move-tool --md guide.md   # 툴 사용 안내 HTML
 ```
 
 - **원본은 항상 `spec.md`**. HTML은 직접 고치지 않는다. 시안·요약은 `src/gen_visuals.py`를 고친다.

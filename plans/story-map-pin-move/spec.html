@@ -164,10 +164,10 @@ td code{white-space:nowrap}
       <h1>스토리 맵 핀 이동 연출</h1>
       <p class="sub">스토리 진행 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 이동하며 "누가 어디서 어디로 갔는지"를 보여주는 연출 기능.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.9 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.10 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>클라이언트 · 편집 툴 · 데이터</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">17건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">14건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -551,10 +551,10 @@ td code{white-space:nowrap}
 <td>이어가기 연출의 배경은 앞 연출과 같아야 한다. 툴이 앞 연출의 배경으로 자동으로 채우고 바꾸지 못하게 한다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">R-49</td>
 <td>이어가기 연출의 핀 목록에 없는 앞 연출 핀은 0ms부터 <code>MAP_PIN_FADEOUT_MS</code>(400) 동안 사라진다. 맵이 닫혀 있다가 일반 등장하는 경우에는 처음부터 보이지 않는다. (툴은 앞 연출 핀을 모두 가져오므로, 기획자가 일부러 지운 핀만 해당한다.)</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">R-50</td>
@@ -625,10 +625,10 @@ td code{white-space:nowrap}
 <td>연출 재생 중 화면을 탭하면 이 연출만 <code>MAP_TAP_FINISH_MS</code>(300) 만에 최종 상태로 끝난다. 다음 대사는 그 다음 탭부터 넘어간다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">R-53</td>
 <td>탭 완료는 남은 구간을 빨리 감는 방식이다. 핀이 경로를 따라 빠르게 끝까지 가고 궤적도 끝까지 그려진다. 등장 페이드인 도중의 탭도 같다. 탭 완료 뒤에는 마무리 대기 없이 바로 유지 상태가 된다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">R-13</td>
@@ -977,11 +977,11 @@ td code{white-space:nowrap}
 <td>맨 앞 연출부터 차례로 따라가며 계산한다. ① 핀 위치: 핀 번호마다 가장 마지막에 나온 연출의 끝 위치(사라진 핀, 목록에서 빠진 핀은 없음). ② 장소 마크: 연출마다 보임 목록을 더하고 숨김 목록을 뺀 결과. ③ 앞 궤적: 지나온 모든 연출의 경로 모음.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">F-11</td>
 <td>탭 완료</td>
 <td>탭한 순간의 연출 시각을 t0라 하면, 표시 시각 = t0 + (종료 − t0) × (탭 뒤 지난 시간 ÷ <code>MAP_TAP_FINISH_MS</code>).</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">F-12</td>
@@ -2917,9 +2917,7 @@ td code{white-space:nowrap}
 <h3>기획자가 정할 것</h3>
 <p>v0.9에서 구현 공백을 메우려고 제안한 규칙이다. 그대로 갈지 확인이 필요하다.</p>
 <ul class="check">
-<li><span class="mono">□</span><span>이어가기 연출의 핀 목록에서 빠진 앞 연출 핀: 사라진다(제안) / 그대로 남는다 (R-49)</span></li>
 <li><span class="mono">□</span><span>사라지는 핀의 궤적: 함께 사라진다(제안) / 남는다 (R-47)</span></li>
-<li><span class="mono">□</span><span>탭 완료 방식: 빨리 감기(제안, 프로토타입 동작) / 순간 이동 뒤 페이드 (R-53)</span></li>
 <li><span class="mono">□</span><span>열린 맵과 같은 연출을 다시 열 때: 처음부터 다시 재생(제안) / 무시 (상태 전이표)</span></li>
 <li><span class="mono">□</span><span>핀끼리 그리는 순서 (R-48), 앞 궤적에서 빼는 핀 (R-50), 이어가기 최대 길이 (R-51)</span></li>
 </ul>
@@ -2947,6 +2945,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.10</td>
+<td>2026-11-16</td>
+<td>사용자 결정: 이어가기에서 지운 앞 연출 핀은 사라진다(R-49), 탭 완료는 빨리 감기(R-53, F-11) 확정</td>
+</tr>
 <tr>
 <td>v0.9</td>
 <td>2026-11-15</td>

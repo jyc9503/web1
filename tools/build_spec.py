@@ -4,6 +4,7 @@
 사용:
   python3 tools/build_spec.py plans/<슬러그>
   python3 tools/build_spec.py plans/<슬러그> --artifact /경로/artifact.html
+  python3 tools/build_spec.py plans/<슬러그> --md guide.md      # 다른 md(같은 규칙) → guide.html
 
 - 원본은 항상 spec.md. HTML은 이 스크립트로만 만든다.
 - 디자인은 .claude/skills/plan-doc/assets/spec-sample.html 의 CSS를 그대로 가져온다.
@@ -124,9 +125,9 @@ def convert(md_text, plan_dir):
     return meta, stats["verify"], "\n".join(sections), "\n".join(toc)
 
 
-def build(plan_dir):
+def build(plan_dir, md="spec.md"):
     plan_dir = pathlib.Path(plan_dir)
-    meta, verify_count, sections, toc = convert((plan_dir / "spec.md").read_text(encoding="utf-8"), plan_dir)
+    meta, verify_count, sections, toc = convert((plan_dir / md).read_text(encoding="utf-8"), plan_dir)
     sample = SAMPLE.read_text(encoding="utf-8")
     css = re.search(r"<style>(.*?)</style>", sample, re.S).group(1) + EXTRA_CSS
     font = re.search(r'<link rel="stylesheet" href="https://fonts[^>]*>', sample).group(0)
@@ -192,9 +193,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("plan_dir")
     ap.add_argument("--artifact", help="Artifact 게시용 조각 HTML을 쓸 경로")
+    ap.add_argument("--md", default="spec.md", help="변환할 md 파일 이름 (기본 spec.md)")
     args = ap.parse_args()
-    standalone, fragment, count = build(args.plan_dir)
-    out = pathlib.Path(args.plan_dir) / "spec.html"
+    standalone, fragment, count = build(args.plan_dir, args.md)
+    out = pathlib.Path(args.plan_dir) / (pathlib.Path(args.md).stem + ".html")
     out.write_text(standalone, encoding="utf-8")
     print(f"wrote {out} (검증필요·미정 {count}건)")
     if args.artifact:
