@@ -152,7 +152,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · 프로토타입 v0.14 (기획서 v0.11 / 툴 v0.13)</span>
+    <span class="tag">카제나 · 스토리 연출 · 프로토타입 v0.15 (기획서 v0.12 / 툴 v0.14)</span>
     <h1>맵 핀 이동 연출</h1>
     <p>세 탭이 같은 데이터를 봅니다. <b>스토리 시연</b>은 스토리 행을 따라 맵이 열리고 이어지고 닫히는 과정을, <b>편집 툴</b>은 기획자가 연출을 만드는 조작을, <b>데이터</b>는 저장되는 엑셀 행과 연출 JSON을 보여줍니다. 배경, 핀, 장소 이름, 대사는 모두 자리표시입니다.</p>
   </header>
@@ -186,6 +186,7 @@ code{font-family:var(--f-mono);font-size:.92em}
           <button class="btn" id="s-reset" type="button">처음부터</button>
           <select class="sel" id="s-ratio" aria-label="화면 비율">
             <option value="16/9">화면 16:9</option>
+            <option value="844/390">폰 가로 실제 크기 844×390</option>
             <option value="20/9">화면 20:9 (좌우 여백)</option>
             <option value="4/3">화면 4:3 (위아래 여백)</option>
           </select>
@@ -364,7 +365,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 /* ---------- 설정 (map_config, map_speed_preset). 값은 기획서 「설정 키」와 같다 ---------- */
 var CFG={BG_FADE:400,PIN_FADE:400,PLACE_FADE:400,OUTRO:1000,TAP:300,PIN_HOLD:400,PIN_FADEOUT:400,CLOSE:400,SETTLE:250,PREV_ALPHA:40,
   SPEED_BASE_W:2048,DUR_STEP:100,DUR_MIN:100,CURVE_SAMPLES:16,OVERLAP:0.9,GAP_RATIO:1.15,LABEL_PAD:6,CHAIN_MAX:20,
-  SPEED_WARN:1600,RECOMMEND_MAX:8000,SNAP_PX:40,FAST:2,AUTO_WAIT:1600};
+  SPEED_WARN:1600,RECOMMEND_MAX:8000,RECOMMEND_MOVING:3,RECOMMEND_PLACES:8,DIALOG_AREA:22,PREV_DEPTH:0,SNAP_PX:40,FAST:2,AUTO_WAIT:1600};
 var CFG_UI=[['MAP_BG_FADE_MS','BG_FADE'],['MAP_PIN_FADE_MS','PIN_FADE'],['MAP_PLACE_FADE_MS','PLACE_FADE'],['MAP_OUTRO_MS','OUTRO'],['MAP_TAP_FINISH_MS','TAP'],
   ['MAP_PIN_HOLD_MS','PIN_HOLD'],['MAP_PIN_FADEOUT_MS','PIN_FADEOUT'],['MAP_CLOSE_MS','CLOSE'],['MAP_SETTLE_MS','SETTLE'],['MAP_PREV_TRAIL_ALPHA (%)','PREV_ALPHA'],['배속 배율 (가정)','FAST']];
 var PRESETS=[[1,'걷기',500],[2,'달리기',800],[3,'고속',1200]];
@@ -378,7 +379,7 @@ function pin(no,res,pts,o){o=o||{};return {no:no,res:res,label:'',show_label:tru
   start:o.start||{type:'TIME',ref:null,delay:0},curve:o.curve||'SMOOTH',easing:'INOUT',trail:true,on_end:'KEEP',from_prev:!!o.from_prev,pts:pts};}
 function sampleState(){
   var places=[{id:1001,name:'정거장',x:205,y:852},{id:1002,name:'관측소',x:1597,y:346},{id:1003,name:'북문',x:287,y:346},{id:1004,name:'광장',x:1270,y:576},
-    {id:1005,name:'숲',x:1802,y:922},{id:1006,name:'항구',x:1720,y:599},{id:1007,name:'탑',x:922,y:184}];
+    {id:1005,name:'숲',x:1802,y:880},{id:1006,name:'항구',x:1720,y:599},{id:1007,name:'탑',x:922,y:184}];
   var s1={id:30001,name:'장면 1',memo:'A 관측소로, B 광장으로, C 항구로',prev:null,show_prev:true,outro:null,
     places:{1001:{visible:true},1002:{visible:true},1003:{visible:true},1004:{visible:true},1005:{visible:true},1006:{visible:true}},
     pins:[pin(1,50101,[{place:1001},{x:573,y:645,hout:{x:140,y:-10}},{x:1024,y:714},{place:1002}],{preset:2}),
@@ -497,7 +498,7 @@ function placeAlpha(sc,pl,mt,bgA){
 }
 function prevTrails(sc){ /* 연결된 모든 앞 연출의 경로. 궤적을 끈 핀과 사라진 핀은 뺀다 (R-50) */
   var out=[],ps=prevOf(sc),guard=0;
-  while(ps&&guard++<CFG.CHAIN_MAX){ps.pins.forEach(function(q){if(!q.trail||q.on_end==='FADE')return;var r=rnodes(ps,q);if(r.length>1)out.push({res:q.res,pts:sampleCurve(r,q.curve).pts});});ps=prevOf(ps);}
+  while(ps&&guard++<(CFG.PREV_DEPTH>0?CFG.PREV_DEPTH:CFG.CHAIN_MAX)){ps.pins.forEach(function(q){if(!q.trail||q.on_end==='FADE')return;var r=rnodes(ps,q);if(r.length>1)out.push({res:q.res,pts:sampleCurve(r,q.curve).pts});});ps=prevOf(ps);}
   return out;
 }
 function droppedPins(sc){ /* 앞 연출 끝에 있었지만 이 연출 핀 목록에 없는 핀 (R-49) */
@@ -526,9 +527,9 @@ function setZoom(z,cx,cy){ /* 커서 아래 지점을 고정하고 확대 (V-06)
 }
 
 /* ---------- 그리기 ---------- */
-function pinR(){return Math.max(15,U*0.0448/2);}       /* MAP_PIN_SIZE_PX 86 / 1920 */
-function fs(){return Math.max(11,U*0.0125);}           /* MAP_LABEL_FONT_PX 24 / 1920 */
-function pfs(){return Math.max(12,U*0.0146);}          /* MAP_PLACE_FONT_PX 28 / 1920 */
+function pinR(){return Math.max(18,U*0.0448/2);}       /* MAP_PIN_SIZE_PX 86 / 1920, 최소 지름 36 (R-57) */
+function fs(){return Math.max(12,U*0.0125);}           /* MAP_LABEL_FONT_PX 24 / 1920, 최소 12 (R-57) */
+function pfs(){return Math.max(13,U*0.0146);}          /* MAP_PLACE_FONT_PX 28 / 1920, 최소 13 (R-57) */
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 function line(pts,col,width,dash,alpha){
   if(pts.length<2||alpha<=0)return;
@@ -657,9 +658,9 @@ function renderEdit(){ /* 편집 보기. 재생 중이면 게임 화면 위에 �
     if(r.length>1){var e=c.pts[c.pts.length-1];ctx.save();ctx.globalAlpha=(on?1:.45)*k;ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(e.x*W,e.y*H,pinR()*.55,0,Math.PI*2);ctx.stroke();ctx.restore();}
   });
   if($('guide').checked){
-    ctx.save();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.setLineDash([5,5]);ctx.lineWidth=1.5;rr(W*0.03,H*0.78,W*0.94,H*0.18,8);ctx.stroke();
+    ctx.save();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.setLineDash([5,5]);ctx.lineWidth=1.5;rr(W*0.03,H*(1-CFG.DIALOG_AREA/100),W*0.94,H*(CFG.DIALOG_AREA/100-0.03),8);ctx.stroke();
     ctx.fillStyle='rgba(255,255,255,.45)';ctx.font='500 '+Math.max(10,U*0.011)+'px "Noto Sans KR",sans-serif';ctx.textAlign='right';ctx.textBaseline='top';
-    ctx.fillText('대사창 영역 · 맵 유지 중 가려짐',W*0.96,H*0.79);ctx.restore();
+    ctx.fillText('대사창 영역 · 맵 유지 중 가려짐',W*0.96,H*(1-CFG.DIALOG_AREA/100)+6);ctx.restore();
   }
   if(tab==='path')handles(k);
   if(!moving){
@@ -886,7 +887,7 @@ function setMode(m){
   $('p-story').hidden=m!=='story';$('p-tool').hidden=m!=='tool';
   $('storybar').hidden=m!=='story';$('toolbar').hidden=m!=='tool';$('gameui').hidden=m!=='story';
   zoom=1;panX=0;panY=0;panMode(false);
-  $('stage').style.aspectRatio=m==='story'?$('s-ratio').value:'16/9';
+  if(m==='story')applyRatio();else{$('stage').style.aspectRatio='16/9';$('stage').style.maxWidth='';}
   playing=false;tapping=null;t=0;offs.clear();
   if(m==='story')storyReset();
   if(m==='tool'){setPlay();syncAll();}
@@ -962,7 +963,7 @@ function syncPlaceXY(){ /* 장소 위치 입력칸 (툴 M-06) */
 }
 function syncAll(){syncScenes();syncForm();hint();setPlay();}
 
-/* ---------- 저장 전 검사 (툴 T-07, CK-01~CK-15) ---------- */
+/* ---------- 저장 전 검사 (툴 T-07, CK-01~CK-20) ---------- */
 function checks(sc){
   var out=[],sch=schedule(sc),seen={};
   function add(lv,id,msg,pi){out.push({lv:lv,id:id,msg:msg,pi:pi});}
@@ -988,6 +989,14 @@ function checks(sc){
     else if(names[pl.name])add('warn','CK-15','장소 이름 "'+pl.name+'"이(가) 겹칩니다.');names[pl.name]=1;
     if(pl.x<0||pl.y<0||pl.x>BG.w||pl.y>BG.h)add('err','CK-01','장소 '+pl.name+'이(가) 배경 밖에 있습니다.');});
   var me=moveEnd(sc,sch);if(me>CFG.RECOMMEND_MAX)add('warn','CK-14','연출이 권장 길이보다 깁니다('+me+'ms).');
+  var iv=sc.pins.map(function(p){var q=sch[p.no];return q&&q.dur?[q.start,q.start+q.dur]:null;}).filter(Boolean),mx=0,at=0; /* CK-18, 연출 G-02 */
+  iv.forEach(function(a){var n=iv.filter(function(b){return b[0]<=a[0]&&a[0]<b[1];}).length;if(n>mx){mx=n;at=a[0];}});
+  if(mx>CFG.RECOMMEND_MOVING)add('warn','CK-18',at+'ms에 핀 '+mx+'개가 함께 움직입니다. 출발 시차를 두면 따라 보기 쉽습니다.');
+  var lim=1-CFG.DIALOG_AREA/100,pst=placeState(sc),vis=0; /* CK-19, CK-20, 연출 G-04·G-05 */
+  state.places.forEach(function(pl){var m=pst[pl.id];if(!m||m==='HIDE')return;vis++;if(pl.y/BG.h>lim)add('warn','CK-19',pl.name+'이(가) 대사창에 가려집니다.');});
+  sc.pins.forEach(function(p,pi){var r=rpath(sc,p),e=p.pts[p.pts.length-1];if(r.length<2||r[r.length-1][1]<=lim)return; /* 보이는 장소에 도착하면 위에서 이미 알렸다 */
+    var m2=e&&e.place?pst[e.place]:null;if(m2&&m2!=='HIDE')return;add('warn','CK-19','핀 '+p.no+'의 도착 지점이 대사창에 가려집니다.',pi);});
+  if(vis>CFG.RECOMMEND_PLACES)add('warn','CK-20','보이는 장소가 '+vis+'개입니다. 이야기에 나오는 장소만 남기세요.');
   return out;
 }
 function syncChecks(){
@@ -1154,7 +1163,8 @@ $('pop-close').addEventListener('click',stopReplay);
 $('logmodal').addEventListener('click',function(e){if(e.target===e.currentTarget)closeLog();});
 $('s-next').addEventListener('click',storyTap);
 $('s-reset').addEventListener('click',storyReset);
-$('s-ratio').addEventListener('change',function(e){$('stage').style.aspectRatio=e.target.value;resize();});
+function applyRatio(){var v=$('s-ratio').value,st=$('stage');st.style.aspectRatio=v;st.style.maxWidth=v==='844/390'?'844px':'';resize();}
+$('s-ratio').addEventListener('change',applyRatio);
 $('scrub').addEventListener('input',function(e){tapping=null;playing=false;t=parseFloat(e.target.value);setPlay();});
 $('m-game').addEventListener('click',function(){setView('game');});
 $('m-edit').addEventListener('click',function(){setView('edit');});

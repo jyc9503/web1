@@ -121,6 +121,11 @@ main pre{margin:12px 0 16px;padding:14px 16px;background:var(--surface);border:1
 main pre code{background:none;color:var(--ink);padding:0;font-size:inherit}
 .tablewrap{margin:12px 0 18px}
 .flow{margin:12px 0 18px}
+.cuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin:12px 0 18px}
+.cuts figure{margin:0;min-width:0}
+.cuts svg{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
+.cuts figcaption{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.55}
+main h4{font-size:14px;margin:18px 0 6px}
 .note ul{margin:8px 0 0}
 .note p{margin:0}
 td code{white-space:nowrap}
@@ -142,9 +147,11 @@ td code{white-space:nowrap}
 <a href="#s9">이어가기</a>
 <a href="#s10">데이터 입출력</a>
 <a href="#s11">저장과 검증</a>
-<a href="#s12">작업 목록</a>
-<a href="#s13">검증·미결 목록</a>
-<a href="#s14">변경 이력</a>
+<a href="#s12">검증·미결 목록</a>
+<a href="#s13">부록 A. 속성 패널과 저장 위치</a>
+<a href="#s14">부록 B. 검사 항목</a>
+<a href="#s15">부록 C. 작업 목록</a>
+<a href="#s16">변경 이력</a>
     <div class="legend">
       <span><span class="badge b-ok">확정</span> 그대로 구현</span>
       <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
@@ -158,23 +165,23 @@ td code{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기, 데이터 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.13 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.14 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">27건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">32건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
 <p>「스토리 맵 핀 이동 연출」(<code>plans/story-map-pin-move/</code>)의 데이터를 만드는 편집 툴이다. 연출 규칙(R-xx), 계산식(F-xx), 데이터 형식은 그 기획서(이하 "연출 기획서")를 따르고, 이 문서는 <strong>툴에서 어떻게 만드는지</strong>만 다룬다.</p>
 <ul>
-<li><strong>사용자</strong>: 스토리 연출을 만드는 기획자</li>
+<li><strong>사용자</strong>: 스토리 연출을 만드는 기획자 여러 명. 처음 쓰는 사람도 헷갈리지 않고, 사람마다 만든 연출의 품질이 비슷해야 한다. 같은 배경과 장소를 여러 사람이 나눠 쓴다.</li>
 <li><strong>대상 기기</strong>: PC(마우스와 키보드). 프로토타입이 폰 터치로도 조작되는 것은 기획 검토를 폰에서 하기 위한 것이고, 툴 요구가 아니다. 터치 기기 지원이 필요해지면 더블탭과 길게 누르기를 같은 규칙으로 쓴다. <code>검증필요</code></li>
 <li><strong>목표</strong>: 연출 하나를 5분 안에 만든다. 점 몇 개를 찍으면 곡선이 나오고, 앞 연출에서 이어갈 때는 버튼 하나로 시작 상태가 채워진다. <code>검증필요</code></li>
-<li><strong>원칙</strong>: 툴에서 보는 미리보기와 게임 화면이 같아야 한다. 같은 계산식(연출 기획서 「계산 규칙」)을 쓴다.</li>
-<li><strong>결과물</strong>: 연출 1건당 JSON 1개와 엑셀 테이블 행(<code>map_scene</code>, <code>map_place</code>, <code>map_background</code>). 형식은 연출 기획서 「데이터 설계」에 있다.</li>
+<li><strong>원칙</strong>: 툴에서 보는 미리보기와 게임 화면이 같아야 한다. 같은 계산식(연출 기획서 「부록 C 계산 규칙」)을 쓴다.</li>
+<li><strong>결과물</strong>: 연출 1건당 JSON 1개와 엑셀 테이블 행(<code>map_scene</code>, <code>map_place</code>, <code>map_background</code>). 형식은 연출 기획서 「부록 A 데이터 설계」에 있다.</li>
 <li><strong>단위</strong>: 툴 화면의 좌표·길이는 배경 px, 시간은 ms, 속도는 px/초로 표시한다(연출 R-05, R-37, R-41).</li>
 <li>동작 프로토타입(<code>plans/story-map-pin-move/proto/</code>)의 「편집 툴」 탭이 이 문서의 주요 기능을, 「데이터」 탭이 저장 형식을 구현해 두었다.</li>
-<li>기획자용 조작 안내는 <code>plans/map-move-tool/guide.md</code>에 있다(E-06).</li>
+<li>기획자용 조작 안내와 「좋은 연출 기준」은 <code>plans/map-move-tool/guide.md</code>에 있다(E-06). 기준의 원본은 연출 기획서 「연출 작성 기준」(G-01~G-09)이고, 툴은 그중 기계로 볼 수 있는 것을 경고로 알려준다(CK-13, CK-14, CK-18~CK-20).</li>
 <li>이 문서는 회사 밖에서 회사 데이터 없이 썼다. 테이블·열·필드 이름은 자리표시다.</li>
 </ul>
 <h3>번호 체계</h3>
@@ -283,7 +290,7 @@ td code{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td>연출 목록</td>
-<td>묶음(<code>tool_folder</code>)별 연출 맵 목록, <code>sort_order</code> 순서. 이어가기로 연결된 연출은 들여쓰기로 표시</td>
+<td>묶음(<code>tool_folder</code>)별 연출 목록, <code>sort_order</code> 순서. 이어가기로 연결된 연출은 들여쓰기로 표시</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -351,7 +358,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">V-05</td>
-<td>대사창 영역 점선 상자를 켜고 끌 수 있다(기본 꺼짐). 맵이 대사 뒤에 남을 때(연출 R-26) 가려지는 곳을 확인하는 용도이며 저장 경고는 없다.</td>
+<td>대사창 영역 점선 상자를 켜고 끌 수 있다(기본 꺼짐). 맵이 대사 뒤에 남을 때(연출 R-26) 가려지는 곳을 확인하는 용도다. 영역은 배경 아래 <code>MAP_DIALOG_AREA_RATIO</code>(22)%이고, 같은 영역으로 CK-19 경고를 낸다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
@@ -464,6 +471,11 @@ td code{white-space:nowrap}
 <tr data-s="warn">
 <td class="id">S-06</td>
 <td><strong>배경 등록</strong>: 배경 이미지를 고르면 원본 해상도를 읽어 <code>map_background</code> 행을 만든다(D-06).</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">S-07</td>
+<td><strong>묶음 이름 규칙</strong>: <code>tool_folder</code>는 <code>C&lt;챕터 두 자리&gt;_&lt;내용 영문&gt;</code>으로 짓는다(예: <code>C03_MOVE</code>). 이벤트 스토리는 <code>EV&lt;번호&gt;_&lt;내용&gt;</code>. 목록에서 챕터 순으로 정렬된다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -777,7 +789,12 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">M-08</td>
-<td>마크를 지우면 그 장소에 붙어 있던 점은 그 자리의 좌표 점으로 바뀌고, 모든 연출의 보임/숨김 목록에서 빠진다. 지우기 전에 영향을 받는 연출 수를 알린다.</td>
+<td>마크를 지우면 그 장소에 붙어 있던 점은 그 자리의 좌표 점으로 바뀌고, 모든 연출의 보임/숨김 목록에서 빠진다. 지우기 전에 영향받는 연출 목록(M-09)을 보여주고 확인을 받는다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">M-09</td>
+<td><strong>공유 장소 변경 확인</strong>: 장소를 옮기거나 이름을 바꾸거나 지울 때, 그 장소를 지나거나 보여주는 다른 연출의 목록(연출 id, 묶음, 메모)을 보여주고 확인을 받는다. 여러 기획자가 같은 배경을 쓰므로, 남의 연출이 모르게 바뀌는 일을 막는다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -837,7 +854,7 @@ td code{white-space:nowrap}
 </table></div>
 </section>
 <section id="s10"><h2><span class="sec">§10</span>데이터 입출력</h2>
-<p>툴이 읽고 쓰는 데이터다. 형식은 연출 기획서 「데이터 설계」를 따른다. 툴 플랫폼이 정해지지 않았으므로 방식은 모두 제안이다.</p>
+<p>툴이 읽고 쓰는 데이터다. 형식은 연출 기획서 「부록 A 데이터 설계」를 따른다. 툴 플랫폼이 정해지지 않았으므로 방식은 모두 제안이다.</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -869,7 +886,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">D-05</td>
-<td><strong>id 채번</strong>: 새 연출·장소·배경의 id는 그 테이블에서 쓰고 있는 가장 큰 id + 1을 제안한다. 사용자가 고칠 수 있고, 이미 있는 id는 막는다. id 범위는 회사 규칙을 따른다.</td>
+<td><strong>id 채번</strong>: 기획자마다 id 대역을 나눠 쓴다(툴 설정에 내 대역을 입력). 새 연출·장소의 id는 내 대역 안에서 쓰고 있는 가장 큰 id + 1을 제안한다. 동시에 작업해도 id가 겹치지 않는다. 사용자가 고칠 수 있고, 이미 있는 id는 막는다. 회사 채번 규칙이 있으면 그것을 따른다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -889,7 +906,73 @@ td code{white-space:nowrap}
 </tr>
 </tbody>
 </table></div>
-<h3>속성 패널과 저장 위치</h3>
+</section>
+<section id="s11"><h2><span class="sec">§11</span>저장과 검증</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>요구</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td class="id">T-05</td>
+<td>툴 안에서 미리보기 재생(재생·일시정지·처음으로·배속·시간 이동). 결과는 게임과 같아야 한다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">T-06</td>
+<td>연출 기획서 「부록 A 데이터 설계」 형식(연출 JSON + 엑셀 행)으로 저장하고 불러온다. 「데이터 보기」(D-08)는 현재 연출의 엑셀 행과 JSON을 보여주어 그대로 복사할 수 있다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">T-07</td>
+<td>저장 전에 검사 항목(CK, 부록 B)을 확인한다. 오류는 저장을 막고, 경고는 목록만 보여준다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">T-08</td>
+<td>기존 스토리 툴과 분리된 별도 툴로 만든다. 스토리 테이블은 연출 id로 참조한다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+</tbody>
+</table></div>
+<p>검사 항목(CK-01~CK-20)과 문구는 「부록 B 검사 항목」에 있다.</p>
+</section>
+<section id="s12"><h2><span class="sec">§12</span>검증·미결 목록</h2>
+<h3>회사에서 확인할 것</h3>
+<ul class="check">
+<li><span class="mono">□</span><span>툴 플랫폼(엔진 에디터 확장 / 웹 툴): 회사에서 판단 (T-08)</span></li>
+<li><span class="mono">□</span><span>툴이 읽을 회사 데이터의 위치와 형식: Actor, 문자열, 엑셀 테이블을 내보낸 데이터 (D-01)</span></li>
+<li><span class="mono">□</span><span>연출 JSON을 두는 위치와 이름 규칙 (D-02)</span></li>
+<li><span class="mono">□</span><span>문자열 테이블에 새 키를 넣는 절차 (D-04)</span></li>
+<li><span class="mono">□</span><span>새 id의 범위 규칙 (D-05)</span></li>
+</ul>
+<h3>프로그램실 회의 안건</h3>
+<ul class="check">
+<li><span class="mono">□</span><span>엑셀 행 반영 방식: 직접 쓰기 / 붙여넣기용 행 내보내기 (D-03)</span></li>
+<li><span class="mono">□</span><span>편의 기능 범위: 경로 복사(P-12), 경로 뒤집기(P-13), 이어서 미리보기(C-05), PC 단축키. 넣기로 했고 범위는 프로그램실과 논의</span></li>
+<li><span class="mono">□</span><span>자유 그리기(P-02): 이번 버전 제외, 회의에서 프로그램실 의견 확인</span></li>
+<li><span class="mono">□</span><span>확대·이동(V-06)의 조작 방식을 회사의 다른 툴과 맞출지</span></li>
+</ul>
+<h3>기획자가 정할 것</h3>
+<ul class="check">
+<li><span class="mono">□</span><span>
+<p>여러 기획자 운영: id 대역(D-05), 공유 장소 변경 확인(M-09), 묶음 이름 규칙(S-07)</p>
+</span></li>
+<li><span class="mono">□</span><span>
+<p>v0.12에서 추가한 제안(V-06, V-07, S-01~S-06, K-07, K-08, M-08, D-01~D-07, CK-11, CK-12, CK-16, CK-17)</p>
+</span></li>
+</ul>
+<h3>나중에 다시 볼 것</h3>
+<ul class="check">
+<li><span class="mono">□</span><span>속도 프리셋 값은 시작값. 실제 연출을 만들며 튜닝 (P-15)</span></li>
+</ul>
+</section>
+<section id="s13"><h2><span class="sec">§13</span>부록 A. 속성 패널과 저장 위치</h2>
+<p>속성 패널의 각 항목이 어디에 저장되는지다. 툴 프로그래머용이다.</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -1041,40 +1124,8 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s11"><h2><span class="sec">§11</span>저장과 검증</h2>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>요구</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td class="id">T-05</td>
-<td>툴 안에서 미리보기 재생(재생·일시정지·처음으로·배속·시간 이동). 결과는 게임과 같아야 한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-06</td>
-<td>연출 기획서 「데이터 설계」 형식(연출 JSON + 엑셀 행)으로 저장하고 불러온다. 「데이터 보기」(D-08)는 현재 연출의 엑셀 행과 JSON을 보여주어 그대로 복사할 수 있다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-07</td>
-<td>저장 전에 아래 검사 항목(CK)을 확인한다. 오류는 저장을 막고, 경고는 목록만 보여준다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-08</td>
-<td>기존 스토리 툴과 분리된 별도 툴로 만든다. 스토리 테이블은 연출 맵 id로 참조한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-</tbody>
-</table></div>
-<h3>검사 항목</h3>
-<p>문구는 예시이고 <code>{ }</code> 안은 실제 값으로 바뀐다. 같은 규칙으로 빌드 때 한 번 더 검사한다(연출 기획서 「구현 전달사항」).</p>
+<section id="s14"><h2><span class="sec">§14</span>부록 B. 검사 항목</h2>
+<p>문구는 예시이고 <code>{ }</code> 안은 실제 값으로 바뀐다. 같은 규칙으로 빌드 때 한 번 더 검사한다(연출 기획서 「부록 G 구현 전달사항」).</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -1179,7 +1230,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">CK-14</td>
-<td>이동 끝 시각이 <code>MAP_RECOMMEND_MAX_MS</code>(8000)를 넘음</td>
+<td>이동 끝 시각이 <code>MAP_RECOMMEND_MAX_MS</code>(8000)를 넘음 (연출 G-01)</td>
 <td>경고</td>
 <td>연출이 권장 길이보다 깁니다({길이}ms).</td>
 <td><span class="badge b-ok">확정</span></td>
@@ -1205,10 +1256,31 @@ td code{white-space:nowrap}
 <td>{장소}의 이름이 이름표에 가려집니다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
+<tr data-s="warn">
+<td class="id">CK-18</td>
+<td>동시에 움직이는 핀이 <code>MAP_RECOMMEND_MOVING_PINS</code>(3)개보다 많은 순간이 있음 (연출 G-02)</td>
+<td>경고</td>
+<td>{시각}ms에 핀 {개수}개가 함께 움직입니다. 출발 시차를 두면 따라 보기 쉽습니다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">CK-19</td>
+<td>도착 지점이나 보이는 장소 마크가 대사창 영역(배경 아래 <code>MAP_DIALOG_AREA_RATIO</code>(22)%) 안에 있음 (연출 G-04)</td>
+<td>경고</td>
+<td>{이름}이(가) 대사창에 가려집니다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">CK-20</td>
+<td>보이는 장소 마크가 <code>MAP_RECOMMEND_PLACES</code>(8)개보다 많음 (연출 G-05)</td>
+<td>경고</td>
+<td>보이는 장소가 {개수}개입니다. 이야기에 나오는 장소만 남기세요.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
 </tbody>
 </table></div>
 </section>
-<section id="s12"><h2><span class="sec">§12</span>작업 목록</h2>
+<section id="s15"><h2><span class="sec">§15</span>부록 C. 작업 목록</h2>
 <p>우선순위 제안이다. P0은 첫 구현에 꼭 필요한 것, P1은 같은 버전 안에 넣을 것, P2는 여유가 있을 때다. 기간은 회사에서 산정한다.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -1270,13 +1342,19 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td>저장 전 검사와 검사 결과 목록</td>
-<td>T-07, CK</td>
+<td>T-07, CK-01~CK-17</td>
 <td>P0</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
-<td>연출 관리(새 연출, 복제, 삭제, 목록 순서), 배경 등록</td>
-<td>S-01~S-06, D-05, D-06</td>
+<td>연출 작성 기준 경고, 공유 장소 변경 확인, id 대역</td>
+<td>CK-18~CK-20, M-09, D-05</td>
+<td>P1</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>연출 관리(새 연출, 복제, 삭제, 목록 순서, 묶음 이름), 배경 등록</td>
+<td>S-01~S-07, D-06</td>
 <td>P1</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
@@ -1307,32 +1385,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s13"><h2><span class="sec">§13</span>검증·미결 목록</h2>
-<h3>회사에서 확인할 것</h3>
-<ul class="check">
-<li><span class="mono">□</span><span>툴 플랫폼(엔진 에디터 확장 / 웹 툴): 회사에서 판단 (T-08)</span></li>
-<li><span class="mono">□</span><span>툴이 읽을 회사 데이터의 위치와 형식: Actor, 문자열, 엑셀 테이블을 내보낸 데이터 (D-01)</span></li>
-<li><span class="mono">□</span><span>연출 JSON을 두는 위치와 이름 규칙 (D-02)</span></li>
-<li><span class="mono">□</span><span>문자열 테이블에 새 키를 넣는 절차 (D-04)</span></li>
-<li><span class="mono">□</span><span>새 id의 범위 규칙 (D-05)</span></li>
-</ul>
-<h3>프로그램실 회의 안건</h3>
-<ul class="check">
-<li><span class="mono">□</span><span>엑셀 행 반영 방식: 직접 쓰기 / 붙여넣기용 행 내보내기 (D-03)</span></li>
-<li><span class="mono">□</span><span>편의 기능 범위: 경로 복사(P-12), 경로 뒤집기(P-13), 이어서 미리보기(C-05), PC 단축키. 넣기로 했고 범위는 프로그램실과 논의</span></li>
-<li><span class="mono">□</span><span>자유 그리기(P-02): 이번 버전 제외, 회의에서 프로그램실 의견 확인</span></li>
-<li><span class="mono">□</span><span>확대·이동(V-06)의 조작 방식을 회사의 다른 툴과 맞출지</span></li>
-</ul>
-<h3>기획자가 정할 것</h3>
-<ul class="check">
-<li><span class="mono">□</span><span>v0.12에서 추가한 제안(V-06, V-07, S-01~S-06, K-07, K-08, M-08, D-01~D-07, CK-11, CK-12, CK-16, CK-17)</span></li>
-</ul>
-<h3>나중에 다시 볼 것</h3>
-<ul class="check">
-<li><span class="mono">□</span><span>속도 프리셋 값은 시작값. 실제 연출을 만들며 튜닝 (P-15)</span></li>
-</ul>
-</section>
-<section id="s14"><h2><span class="sec">§14</span>변경 이력</h2>
+<section id="s16"><h2><span class="sec">§16</span>변경 이력</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -1342,6 +1395,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.14</td>
+<td>2026-11-21</td>
+<td>전체 검토. 여러 기획자가 함께 쓰는 상황 보강: 공유 장소 변경 확인(M-09), 기획자별 id 대역(D-05), 묶음 이름 규칙(S-07), 연출 작성 기준 경고(CK-18~CK-20), 대사창 영역을 설정 키로(V-05). 속성 패널 표·검사 항목·작업 목록을 부록으로 옮김</td>
+</tr>
 <tr>
 <td>v0.13</td>
 <td>2026-11-16</td>

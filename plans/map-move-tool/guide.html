@@ -121,6 +121,11 @@ main pre{margin:12px 0 16px;padding:14px 16px;background:var(--surface);border:1
 main pre code{background:none;color:var(--ink);padding:0;font-size:inherit}
 .tablewrap{margin:12px 0 18px}
 .flow{margin:12px 0 18px}
+.cuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin:12px 0 18px}
+.cuts figure{margin:0;min-width:0}
+.cuts svg{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
+.cuts figcaption{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.55}
+main h4{font-size:14px;margin:18px 0 6px}
 .note ul{margin:8px 0 0}
 .note p{margin:0}
 td code{white-space:nowrap}
@@ -132,14 +137,16 @@ td code{white-space:nowrap}
   <nav class="toc" aria-label="목차">
     <p class="label">목차</p>
     <a href="#s1">먼저 알아둘 것</a>
-<a href="#s2">화면</a>
-<a href="#s3">연출 하나 만들기</a>
-<a href="#s4">경로 다듬기</a>
-<a href="#s5">장소 마크</a>
-<a href="#s6">이어가기</a>
-<a href="#s7">출발 조건</a>
-<a href="#s8">검사 결과 읽기</a>
-<a href="#s9">단축키</a>
+<a href="#s2">좋은 연출 기준</a>
+<a href="#s3">여럿이 함께 쓸 때</a>
+<a href="#s4">화면</a>
+<a href="#s5">연출 하나 만들기</a>
+<a href="#s6">경로 다듬기</a>
+<a href="#s7">장소 마크</a>
+<a href="#s8">이어가기</a>
+<a href="#s9">출발 조건</a>
+<a href="#s10">검사 결과 읽기</a>
+<a href="#s11">단축키</a>
     <div class="legend">
       <span><span class="badge b-ok">확정</span> 그대로 구현</span>
       <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
@@ -153,7 +160,7 @@ td code{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴 사용 안내</h1>
       <p class="sub">기획자가 툴을 처음 쓸 때 읽는 조작 안내. 툴 안에서는 조작 안내 문구를 띄우지 않으므로(툴 E-06) 이 문서가 그 역할을 한다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.13 기준</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.14 기준</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>스토리 연출 기획자</dd></div>
         <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">0건</span></dd></div>
@@ -168,7 +175,74 @@ td code{white-space:nowrap}
 <li>툴 미리보기와 게임 화면은 같다. 게임 보기로 바꿔 최종 화면을 확인한다.</li>
 </ul>
 </section>
-<section id="s2"><h2><span class="sec">§2</span>화면</h2>
+<section id="s2"><h2><span class="sec">§2</span>좋은 연출 기준</h2>
+<p>메인 스토리의 중요한 이동에 가끔 나오는 연출이다. 한 번 볼 때 또렷하게 읽혀야 한다. 누가 만들어도 비슷한 품질이 나오도록 아래를 지킨다. 원본은 연출 기획서 「연출 작성 기준」(G-01~G-09)이고, 툴이 경고하는 항목은 검사 결과에 뜬다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>기준</th>
+<th>왜</th>
+<th>툴 경고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>이동이 끝나기까지 3~8초. 길면 두 연출로 나누고 사이에 대사</td>
+<td>연출 중에는 대사창이 숨어 유저가 기다린다</td>
+<td>있음</td>
+</tr>
+<tr>
+<td>동시에 움직이는 핀은 3개 이하. 많으면 출발 조건으로 시차</td>
+<td>눈은 움직이는 것을 두세 개까지 따라간다</td>
+<td>있음</td>
+</tr>
+<tr>
+<td>연출 직전 대사에서 누가 어디로 가는지 말한다</td>
+<td>연출 중에는 글로 보충할 수 없다</td>
+<td>없음</td>
+</tr>
+<tr>
+<td>도착 지점과 보이는 장소는 화면 아래 22% 밖에</td>
+<td>연출이 끝나면 대사창이 지도 아래를 덮는다. 「대사창 영역 표시」를 켜고 확인한다</td>
+<td>있음</td>
+</tr>
+<tr>
+<td>보이는 장소 마크는 8개 이하. 이야기에 나오는 곳만</td>
+<td>이름이 많으면 도착지가 묻힌다</td>
+<td>있음</td>
+</tr>
+<tr>
+<td>인물은 걷기, 급한 장면은 달리기, 탈것·함대는 고속. 시간 고정은 대사 박자를 맞출 때만</td>
+<td>같은 걷기가 연출마다 다르면 거리감이 흔들린다</td>
+<td>너무 빠르면 있음</td>
+</tr>
+<tr>
+<td>이동 사이에 대사가 들어가면 이어가기로 나누고, 대사 없이 이어지면 한 연출에서 출발 조건으로</td>
+<td>연출 수가 줄고, 끊김 없는 이동은 한 번에 보인다</td>
+<td>없음</td>
+</tr>
+<tr>
+<td>이름표는 6자 안쪽, 한 연출에서 같은 이름표 두 번 금지</td>
+<td>폰에서 이름표가 가장 작은 글자다</td>
+<td>없음</td>
+</tr>
+<tr>
+<td>핀 색은 기본 팔레트. 바꿀 때는 다른 핀과 구분되게</td>
+<td>궤적 색으로 누가 지나갔는지 읽는다</td>
+<td>없음</td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="s3"><h2><span class="sec">§3</span>여럿이 함께 쓸 때</h2>
+<ul>
+<li><strong>장소는 공유 자원이다.</strong> 같은 배경의 장소는 모든 연출이 함께 쓴다. 장소를 옮기거나 이름을 바꾸거나 지우면 툴이 영향받는 다른 연출 목록을 보여준다. 남의 연출이 있으면 그 담당자와 먼저 이야기한다.</li>
+<li><strong>id는 내 대역에서.</strong> 툴 설정에 내 id 대역을 넣어 두면 새 연출·장소 id가 다른 사람과 겹치지 않는다.</li>
+<li><strong>묶음 이름은 규칙대로.</strong> <code>C03_MOVE</code>처럼 <code>C&lt;챕터 두 자리&gt;_&lt;내용&gt;</code>, 이벤트는 <code>EV&lt;번호&gt;_&lt;내용&gt;</code>.</li>
+<li><strong>메모를 남긴다.</strong> 연출 메모에 "누가 어디로"를 한 줄 적어 두면 목록에서 바로 찾는다.</li>
+</ul>
+</section>
+<section id="s4"><h2><span class="sec">§4</span>화면</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -200,7 +274,7 @@ td code{white-space:nowrap}
 <li><strong>게임 보기</strong>: 게임과 같은 화면. 지나온 구간만 점선으로 남는다. <code>G</code>로 바꾼다.</li>
 </ul>
 </section>
-<section id="s3"><h2><span class="sec">§3</span>연출 하나 만들기</h2>
+<section id="s5"><h2><span class="sec">§5</span>연출 하나 만들기</h2>
 <ol>
 <li>연출 목록에서 새 연출을 만들고 배경을 고른다.</li>
 <li>「장소 마크」 탭에서 빈 곳을 더블클릭해 장소를 만들고 이름을 적는다. 이미 있는 배경이면 장소가 이미 있다.</li>
@@ -212,7 +286,7 @@ td code{white-space:nowrap}
 <li>검사 결과가 「오류 0」이면 <code>Ctrl+S</code>로 저장한다.</li>
 </ol>
 </section>
-<section id="s4"><h2><span class="sec">§4</span>경로 다듬기</h2>
+<section id="s6"><h2><span class="sec">§6</span>경로 다듬기</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -260,7 +334,7 @@ td code{white-space:nowrap}
 <li>핀이 장소 위에 서 있으면 핀이 먼저 잡힌다. 장소를 고르려면 장소 이름 글자를 누른다.</li>
 </ul>
 </section>
-<section id="s5"><h2><span class="sec">§5</span>장소 마크</h2>
+<section id="s7"><h2><span class="sec">§7</span>장소 마크</h2>
 <ul>
 <li>장소를 한 번 누르면 장소 편집으로 바뀐다. 핀이나 점을 누르면 핀·경로 편집으로 돌아온다.</li>
 <li>위치는 끌거나 X, Y 칸에 숫자로 적는다.</li>
@@ -268,7 +342,7 @@ td code{white-space:nowrap}
 <li>배경 이미지를 해상도가 다른 파일로 바꾸면 툴이 좌표를 비율대로 바꿀지 묻는다.</li>
 </ul>
 </section>
-<section id="s6"><h2><span class="sec">§6</span>이어가기</h2>
+<section id="s8"><h2><span class="sec">§8</span>이어가기</h2>
 <p>앞 연출이 끝난 자리에서 다음 이동을 시작할 때 쓴다.</p>
 <ol>
 <li>앞 연출을 고른 상태에서 「앞 연출에서 이어가기」를 누른다.</li>
@@ -283,7 +357,7 @@ td code{white-space:nowrap}
 <li>이어진 연출이 있는 연출은 지울 수 없다.</li>
 </ol>
 </section>
-<section id="s7"><h2><span class="sec">§7</span>출발 조건</h2>
+<section id="s9"><h2><span class="sec">§9</span>출발 조건</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -310,13 +384,13 @@ td code{white-space:nowrap}
 <li>두 핀이 서로를 기다리게 만들면 검사에서 오류가 난다.</li>
 </ul>
 </section>
-<section id="s8"><h2><span class="sec">§8</span>검사 결과 읽기</h2>
+<section id="s10"><h2><span class="sec">§10</span>검사 결과 읽기</h2>
 <ul>
 <li><strong>오류</strong>: 저장할 수 없다. 줄을 누르면 문제의 핀으로 간다.</li>
 <li><strong>경고</strong>: 저장은 된다. 너무 빠른 핀(1600px/초 초과), 권장 길이(8000ms) 초과, 겹치는 장소 이름 등.</li>
 </ul>
 </section>
-<section id="s9"><h2><span class="sec">§9</span>단축키</h2>
+<section id="s11"><h2><span class="sec">§11</span>단축키</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>

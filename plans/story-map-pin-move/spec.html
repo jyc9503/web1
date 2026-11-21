@@ -121,6 +121,11 @@ main pre{margin:12px 0 16px;padding:14px 16px;background:var(--surface);border:1
 main pre code{background:none;color:var(--ink);padding:0;font-size:inherit}
 .tablewrap{margin:12px 0 18px}
 .flow{margin:12px 0 18px}
+.cuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin:12px 0 18px}
+.cuts figure{margin:0;min-width:0}
+.cuts svg{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
+.cuts figcaption{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.55}
+main h4{font-size:14px;margin:18px 0 6px}
 .note ul{margin:8px 0 0}
 .note p{margin:0}
 td code{white-space:nowrap}
@@ -132,25 +137,26 @@ td code{white-space:nowrap}
   <nav class="toc" aria-label="목차">
     <p class="label">목차</p>
     <a href="#s1">개요</a>
-<a href="#s2">핵심 규칙</a>
-<a href="#s3">게임 화면과 툴 화면</a>
-<a href="#s4">처리 흐름</a>
-<a href="#s5">이어가기</a>
-<a href="#s6">계산 규칙</a>
+<a href="#s2">플레이어가 보는 장면</a>
+<a href="#s3">핵심 규칙</a>
+<a href="#s4">게임 화면과 툴 화면</a>
+<a href="#s5">처리 흐름</a>
+<a href="#s6">이어가기</a>
 <a href="#s7">스토리 테이블 연동</a>
-<a href="#s8">데이터 설계</a>
-<a href="#s9">설정 키</a>
-<a href="#s10">연출 타임라인 (예시)</a>
-<a href="#s11">예시 데이터</a>
-<a href="#s12">예외 처리</a>
-<a href="#s13">회사 데이터 연결</a>
-<a href="#s14">구현 전달사항</a>
-<a href="#s15">편집 툴 요구</a>
-<a href="#s16">아트·사운드 전달사항</a>
-<a href="#s17">검수 항목</a>
-<a href="#s18">작업 목록</a>
-<a href="#s19">검증·미결 목록</a>
-<a href="#s20">변경 이력</a>
+<a href="#s8">연출 작성 기준</a>
+<a href="#s9">아트·사운드 전달사항</a>
+<a href="#s10">편집 툴 요구</a>
+<a href="#s11">검증·미결 목록</a>
+<a href="#s12">부록 A. 데이터 설계</a>
+<a href="#s13">부록 B. 설정 키</a>
+<a href="#s14">부록 C. 계산 규칙</a>
+<a href="#s15">부록 D. 예시 연출과 데이터</a>
+<a href="#s16">부록 E. 예외 처리</a>
+<a href="#s17">부록 F. 회사 데이터 연결</a>
+<a href="#s18">부록 G. 구현 전달사항</a>
+<a href="#s19">부록 H. 검수 항목</a>
+<a href="#s20">부록 I. 작업 목록</a>
+<a href="#s21">변경 이력</a>
     <div class="legend">
       <span><span class="badge b-ok">확정</span> 그대로 구현</span>
       <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
@@ -164,10 +170,10 @@ td code{white-space:nowrap}
       <h1>스토리 맵 핀 이동 연출</h1>
       <p class="sub">스토리 진행 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 이동하며 "누가 어디서 어디로 갔는지"를 보여주는 연출 기능.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.11 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.12 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>클라이언트 · 편집 툴 · 데이터</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">12건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">24건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -175,38 +181,48 @@ td code{white-space:nowrap}
 <ul>
 <li><strong>목적</strong>: 이동과 위치 정보를 시각으로 전달해 스토리 몰입을 높인다.</li>
 <li><strong>감정 중심</strong>: 이동 및 위치 정보. 성공 기준은 "누가 어디서 어디로 갔는지 한 번에 읽힌다"이다.</li>
-<li><strong>사용 위치</strong>: 스토리 테이블의 행에서 연출 맵 id로 맵을 열고(재생) 닫는다. 맵은 닫기 전까지 대사 뒤에 남고, 앞 연출이 끝난 상태에서 이어서 시작할 수 있다.</li>
-<li><strong>기획자 작업</strong>: 편집 툴에서 배경을 고르고, 장소 마크를 새기고, 핀마다 Actor·경로·속도·출발 조건을 정한다. 결과는 엑셀 테이블 5개와 연출마다 JSON 1개로 저장된다(「데이터 설계」). 툴 상세는 별도 기획서 「맵 이동 연출 편집 툴」(<code>plans/map-move-tool/</code>)에 있다.</li>
-<li><strong>이 문서의 상태</strong>: 회사 밖에서 회사 데이터 없이 썼다. 테이블·열·키 이름은 모두 자리표시다. 회사 기존 데이터에 붙이는 방법은 「회사 데이터 연결」에 모았다.</li>
+<li><strong>쓰는 곳</strong>: 메인 스토리에서 이동이 중요한 장면에 가끔 쓴다. 자주 나오지 않으므로 한 번 볼 때 인상적이어야 하고, 한 번에 3~8초로 짧게 끝난다(G-01).</li>
+<li><strong>사용 위치</strong>: 스토리 테이블의 행에서 연출 id로 맵을 열고(재생) 닫는다. 맵은 닫기 전까지 대사 뒤에 남고, 앞 연출이 끝난 상태에서 이어서 시작할 수 있다.</li>
+<li><strong>기획자 작업</strong>: 편집 툴에서 배경을 고르고, 장소 마크를 새기고, 핀마다 Actor·경로·속도·출발 조건을 정한다. 결과는 엑셀 테이블 5개와 연출마다 JSON 1개로 저장된다(「부록 A 데이터 설계」). 툴 상세는 별도 기획서 「맵 이동 연출 편집 툴」(<code>plans/map-move-tool/</code>)에 있다.</li>
+<li><strong>이 문서의 상태</strong>: 회사 밖에서 회사 데이터 없이 썼다. 테이블·열·키 이름은 모두 자리표시다. 회사 기존 데이터에 붙이는 방법은 「부록 F 회사 데이터 연결」에 모았다.</li>
+<li><strong>문서 구성</strong>: 앞쪽 본문은 무엇을 만드는지(10분 분량), 뒤쪽 부록은 어떻게 만드는지(데이터, 수치, 계산식, 예외, 검수)다.</li>
 </ul>
 <h3>누가 어디를 읽나</h3>
 <div class="tablewrap"><table>
 <thead>
 <tr>
 <th>읽는 사람</th>
-<th>먼저 볼 섹션</th>
+<th>먼저 볼 곳</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>기획 리드·PD</td>
+<td>본문 전체 (개요 ~ 검증·미결)</td>
+</tr>
+<tr>
+<td>스토리 기획자</td>
+<td>플레이어가 보는 장면, 연출 작성 기준, 툴 사용 안내(<code>plans/map-move-tool/guide.md</code>)</td>
+</tr>
+<tr>
 <td>클라이언트 프로그래머</td>
-<td>핵심 규칙, 처리 흐름, 계산 규칙, 데이터 설계, 예외 처리, 구현 전달사항</td>
+<td>핵심 규칙, 처리 흐름, 부록 A·B·C·E·G</td>
 </tr>
 <tr>
 <td>툴 프로그래머</td>
-<td>데이터 설계, 편집 툴 요구, 별도 기획서 「맵 이동 연출 편집 툴」</td>
+<td>부록 A, 별도 기획서 「맵 이동 연출 편집 툴」</td>
 </tr>
 <tr>
 <td>시스템·데이터 담당</td>
-<td>데이터 설계, 설정 키, 회사 데이터 연결</td>
+<td>부록 A·B·F</td>
 </tr>
 <tr>
 <td>아트·사운드</td>
-<td>게임 화면과 툴 화면, 아트·사운드 전달사항, 화면 시안</td>
+<td>플레이어가 보는 장면, 게임 화면과 툴 화면, 아트·사운드 전달사항</td>
 </tr>
 <tr>
 <td>QA</td>
-<td>처리 흐름, 예외 처리, 검수 항목</td>
+<td>처리 흐름, 부록 E·H</td>
 </tr>
 </tbody>
 </table></div>
@@ -255,8 +271,8 @@ td code{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
-<td>연출 맵</td>
-<td>이 연출 한 건(장면 하나). 배경 1장, 장소 마크, 핀 여러 개로 이뤄진다</td>
+<td>연출</td>
+<td>맵 이동 연출 한 건. 배경 1장, 장소 마크, 핀 여러 개로 이뤄진다. 예시에서는 「장면 1」처럼 이름을 붙인다</td>
 </tr>
 <tr>
 <td>핀</td>
@@ -284,7 +300,7 @@ td code{white-space:nowrap}
 </tr>
 <tr>
 <td>맵 열기 / 맵 닫기</td>
-<td>스토리 행이 연출 맵을 재생하게 하는 것 / 열린 맵을 닫게 하는 것</td>
+<td>스토리 행이 연출을 재생하게 하는 것 / 열린 맵을 닫게 하는 것</td>
 </tr>
 <tr>
 <td>맵 열림</td>
@@ -302,12 +318,25 @@ td code{white-space:nowrap}
 </table></div>
 <h3>표기 약속</h3>
 <ul>
-<li>규칙 안의 <code>MAP_PIN_FADE_MS</code>(400) 같은 표기는 "설정 키(지금 값)"이다. 값의 원본은 「설정 키」 표 하나이고, 규칙의 동작이 <code>확정</code>이어도 <strong>수치는 구현 후 조정하는 시작값</strong>이다.</li>
+<li>규칙 안의 <code>MAP_PIN_FADE_MS</code>(400) 같은 표기는 "설정 키(지금 값)"이다. 값의 원본은 「부록 B 설정 키」 표 하나이고, 규칙의 동작이 <code>확정</code>이어도 <strong>수치는 구현 후 조정하는 시작값</strong>이다.</li>
 <li><code>확정</code>은 기획자가 정한 것, <code>검증필요</code>는 가정했거나 회사 데이터로 확인해야 하는 것, <code>미정</code>은 결정을 미룬 것이다.</li>
 </ul>
 </section>
-<section id="s2"><h2><span class="sec">§2</span>핵심 규칙</h2>
-<p>규칙 번호는 처음 붙인 번호를 유지한다(중간에 지운 번호는 다시 쓰지 않는다. R-44는 v0.7에서 삭제). R-46부터는 v0.9에서 구현 공백을 메우려고 추가한 제안이다.</p>
+<section id="s2"><h2><span class="sec">§2</span>플레이어가 보는 장면</h2>
+<p>메인 스토리에서 이동이 중요한 순간에 가끔 나온다. 유저는 직전 대사로 "누가 어디로 가는지" 듣고, 지도에서 그 이동을 눈으로 확인한 뒤 다음 대사로 돌아온다. 아래는 예시 연출 두 개(장면 1, 장면 2)를 게임 화면 그대로 그린 것이다. 배경과 인물은 자리표시다.</p>
+<div class="cuts"><figure><svg viewBox="0 0 640 360" role="img" aria-label="게임 화면 0.8초" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a2233"/><stop offset="1" stop-color="#10141f"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><line x1="0.0" y1="0" x2="0.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="32.0" y1="0" x2="32.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="64.0" y1="0" x2="64.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="96.0" y1="0" x2="96.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="128.0" y1="0" x2="128.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="160.0" y1="0" x2="160.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="192.0" y1="0" x2="192.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="224.0" y1="0" x2="224.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="256.0" y1="0" x2="256.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="288.0" y1="0" x2="288.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="320.0" y1="0" x2="320.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="352.0" y1="0" x2="352.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="384.0" y1="0" x2="384.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="416.0" y1="0" x2="416.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="448.0" y1="0" x2="448.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="480.0" y1="0" x2="480.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="512.0" y1="0" x2="512.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="544.0" y1="0" x2="544.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="576.0" y1="0" x2="576.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="608.0" y1="0" x2="608.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="640.0" y1="0" x2="640.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="0.0" x2="640" y2="0.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="30.0" x2="640" y2="30.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="60.0" x2="640" y2="60.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="90.0" x2="640" y2="90.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="120.0" x2="640" y2="120.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="150.0" x2="640" y2="150.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="180.0" x2="640" y2="180.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="210.0" x2="640" y2="210.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="240.0" x2="640" y2="240.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="270.0" x2="640" y2="270.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="300.0" x2="640" y2="300.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="330.0" x2="640" y2="330.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="360.0" x2="640" y2="360.0" stroke="rgba(140,160,200,.10)"/><ellipse cx="115.19999999999999" cy="223.2" rx="102.4" ry="72.0" fill="#1f2c3f" stroke="rgba(150,170,210,.18)"/><ellipse cx="320.0" cy="198.00000000000003" rx="89.60000000000001" ry="93.60000000000001" fill="#222f45" stroke="rgba(150,170,210,.18)"/><ellipse cx="524.8" cy="122.4" rx="89.60000000000001" ry="72.0" fill="#1d2a3d" stroke="rgba(150,170,210,.18)"/><ellipse cx="192.0" cy="93.60000000000001" rx="76.8" ry="57.6" fill="#1e293b" stroke="rgba(150,170,210,.18)"/><ellipse cx="499.20000000000005" cy="280.8" rx="76.8" ry="50.400000000000006" fill="#1f2b3e" stroke="rgba(150,170,210,.18)"/><text x="320.0" y="347.4" text-anchor="middle" font-size="8" font-weight="600" fill="rgba(160,175,205,.4)">배경 리소스 자리 (예시)</text><g opacity="1.00"><circle cx="64.0" cy="266.4" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="64.0" y="245.9" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">정거장</text></g><g opacity="1.00"><circle cx="499.2" cy="108.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="499.2" y="87.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">관측소</text></g><g opacity="1.00"><circle cx="89.6" cy="108.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="89.6" y="87.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">북문</text></g><g opacity="1.00"><circle cx="396.8" cy="180.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="396.8" y="159.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">광장</text></g><g opacity="1.00"><circle cx="563.2" cy="275.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="563.2" y="254.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">숲</text></g><g opacity="1.00"><circle cx="537.6" cy="187.2" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="537.6" y="166.7" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">항구</text></g><g opacity="1.0"><circle cx="64.0" cy="266.4" r="14.5" fill="#e2576b" stroke="#fff" stroke-width="2.5"/><text x="64.0" y="271.6" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">A</text><rect x="40.5" y="284.9" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="64.0" y="296.4" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 A</text></g><g opacity="1.0"><circle cx="89.6" cy="108.0" r="14.5" fill="#3d8bfd" stroke="#fff" stroke-width="2.5"/><text x="89.6" y="113.2" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">B</text><rect x="66.1" y="126.5" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="89.6" y="138.0" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 B</text></g><g opacity="1.0"><circle cx="563.2" cy="275.0" r="14.5" fill="#35b37e" stroke="#fff" stroke-width="2.5"/><text x="563.2" y="280.3" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">C</text><rect x="539.7" y="293.5" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="563.2" y="305.0" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 C</text></g></svg><figcaption>① 등장 · 장면 1 0ms. 배경과 장소 이름이 먼저 보이고 핀이 출발점에 선다. 갈 길은 보이지 않는다.</figcaption></figure><figure><svg viewBox="0 0 640 360" role="img" aria-label="게임 화면 2.3초" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a2233"/><stop offset="1" stop-color="#10141f"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><line x1="0.0" y1="0" x2="0.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="32.0" y1="0" x2="32.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="64.0" y1="0" x2="64.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="96.0" y1="0" x2="96.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="128.0" y1="0" x2="128.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="160.0" y1="0" x2="160.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="192.0" y1="0" x2="192.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="224.0" y1="0" x2="224.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="256.0" y1="0" x2="256.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="288.0" y1="0" x2="288.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="320.0" y1="0" x2="320.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="352.0" y1="0" x2="352.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="384.0" y1="0" x2="384.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="416.0" y1="0" x2="416.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="448.0" y1="0" x2="448.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="480.0" y1="0" x2="480.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="512.0" y1="0" x2="512.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="544.0" y1="0" x2="544.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="576.0" y1="0" x2="576.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="608.0" y1="0" x2="608.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="640.0" y1="0" x2="640.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="0.0" x2="640" y2="0.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="30.0" x2="640" y2="30.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="60.0" x2="640" y2="60.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="90.0" x2="640" y2="90.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="120.0" x2="640" y2="120.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="150.0" x2="640" y2="150.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="180.0" x2="640" y2="180.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="210.0" x2="640" y2="210.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="240.0" x2="640" y2="240.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="270.0" x2="640" y2="270.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="300.0" x2="640" y2="300.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="330.0" x2="640" y2="330.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="360.0" x2="640" y2="360.0" stroke="rgba(140,160,200,.10)"/><ellipse cx="115.19999999999999" cy="223.2" rx="102.4" ry="72.0" fill="#1f2c3f" stroke="rgba(150,170,210,.18)"/><ellipse cx="320.0" cy="198.00000000000003" rx="89.60000000000001" ry="93.60000000000001" fill="#222f45" stroke="rgba(150,170,210,.18)"/><ellipse cx="524.8" cy="122.4" rx="89.60000000000001" ry="72.0" fill="#1d2a3d" stroke="rgba(150,170,210,.18)"/><ellipse cx="192.0" cy="93.60000000000001" rx="76.8" ry="57.6" fill="#1e293b" stroke="rgba(150,170,210,.18)"/><ellipse cx="499.20000000000005" cy="280.8" rx="76.8" ry="50.400000000000006" fill="#1f2b3e" stroke="rgba(150,170,210,.18)"/><text x="320.0" y="347.4" text-anchor="middle" font-size="8" font-weight="600" fill="rgba(160,175,205,.4)">배경 리소스 자리 (예시)</text><g opacity="1.00"><circle cx="64.0" cy="266.4" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="64.0" y="245.9" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">정거장</text></g><g opacity="1.00"><circle cx="499.2" cy="108.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="499.2" y="87.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">관측소</text></g><g opacity="1.00"><circle cx="89.6" cy="108.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="89.6" y="87.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">북문</text></g><g opacity="1.00"><circle cx="396.8" cy="180.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="396.8" y="159.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">광장</text></g><g opacity="1.00"><circle cx="563.2" cy="275.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="563.2" y="254.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">숲</text></g><g opacity="1.00"><circle cx="537.6" cy="187.2" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="537.6" y="166.7" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">항구</text></g><polyline points="64.0,266.4 68.0,264.0 72.7,260.8 78.1,257.0 84.1,252.7 90.6,248.0 97.6,243.0 105.0,237.9 112.8,232.7 120.8,227.5 129.1,222.4 137.4,217.6 145.9,213.2 154.4,209.3 162.8,206.0 171.1,203.4 179.2,201.6 187.2,200.8 195.3,201.1 203.5,202.3 211.7,204.1 220.0,206.6 228.4,209.4 237.0,212.4 245.6,215.6 254.4,218.6 263.3,221.3 272.3,223.7 281.5,225.4 290.9,226.4 300.4,226.5 310.1,225.4 320.0,223.2 330.5,219.5 341.8,214.6 353.8,208.4 366.3,201.3 379.2,193.4 392.3,185.0 405.4,176.1 418.4,166.9 431.1,157.8 443.4,148.8 449.6,144.2" fill="none" stroke="#e2576b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 5.5" opacity="0.95"/><polyline points="89.6,108.0 95.5,108.7 102.6,109.5 110.9,110.3 120.1,111.2 130.2,112.2 140.9,113.3 152.3,114.4 164.0,115.6 176.0,117.0 188.2,118.4 200.3,120.0 212.3,121.7 217.4,122.4" fill="none" stroke="#3d8bfd" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 5.5" opacity="0.95"/><polyline points="563.2,275.0 561.5,274.9" fill="none" stroke="#35b37e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 5.5" opacity="0.95"/><g opacity="1.0"><circle cx="449.6" cy="144.2" r="14.5" fill="#e2576b" stroke="#fff" stroke-width="2.5"/><text x="449.6" y="149.4" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">A</text><g transform="translate(449.6 144.2) rotate(-36.6)"><path d="M22.5 0L15.5 -5L15.5 5Z" fill="#fff"/></g><rect x="426.1" y="162.7" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="449.6" y="174.2" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 A</text></g><g opacity="1.0"><circle cx="217.4" cy="122.4" r="14.5" fill="#3d8bfd" stroke="#fff" stroke-width="2.5"/><text x="217.4" y="127.7" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">B</text><g transform="translate(217.4 122.4) rotate(8.7)"><path d="M22.5 0L15.5 -5L15.5 5Z" fill="#fff"/></g><rect x="193.9" y="140.9" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="217.4" y="152.4" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 B</text></g><g opacity="1.0"><circle cx="561.5" cy="274.9" r="14.5" fill="#35b37e" stroke="#fff" stroke-width="2.5"/><text x="561.5" y="280.2" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">C</text><g transform="translate(561.5 274.9) rotate(-176.5)"><path d="M22.5 0L15.5 -5L15.5 5Z" fill="#fff"/></g><rect x="538.0" y="293.4" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="561.5" y="304.9" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 C</text></g></svg><figcaption>② 이동 · 장면 1 1500ms. 지나온 길만 점선으로 남고, 움직이는 핀에 방향 삼각형이 붙는다.</figcaption></figure><figure><svg viewBox="0 0 640 360" role="img" aria-label="게임 화면 4.0초" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a2233"/><stop offset="1" stop-color="#10141f"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><line x1="0.0" y1="0" x2="0.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="32.0" y1="0" x2="32.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="64.0" y1="0" x2="64.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="96.0" y1="0" x2="96.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="128.0" y1="0" x2="128.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="160.0" y1="0" x2="160.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="192.0" y1="0" x2="192.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="224.0" y1="0" x2="224.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="256.0" y1="0" x2="256.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="288.0" y1="0" x2="288.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="320.0" y1="0" x2="320.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="352.0" y1="0" x2="352.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="384.0" y1="0" x2="384.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="416.0" y1="0" x2="416.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="448.0" y1="0" x2="448.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="480.0" y1="0" x2="480.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="512.0" y1="0" x2="512.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="544.0" y1="0" x2="544.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="576.0" y1="0" x2="576.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="608.0" y1="0" x2="608.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="640.0" y1="0" x2="640.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="0.0" x2="640" y2="0.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="30.0" x2="640" y2="30.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="60.0" x2="640" y2="60.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="90.0" x2="640" y2="90.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="120.0" x2="640" y2="120.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="150.0" x2="640" y2="150.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="180.0" x2="640" y2="180.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="210.0" x2="640" y2="210.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="240.0" x2="640" y2="240.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="270.0" x2="640" y2="270.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="300.0" x2="640" y2="300.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="330.0" x2="640" y2="330.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="360.0" x2="640" y2="360.0" stroke="rgba(140,160,200,.10)"/><ellipse cx="115.19999999999999" cy="223.2" rx="102.4" ry="72.0" fill="#1f2c3f" stroke="rgba(150,170,210,.18)"/><ellipse cx="320.0" cy="198.00000000000003" rx="89.60000000000001" ry="93.60000000000001" fill="#222f45" stroke="rgba(150,170,210,.18)"/><ellipse cx="524.8" cy="122.4" rx="89.60000000000001" ry="72.0" fill="#1d2a3d" stroke="rgba(150,170,210,.18)"/><ellipse cx="192.0" cy="93.60000000000001" rx="76.8" ry="57.6" fill="#1e293b" stroke="rgba(150,170,210,.18)"/><ellipse cx="499.20000000000005" cy="280.8" rx="76.8" ry="50.400000000000006" fill="#1f2b3e" stroke="rgba(150,170,210,.18)"/><text x="320.0" y="347.4" text-anchor="middle" font-size="8" font-weight="600" fill="rgba(160,175,205,.4)">배경 리소스 자리 (예시)</text><g opacity="1.00"><circle cx="64.0" cy="266.4" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="64.0" y="245.9" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">정거장</text></g><g opacity="1.00"><circle cx="499.2" cy="108.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="499.2" y="87.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">관측소</text></g><g opacity="1.00"><circle cx="89.6" cy="108.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="89.6" y="87.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">북문</text></g><g opacity="1.00"><circle cx="396.8" cy="180.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="396.8" y="159.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">광장</text></g><g opacity="1.00"><circle cx="563.2" cy="275.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="563.2" y="254.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">숲</text></g><g opacity="1.00"><circle cx="537.6" cy="187.2" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="537.6" y="166.7" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">항구</text></g><polyline points="64.0,266.4 68.0,264.0 72.7,260.8 78.1,257.0 84.1,252.7 90.6,248.0 97.6,243.0 105.0,237.9 112.8,232.7 120.8,227.5 129.1,222.4 137.4,217.6 145.9,213.2 154.4,209.3 162.8,206.0 171.1,203.4 179.2,201.6 187.2,200.8 195.3,201.1 203.5,202.3 211.7,204.1 220.0,206.6 228.4,209.4 237.0,212.4 245.6,215.6 254.4,218.6 263.3,221.3 272.3,223.7 281.5,225.4 290.9,226.4 300.4,226.5 310.1,225.4 320.0,223.2 330.5,219.5 341.8,214.6 353.8,208.4 366.3,201.3 379.2,193.4 392.3,185.0 405.4,176.1 418.4,166.9 431.1,157.8 443.4,148.8 455.1,140.1 466.1,131.9 476.1,124.4 485.1,117.8 492.9,112.3 499.2,108.0" fill="none" stroke="#e2576b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 5.5" opacity="0.95"/><polyline points="89.6,108.0 95.5,108.7 102.6,109.5 110.9,110.3 120.1,111.2 130.2,112.2 140.9,113.3 152.3,114.4 164.0,115.6 176.0,117.0 188.2,118.4 200.3,120.0 212.3,121.7 224.0,123.5 235.3,125.4 246.0,127.4 256.0,129.6 265.8,132.1 275.8,134.9 286.0,138.0 296.3,141.4 306.6,144.9 316.9,148.6 327.0,152.4 336.8,156.2 346.3,159.9 355.4,163.5 364.1,167.0 372.1,170.3 379.5,173.3 386.1,175.9 391.9,178.2 396.8,180.0" fill="none" stroke="#3d8bfd" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 5.5" opacity="0.95"/><polyline points="563.2,275.0 422.4,266.4 537.6,187.2" fill="none" stroke="#35b37e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 5.5" opacity="0.95"/><g opacity="1.0"><circle cx="499.2" cy="108.0" r="14.5" fill="#e2576b" stroke="#fff" stroke-width="2.5"/><text x="499.2" y="113.2" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">A</text><rect x="475.7" y="126.5" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="499.2" y="138.0" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 A</text></g><g opacity="1.0"><circle cx="396.8" cy="180.0" r="14.5" fill="#3d8bfd" stroke="#fff" stroke-width="2.5"/><text x="396.8" y="185.2" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">B</text><rect x="373.3" y="198.5" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="396.8" y="210.0" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 B</text></g><g opacity="1.0"><circle cx="537.6" cy="187.2" r="14.5" fill="#35b37e" stroke="#fff" stroke-width="2.5"/><text x="537.6" y="192.4" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">C</text><rect x="514.1" y="205.7" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="537.6" y="217.2" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 C</text></g></svg><figcaption>③ 도착 · 장면 1 3200ms. 모두 장소에 도착했다. 1000ms 뒤 대사가 다시 나오고 지도는 대사 뒤에 남는다.</figcaption></figure><figure><svg viewBox="0 0 640 360" role="img" aria-label="게임 화면 1.8초" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a2233"/><stop offset="1" stop-color="#10141f"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><line x1="0.0" y1="0" x2="0.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="32.0" y1="0" x2="32.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="64.0" y1="0" x2="64.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="96.0" y1="0" x2="96.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="128.0" y1="0" x2="128.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="160.0" y1="0" x2="160.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="192.0" y1="0" x2="192.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="224.0" y1="0" x2="224.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="256.0" y1="0" x2="256.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="288.0" y1="0" x2="288.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="320.0" y1="0" x2="320.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="352.0" y1="0" x2="352.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="384.0" y1="0" x2="384.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="416.0" y1="0" x2="416.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="448.0" y1="0" x2="448.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="480.0" y1="0" x2="480.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="512.0" y1="0" x2="512.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="544.0" y1="0" x2="544.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="576.0" y1="0" x2="576.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="608.0" y1="0" x2="608.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="640.0" y1="0" x2="640.0" y2="360" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="0.0" x2="640" y2="0.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="30.0" x2="640" y2="30.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="60.0" x2="640" y2="60.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="90.0" x2="640" y2="90.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="120.0" x2="640" y2="120.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="150.0" x2="640" y2="150.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="180.0" x2="640" y2="180.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="210.0" x2="640" y2="210.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="240.0" x2="640" y2="240.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="270.0" x2="640" y2="270.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="300.0" x2="640" y2="300.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="330.0" x2="640" y2="330.0" stroke="rgba(140,160,200,.10)"/><line x1="0" y1="360.0" x2="640" y2="360.0" stroke="rgba(140,160,200,.10)"/><ellipse cx="115.19999999999999" cy="223.2" rx="102.4" ry="72.0" fill="#1f2c3f" stroke="rgba(150,170,210,.18)"/><ellipse cx="320.0" cy="198.00000000000003" rx="89.60000000000001" ry="93.60000000000001" fill="#222f45" stroke="rgba(150,170,210,.18)"/><ellipse cx="524.8" cy="122.4" rx="89.60000000000001" ry="72.0" fill="#1d2a3d" stroke="rgba(150,170,210,.18)"/><ellipse cx="192.0" cy="93.60000000000001" rx="76.8" ry="57.6" fill="#1e293b" stroke="rgba(150,170,210,.18)"/><ellipse cx="499.20000000000005" cy="280.8" rx="76.8" ry="50.400000000000006" fill="#1f2b3e" stroke="rgba(150,170,210,.18)"/><text x="320.0" y="347.4" text-anchor="middle" font-size="8" font-weight="600" fill="rgba(160,175,205,.4)">배경 리소스 자리 (예시)</text><g opacity="1.00"><circle cx="64.0" cy="266.4" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="64.0" y="245.9" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">정거장</text></g><g opacity="1.00"><circle cx="499.2" cy="108.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="499.2" y="87.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">관측소</text></g><g opacity="1.00"><circle cx="89.6" cy="108.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="89.6" y="87.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">북문</text></g><g opacity="1.00"><circle cx="396.8" cy="180.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="396.8" y="159.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">광장</text></g><g opacity="1.00"><circle cx="563.2" cy="275.0" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="563.2" y="254.5" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">숲</text></g><g opacity="1.00"><circle cx="537.6" cy="187.2" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="537.6" y="166.7" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">항구</text></g><g opacity="1.00"><circle cx="288.0" cy="57.6" r="2.6" fill="#f4f1e8" stroke="rgba(8,10,16,.9)" stroke-width="1.5"/><text x="288.0" y="37.1" text-anchor="middle" font-size="10" font-weight="700" fill="#f4f1e8" stroke="rgba(8,10,16,.85)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">탑</text></g><polyline points="64.0,266.4 68.0,264.0 72.7,260.8 78.1,257.0 84.1,252.7 90.6,248.0 97.6,243.0 105.0,237.9 112.8,232.7 120.8,227.5 129.1,222.4 137.4,217.6 145.9,213.2 154.4,209.3 162.8,206.0 171.1,203.4 179.2,201.6 187.2,200.8 195.3,201.1 203.5,202.3 211.7,204.1 220.0,206.6 228.4,209.4 237.0,212.4 245.6,215.6 254.4,218.6 263.3,221.3 272.3,223.7 281.5,225.4 290.9,226.4 300.4,226.5 310.1,225.4 320.0,223.2 330.5,219.5 341.8,214.6 353.8,208.4 366.3,201.3 379.2,193.4 392.3,185.0 405.4,176.1 418.4,166.9 431.1,157.8 443.4,148.8 455.1,140.1 466.1,131.9 476.1,124.4 485.1,117.8 492.9,112.3 499.2,108.0" fill="none" stroke="#e2576b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 5.5" opacity="0.4"/><polyline points="89.6,108.0 95.5,108.7 102.6,109.5 110.9,110.3 120.1,111.2 130.2,112.2 140.9,113.3 152.3,114.4 164.0,115.6 176.0,117.0 188.2,118.4 200.3,120.0 212.3,121.7 224.0,123.5 235.3,125.4 246.0,127.4 256.0,129.6 265.8,132.1 275.8,134.9 286.0,138.0 296.3,141.4 306.6,144.9 316.9,148.6 327.0,152.4 336.8,156.2 346.3,159.9 355.4,163.5 364.1,167.0 372.1,170.3 379.5,173.3 386.1,175.9 391.9,178.2 396.8,180.0" fill="none" stroke="#3d8bfd" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 5.5" opacity="0.4"/><polyline points="563.2,275.0 422.4,266.4 537.6,187.2" fill="none" stroke="#35b37e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 5.5" opacity="0.4"/><polyline points="499.2,108.0 497.6,106.4 496.0,104.4 494.3,102.1 492.5,99.4 490.6,96.5 488.5,93.4 486.2,90.2 483.6,86.8 480.7,83.5 477.4,80.3 473.8,77.1 469.6,74.1 465.1,71.3 460.0,68.8 454.3,66.6 448.0,64.8 440.7,63.3 432.1,62.1 422.4,61.1 411.9,60.3 400.7,59.6 388.9,59.1 376.9,58.8 364.8,58.5 352.8,58.3 341.1,58.2 329.8,58.1 319.3,58.1 309.7,58.0 301.1,57.9 293.8,57.8 288.0,57.6" fill="none" stroke="#e2576b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 5.5" opacity="0.95"/><polyline points="396.8,180.0 398.5,182.3 400.3,185.2 402.3,188.6 404.5,192.5 406.9,196.6 408.0,198.5" fill="none" stroke="#3d8bfd" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 5.5" opacity="0.95"/><g opacity="1.0"><circle cx="288.0" cy="57.6" r="14.5" fill="#e2576b" stroke="#fff" stroke-width="2.5"/><text x="288.0" y="62.8" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">A</text><rect x="264.5" y="76.1" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="288.0" y="87.6" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 A</text></g><g opacity="1.0"><circle cx="408.0" cy="198.5" r="14.5" fill="#3d8bfd" stroke="#fff" stroke-width="2.5"/><text x="408.0" y="203.7" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">B</text><g transform="translate(408.0 198.5) rotate(60.0)"><path d="M22.5 0L15.5 -5L15.5 5Z" fill="#fff"/></g><rect x="384.5" y="217.0" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="408.0" y="228.5" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 B</text></g><g opacity="1.0"><circle cx="537.6" cy="187.2" r="14.5" fill="#35b37e" stroke="#fff" stroke-width="2.5"/><text x="537.6" y="192.4" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">C</text><rect x="514.1" y="205.7" width="47.0" height="16" rx="8" fill="rgba(8,10,16,.8)"/><text x="537.6" y="217.2" text-anchor="middle" font-size="10" fill="#f1f3f8">전투원 C</text></g></svg><figcaption>④ 이어가기 · 장면 2 1800ms. 대사 뒤 지도가 닫히지 않고 바로 다음 이동이 시작된다. 앞 이동은 흐린 점선으로 남는다.</figcaption></figure></div>
+<p>유저가 읽는 순서:</p>
+<ol>
+<li><strong>직전 대사</strong>: 누가 어디로 갈지 듣는다(G-03).</li>
+<li><strong>장소 이름</strong>: 지도가 나타나면 장소 이름이 먼저 읽힌다. 이야기에 나오는 장소만 보인다(G-05).</li>
+<li><strong>출발</strong>: 핀이 움직이기 시작하고 효과음이 한 번 난다. 핀이 여럿이면 시차를 두고 출발한다(G-02).</li>
+<li><strong>궤적</strong>: 지나온 길만 점선으로 남아, 끝난 뒤에도 "어디서 왔는지"가 보인다.</li>
+<li><strong>도착과 대사</strong>: 대사창이 돌아와도 도착 지점은 가려지지 않는다(G-04). 지도는 닫힐 때까지 대사 뒤에 남는다.</li>
+</ol>
+<p>화면 탭 한 번으로 언제든 끝 상태로 넘길 수 있다(R-12). 처음 보는 유저와 다시 보는 유저 모두를 위한 장치다.</p>
+</section>
+<section id="s3"><h2><span class="sec">§3</span>핵심 규칙</h2>
+<p>규칙 번호는 처음 붙인 번호를 유지한다(중간에 지운 번호는 다시 쓰지 않는다. R-44는 v0.7에서 삭제). R-46부터는 v0.9 이후 구현 공백과 검토 결과를 메우려고 추가한 제안이다.</p>
 <h3>기본</h3>
 <div class="tablewrap"><table>
 <thead>
@@ -398,6 +427,11 @@ td code{white-space:nowrap}
 <tr data-s="warn">
 <td class="id">R-55</td>
 <td>UI px 값은 화면 높이 ÷ <code>MAP_UI_BASE_HEIGHT</code>(1080) 배율로 키우거나 줄인다. 여백은 검은색으로 채운다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">R-57</td>
+<td>폰에서도 읽히도록 핀 지름, 이름표 글자, 장소 글자는 줄여도 각각 <code>MAP_PIN_SIZE_MIN</code>(36), <code>MAP_LABEL_FONT_MIN</code>(12), <code>MAP_PLACE_FONT_MIN</code>(13) 아래로 내려가지 않는다(기기 독립 단위, F-13).</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -541,6 +575,11 @@ td code{white-space:nowrap}
 <td>앞 연출의 궤적은 흐린 점선(불투명도 <code>MAP_PREV_TRAIL_ALPHA</code>(40)%)으로 남긴다. 기본은 남기고, 연출마다 끌 수 있다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
+<tr data-s="warn">
+<td class="id">R-56</td>
+<td>흐리게 남길 앞 연출 궤적의 단 수는 <code>MAP_PREV_TRAIL_DEPTH</code>(0)로 정한다. 0은 연결된 앞 연출 전부(지금 동작), 1은 바로 앞 연출만이다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
 <tr data-s="ok">
 <td class="id">R-27</td>
 <td>이어가기 연출은 앞 연출 id만 저장한다. 시작 위치, 앞 궤적, 이어서 보일 장소 마크는 앞 연출 데이터에서 계산한다. 앞 연출을 재생하지 않았어도 데이터는 읽을 수 있으므로 복사본이 필요 없다.</td>
@@ -580,7 +619,7 @@ td code{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td class="id">R-31</td>
-<td>스토리 테이블에서 연출 맵 id로 맵을 열고(재생) 닫는 명령을 준다.</td>
+<td>스토리 테이블에서 연출 id로 맵을 열고(재생) 닫는 명령을 준다.</td>
 <td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
@@ -663,7 +702,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s3"><h2><span class="sec">§3</span>게임 화면과 툴 화면</h2>
+<section id="s4"><h2><span class="sec">§4</span>게임 화면과 툴 화면</h2>
 <p>같은 데이터라도 게임과 툴에서 보이는 요소가 다르다.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -732,10 +771,10 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s4"><h2><span class="sec">§4</span>처리 흐름</h2>
+<section id="s5"><h2><span class="sec">§5</span>처리 흐름</h2>
 <h3>한 연출의 흐름</h3>
 <ol>
-<li>스토리 행의 맵 열기가 연출 맵을 재생하고, 대사 로그에 「위치 정보 확인」 줄을 남긴다(R-35). 대사창을 숨긴다(R-15).</li>
+<li>스토리 행의 맵 열기가 연출을 재생하고, 대사 로그에 「위치 정보 확인」 줄을 남긴다(R-35). 대사창을 숨긴다(R-15).</li>
 <li>일반 연출이면 배경과 장소 마크를 <code>MAP_BG_FADE_MS</code>(400) 동안 페이드인하고(-800ms부터), 핀을 시작 위치에 <code>MAP_PIN_FADE_MS</code>(400) 동안 페이드인한다(-400ms부터).</li>
 <li>이어가기 연출이고 앞 연출의 맵이 열려 있으면 2를 건너뛰고 지금 화면 그대로 0ms에서 시작한다(R-24).</li>
 <li>0ms(이동 시작)부터 핀마다 출발 조건이 맞으면 경로를 따라 이동한다. 지난 구간은 점선 궤적으로 남는다. 첫 핀이 출발할 때 효과음을 한 번 낸다(R-30).</li>
@@ -891,12 +930,12 @@ td code{white-space:nowrap}
 <li>자동 진행은 상태에 영향을 주지 않는다. 연출이 끝나면 켜져 있든 꺼져 있든 대사로 넘어간다(R-36).</li>
 </ul>
 </section>
-<section id="s5"><h2><span class="sec">§5</span>이어가기</h2>
+<section id="s6"><h2><span class="sec">§6</span>이어가기</h2>
 <p>연속된 이동을 여러 연출로 나눠 대사 사이에 끼워 넣기 위한 기능이다. 예를 들어 "A가 관측소로 간다 → 대사 → A가 탑으로 간다"를 두 연출로 만든다.</p>
 <ul>
-<li>이어가기 연출은 <strong>앞 연출 id만</strong> 가진다(R-27). 다음 값은 저장하지 않고 앞 연출 데이터를 따라가며 계산한다(계산 순서는 F-10).</li>
+<li>이어가기 연출은 <strong>앞 연출 id만</strong> 가진다(R-27). 다음 값은 저장하지 않고 앞 연출 데이터를 따라가며 계산한다(계산 순서는 부록 C의 F-10).</li>
 <li>시작 위치: "앞 연출에서 출발"인 핀은 앞 연출의 같은 핀 번호가 끝난 위치</li>
-<li>앞 궤적: 연결된 모든 앞 연출의 경로(R-50에 해당하는 핀 제외)</li>
+<li>앞 궤적: 연결된 앞 연출의 경로(R-50에 해당하는 핀 제외). 몇 단까지 보일지는 R-56</li>
 <li>장소 마크: 앞 연출 끝에 보이던 마크는 계속 보인다. 이 연출의 장소 목록에는 <strong>새로 보일 마크와 숨길 마크만</strong> 적는다.</li>
 <li>앞 연출을 고치면 뒤 연출의 시작 위치도 자동으로 따라간다. 툴은 영향받는 뒤 연출 수를 알려준다.</li>
 <li>다른 연출이 참조 중인 연출은 툴에서 지울 수 없다.</li>
@@ -904,93 +943,6 @@ td code{white-space:nowrap}
 <li>앞 연출에서 "도착 후 사라짐"으로 끝난 핀은 이어서 출발할 수 없다.</li>
 <li>앞 연출에 있던 핀을 이 연출의 핀 목록에서 지우면 그 핀은 연출이 시작될 때 사라진다(R-49).</li>
 </ul>
-</section>
-<section id="s6"><h2><span class="sec">§6</span>계산 규칙</h2>
-<p>게임과 툴 미리보기가 같은 화면을 내려면 같은 식을 써야 한다. 프로토타입이 이 식 그대로 동작한다. 식 자체는 제안이고, 엔진에 같은 결과를 내는 기능이 있으면 그것을 써도 된다.</p>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>항목</th>
-<th>식</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="warn">
-<td class="id">F-01</td>
-<td>화면 배치</td>
-<td>화면 안에 16:9 영역을 가운데에 가장 크게 잡는다(전체가 보이게). 화면 좌표 = 영역 원점 + 배경 px × (영역 폭 ÷ 배경 <code>width</code>).</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">F-02</td>
-<td>곡선 (<code>SMOOTH</code>)</td>
-<td>점 i에서 i+1까지를 3차 베지어로 잇는다. 제어점은 P[i] + out[i], P[i+1] + in[i+1]. 핸들이 없는 점은 out[i] = (P[i+1] − P[i−1]) ÷ 6, in[i] = −out[i]를 쓴다. 양 끝 점은 없는 이웃 대신 자기 자신을 쓴다. (Catmull-Rom과 같은 모양)</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">F-03</td>
-<td>직선 (<code>LINE</code>)</td>
-<td>점과 점을 직선으로 잇는다. 핸들은 무시한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">F-04</td>
-<td>경로 길이</td>
-<td>곡선은 구간마다 <code>MAP_CURVE_SAMPLES</code>(16)등분한 점을 직선으로 이은 길이의 합. 단위는 배경 px.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">F-05</td>
-<td>이동 시간</td>
-<td>속도 v = 프리셋 <code>speed_px</code> × 배경 <code>width</code> ÷ <code>MAP_SPEED_BASE_WIDTH</code>(2048). 이동 시간 = 길이 ÷ v × 1000을 <code>MAP_DURATION_STEP_MS</code>(100) 단위로 반올림하고, 최소 <code>MAP_DURATION_MIN_MS</code>(100). <code>duration_ms</code>가 있으면 그 값을 쓴다. 점이 하나뿐이거나 길이가 0이면 이동 없음.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">F-06</td>
-<td>출발 시각</td>
-<td><code>TIME</code>: 오프셋. <code>AFTER_START</code>: 기준 핀 출발 시각 + 오프셋. <code>AFTER_ARRIVE</code>: 기준 핀 도착 시각(출발 + 이동 시간) + 오프셋. 기준 핀이 이동 없는 핀이면 도착 시각 = 출발 시각.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">F-07</td>
-<td>진행</td>
-<td>u = (지금 − 출발) ÷ 이동 시간을 0~1로 자른다. <code>INOUT</code>: u &lt; 0.5면 2u², 아니면 1 − (2 − 2u)² ÷ 2. <code>LINEAR</code>: u 그대로. 핀 위치는 경로 길이의 그 비율 지점(거리 기준).</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">F-08</td>
-<td>연출 길이</td>
-<td>등장 = 열린 맵에서 이어지면 0, 아니면 <code>MAP_BG_FADE_MS</code> + <code>MAP_PIN_FADE_MS</code>. 이동 끝 = 가장 늦은 도착 시각. 종료 = 이동 끝 + 마무리 대기(연출의 <code>outro_ms</code>, 없으면 <code>MAP_OUTRO_MS</code>).</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">F-09</td>
-<td>겹침 벌리기</td>
-<td>쉬는 핀끼리 화면 거리가 핀 지름 × <code>MAP_OVERLAP_RATIO</code>(0.9)보다 가까우면 한 무리다. 무리의 중심은 평균 위치. 간격은 핀 지름 × <code>MAP_SPREAD_GAP_RATIO</code>(1.15)와 (무리에서 가장 긴 이름표 폭 + <code>MAP_SPREAD_LABEL_PAD_PX</code>(6)) 중 큰 값. 원래 x가 작은 핀부터, 같으면 핀 번호 순으로 왼쪽에서 오른쪽으로 놓는다. k번째 핀의 x = 중심 + (k − (n − 1) ÷ 2) × 간격.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">F-10</td>
-<td>이어가기 시작 상태</td>
-<td>맨 앞 연출부터 차례로 따라가며 계산한다. ① 핀 위치: 핀 번호마다 가장 마지막에 나온 연출의 끝 위치(사라진 핀, 목록에서 빠진 핀은 없음). ② 장소 마크: 연출마다 보임 목록을 더하고 숨김 목록을 뺀 결과. ③ 앞 궤적: 지나온 모든 연출의 경로 모음.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">F-11</td>
-<td>탭 완료</td>
-<td>탭한 순간의 연출 시각을 t0라 하면, 표시 시각 = t0 + (종료 − t0) × (탭 뒤 지난 시간 ÷ <code>MAP_TAP_FINISH_MS</code>).</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">F-12</td>
-<td>방향 표시</td>
-<td>이동 중인 핀의 삼각형은 지금 구간의 진행 방향을 가리킨다. 쉬는 핀에는 삼각형이 없다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-</tbody>
-</table></div>
 </section>
 <section id="s7"><h2><span class="sec">§7</span>스토리 테이블 연동</h2>
 <p>회사 스토리 테이블은 한 행에 <code>id</code>가 있고 옆으로 열이 늘어선 형태이며, 내보내면 한 행이 <code>{}</code> 객체가 된다. 여기에 열 2개를 더한다. 열 이름은 자리표시다.</p>
@@ -1007,7 +959,7 @@ td code{white-space:nowrap}
 <tr data-s="warn">
 <td><code>link_map_scene_id</code></td>
 <td>int (비움 가능)</td>
-<td>이 행에서 재생할 연출 맵의 id(<code>map_scene.id</code>). 비우면 아무 일도 없다</td>
+<td>이 행에서 재생할 연출의 id(<code>map_scene.id</code>). 비우면 아무 일도 없다</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -1077,7 +1029,245 @@ td code{white-space:nowrap}
 { &quot;id&quot;: 310109, &quot;map_close&quot;: true }
 </code></pre>
 </section>
-<section id="s8"><h2><span class="sec">§8</span>데이터 설계</h2>
+<section id="s8"><h2><span class="sec">§8</span>연출 작성 기준</h2>
+<p>여러 기획자가 만들어도 비슷한 품질이 나오도록 지키는 기준이다. 규칙(R)이 아니라 작성 권장이며, 툴은 기계로 볼 수 있는 기준을 경고로 알려준다(저장은 막지 않는다). 기획자용 설명은 툴 사용 안내(<code>plans/map-move-tool/guide.md</code>)에 같은 내용이 있다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>기준</th>
+<th>이유</th>
+<th>툴 경고</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="warn">
+<td class="id">G-01</td>
+<td>이동이 끝나기까지 3~8초. 길어지면 두 연출로 나누고 사이에 대사를 넣는다.</td>
+<td>연출 중에는 대사창이 숨어 유저가 기다린다(R-15).</td>
+<td>툴 CK-14</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">G-02</td>
+<td>동시에 움직이는 핀은 <code>MAP_RECOMMEND_MOVING_PINS</code>(3)개 이하. 더 많으면 출발 조건으로 시차를 둔다.</td>
+<td>눈은 움직이는 것을 두세 개까지 따라간다.</td>
+<td>툴 CK-18</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">G-03</td>
+<td>연출 직전 대사에서 누가 어디로 가는지 말한다.</td>
+<td>연출 중에는 글로 보충할 수 없다. 지도는 대사를 확인시키는 역할이다.</td>
+<td>-</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">G-04</td>
+<td>도착 지점과 보이는 장소 마크는 대사창 영역(배경 아래 <code>MAP_DIALOG_AREA_RATIO</code>(22)%) 밖에 둔다.</td>
+<td>연출이 끝나면 대사창이 지도 아래를 덮는다(R-26).</td>
+<td>툴 CK-19</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">G-05</td>
+<td>한 연출에서 보이는 장소 마크는 <code>MAP_RECOMMEND_PLACES</code>(8)개 이하. 이야기에 나오는 장소만 보인다.</td>
+<td>이름이 많으면 도착지가 묻힌다.</td>
+<td>툴 CK-20</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">G-06</td>
+<td>속도 프리셋은 인물은 걷기, 급한 장면은 달리기, 탈것·함대는 고속. 시간 고정은 대사와 박자를 맞춰야 할 때만 쓴다.</td>
+<td>같은 걷기가 연출마다 다르면 세계의 거리감이 흔들린다.</td>
+<td>툴 CK-13</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">G-07</td>
+<td>이동 사이에 대사가 들어가면 이어가기로 나누고, 대사 없이 이어지는 이동은 한 연출 안에서 출발 조건으로 잇는다.</td>
+<td>연출 수가 줄어 관리가 쉽고, 끊김 없는 이동은 한 번에 보인다.</td>
+<td>-</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">G-08</td>
+<td>이름표는 6자 안쪽으로 쓰고, 한 연출에서 같은 이름표를 두 번 쓰지 않는다.</td>
+<td>폰에서 이름표가 가장 작은 글자다(R-57).</td>
+<td>-</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">G-09</td>
+<td>핀 색은 기본 팔레트를 쓴다. 바꿀 때는 같은 연출의 다른 핀과 구분되는 색을 고른다.</td>
+<td>궤적 색으로 누가 지나갔는지 읽는다.</td>
+<td>-</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="s9"><h2><span class="sec">§9</span>아트·사운드 전달사항</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>항목</th>
+<th>내용</th>
+<th>담당</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td>배경 리소스</td>
+<td>비율 16:9, 해상도 자유(권장 2048×1152 이상). 장소 이름은 배경에 그리지 않는다(장소 마크가 글자를 올린다)</td>
+<td>배경</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td>핀 아이콘</td>
+<td>원형 핀 아이콘. Actor 테이블의 리소스 경로를 쓴다. 함대 등 대상 Actor에도 핀용 아이콘이 있는지 확인</td>
+<td>아트</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>로그 아이콘</td>
+<td>대사 로그의 맵 연출 줄에 쓰는 전용 아이콘 1종</td>
+<td>UI 아트</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td>핀 프레임</td>
+<td>원형 흰 링, 이동 중 진행 방향 삼각형. 지름 <code>MAP_PIN_SIZE_PX</code>(86)</td>
+<td>UI 아트</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td>이름표</td>
+<td>핀 아래 알약 모양. 반투명 어두운 바탕. 글자 <code>MAP_LABEL_FONT_PX</code>(24)</td>
+<td>UI 아트</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td>궤적 점선</td>
+<td>핀 색과 같은 색의 둥근 점선. 코드로 그린다</td>
+<td>클라이언트</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td>장소 마크</td>
+<td>작은 점 + 장소 이름. 배경 위에서 읽히도록 글자에 어두운 외곽선. 이름표와 모양을 다르게 한다. 글자 <code>MAP_PLACE_FONT_PX</code>(28)</td>
+<td>UI 아트</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td>기본 실루엣 핀</td>
+<td>Actor나 아이콘이 없을 때 쓰는 대체 핀 1종</td>
+<td>UI 아트</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>핀 색 팔레트</td>
+<td>핀 번호별 기본 색. 배경 위에서 서로 구분되는 색 8개 이상</td>
+<td>UI 아트</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>이동 효과음</td>
+<td>짧은 이동 시작음 1종(1초 이내)</td>
+<td>사운드</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="s10"><h2><span class="sec">§10</span>편집 툴 요구</h2>
+<p>툴 상세는 별도 기획서 「맵 이동 연출 편집 툴」(<code>plans/map-move-tool/spec.md</code>)에 있다. 이 기획과 직접 묶이는 요구만 적는다. 번호는 두 문서가 함께 쓰며, T-05~T-08과 나머지 세부는 툴 기획서에 있다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>요구</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td class="id">T-01</td>
+<td>핀마다 Actor를 지정한다(캐릭터, 함대, 오브젝트 등).</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">T-02</td>
+<td>핀마다 이동 경로를 지정한다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">T-09</td>
+<td>편집 보기에서 앞으로 갈 경로, 도착 지점, 웨이포인트를 보여주고, 게임 보기로 바꿔 게임과 같은 화면을 확인한다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">T-10</td>
+<td>배경 위에 장소 마크를 추가·이동·이름 변경·삭제하고, 연출마다 보임/숨김을 정한다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">T-11</td>
+<td>앞 연출의 끝 상태를 한 번에 가져오는 「앞 연출에서 이어가기」 기능.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">T-12</td>
+<td>결과를 「부록 A 데이터 설계」 형식(연출 JSON + 엑셀 행)으로 저장·내보내기 한다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="s11"><h2><span class="sec">§11</span>검증·미결 목록</h2>
+<h3>회사에서 확인할 것</h3>
+<p>회사 밖에서는 알 수 없는 회사 데이터·구조 정보다. 자세한 질문은 「부록 F 회사 데이터 연결」 표에 있다.</p>
+<ul class="check">
+<li><span class="mono">□</span><span>테이블 이름, id 범위, bool·열거값 표기, 부모-자식 연결 형식 (데이터 설계)</span></li>
+<li><span class="mono">□</span><span>스토리 테이블에 열 2개를 더하는 방식과 열 이름 (R-46)</span></li>
+<li><span class="mono">□</span><span>연출 JSON의 저장 위치와 불러오는 방식 (<code>scene_json</code>)</span></li>
+<li><span class="mono">□</span><span>Actor 테이블에 함대 등 캐릭터가 아닌 대상도 들어갈 수 있는지, 핀용 원형 아이콘 경로가 있는지 (R-33)</span></li>
+<li><span class="mono">□</span><span>문자열 키 규칙과 새 키 추가 절차 (R-39)</span></li>
+<li><span class="mono">□</span><span>스토리 배속 배율 값 (R-13)</span></li>
+<li><span class="mono">□</span><span>스토리 화면의 실제 UI(대사창 위치, 여백 처리, 연출 중 남는 버튼)에 맞는지 (R-15, R-19)</span></li>
+<li><span class="mono">□</span><span>대사 로그 UI에 전용 아이콘 줄과 다시 재생 팝업을 넣는 방식 (R-35, R-45)</span></li>
+<li><span class="mono">□</span><span>스토리 중간 세이브가 있는지, 스토리 전체 건너뛰기가 있는지</span></li>
+<li><span class="mono">□</span><span>UI 기준 해상도와 최소 글자 크기 규칙, 공용 설정 테이블 유무</span></li>
+<li><span class="mono">□</span><span>로그 아이콘, 이동 효과음 리소스 (아트·사운드)</span></li>
+</ul>
+<h3>기획자가 정할 것</h3>
+<p>v0.9에서 구현 공백을 메우려고 제안한 규칙 중 남은 것이다. 회사 엔진·데이터 사정에 맞춰 정해도 된다.</p>
+<ul class="check">
+<li><span class="mono">□</span><span>흐리게 남길 앞 연출 궤적의 단 수: 전부(지금) / 바로 앞 연출만(추천) (R-56)</span></li>
+<li><span class="mono">□</span><span>폰 최소 표시 크기 값: 핀 36, 이름표 12, 장소 글자 13 (R-57)</span></li>
+<li><span class="mono">□</span><span>연출 작성 기준의 권장 수치: 동시 이동 핀 3개, 보이는 장소 마크 8개, 대사창 영역 22% (G-02, G-04, G-05)</span></li>
+<li><span class="mono">□</span><span>핀끼리 그리는 순서 (R-48)</span></li>
+<li><span class="mono">□</span><span>이어가기 최대 길이 (R-51, <code>MAP_CHAIN_MAX</code>)</span></li>
+</ul>
+<h3>프로그램실 회의 안건</h3>
+<ul class="check">
+<li><span class="mono">□</span><span>편집 툴 플랫폼(엔진 에디터 확장 / 웹 툴) (툴 T-08)</span></li>
+<li><span class="mono">□</span><span>툴이 엑셀 행을 쓰는 방식: 엑셀 파일 직접 쓰기 / 붙여넣기용 행 내보내기 (툴 D-03)</span></li>
+<li><span class="mono">□</span><span>툴 편의 기능 범위: 경로 복사, 경로 뒤집기, 이어서 미리보기, PC 단축키 (툴 P-12, P-13, C-05)</span></li>
+<li><span class="mono">□</span><span>자유 그리기: 이번 버전은 제외. 프로그램실 의견 확인 (툴 P-02)</span></li>
+<li><span class="mono">□</span><span>「부록 C 계산 규칙」의 식을 엔진 기능으로 대체할 수 있는지 (F-02, F-04)</span></li>
+</ul>
+<h3>나중에 다시 볼 것</h3>
+<ul class="check">
+<li><span class="mono">□</span><span>기능을 다 만든 뒤 카메라 연출 여부 재검토 (R-16)</span></li>
+<li><span class="mono">□</span><span>넓은 폰(19.5:9 이상)에서 좌우 검은 여백이 커진다. 배경을 16:9 바깥까지 그려 채우는 방식은 다음 버전에서 검토 (R-19)</span></li>
+<li><span class="mono">□</span><span>도착 순간을 강조하는 표현(도착 펄스 등)은 다음 버전 후보</span></li>
+<li><span class="mono">□</span><span>속도 프리셋 값(걷기 500, 달리기 800, 고속 1200 px/초)과 설정 키의 시간 값은 시작값. 실제 연출을 만들며 조정</span></li>
+</ul>
+</section>
+<section id="s12"><h2><span class="sec">§12</span>부록 A. 데이터 설계</h2>
 <div class="note dev"><p><strong>설계 원칙</strong></p>
 <ul>
 <li><strong>엑셀과 JSON을 나눈다</strong>: 사람이 손으로 고치거나 다른 테이블과 이어지는 것(배경, 장소, 연출 머리, 속도 프리셋, 설정)은 엑셀 테이블에 둔다. 툴이 만드는 것(핀, 경로 점, 장소 보임)은 연출 1건당 JSON 1개에 둔다.</li>
@@ -1146,7 +1336,7 @@ td code{white-space:nowrap}
 <tr>
 <td><code>map_scene</code></td>
 <td>엑셀</td>
-<td>연출 맵 하나의 머리 정보</td>
+<td>연출 하나의 머리 정보</td>
 <td><code>id</code></td>
 <td>기획 (툴)</td>
 </tr>
@@ -1167,7 +1357,7 @@ td code{white-space:nowrap}
 <tr>
 <td>연출 JSON</td>
 <td>JSON</td>
-<td>연출 맵 하나의 내용(핀, 경로 점, 장소 보임)</td>
+<td>연출 하나의 내용(핀, 경로 점, 장소 보임)</td>
 <td>파일 = <code>map_scene</code> 한 행</td>
 <td>툴이 생성. 손으로 고칠 수 있음</td>
 </tr>
@@ -1273,9 +1463,9 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 <ul>
-<li>배경 하나에 장소 여러 개가 붙는 관계다. 여기서는 장소 행이 배경 id를 보게 적었다. 회사 프로그램실이 권장하는 "부모가 자식의 key를 읽는" 방식으로 바꿔야 하면 「회사 데이터 연결」의 안내를 따른다.</li>
+<li>배경 하나에 장소 여러 개가 붙는 관계다. 여기서는 장소 행이 배경 id를 보게 적었다. 회사 프로그램실이 권장하는 "부모가 자식의 key를 읽는" 방식으로 바꿔야 하면 「부록 F 회사 데이터 연결」의 안내를 따른다.</li>
 </ul>
-<h3>map_scene (연출 맵 머리)</h3>
+<h3>map_scene (연출 머리)</h3>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -1627,13 +1817,13 @@ td code{white-space:nowrap}
 </tr>
 <tr>
 <td>JSON 안의 id 참조</td>
-<td><code>actor_id</code>, <code>place_id</code>, <code>speed_preset_id</code>는 엑셀 검사가 닿지 않는다. 툴 저장 전 검사와 빌드 검사로 막는다(「구현 전달사항」)</td>
+<td><code>actor_id</code>, <code>place_id</code>, <code>speed_preset_id</code>는 엑셀 검사가 닿지 않는다. 툴 저장 전 검사와 빌드 검사로 막는다(「부록 G 구현 전달사항」)</td>
 </tr>
 </tbody>
 </table></div>
 </section>
-<section id="s9"><h2><span class="sec">§9</span>설정 키</h2>
-<p>튜닝 값은 모두 <code>map_config</code>에 둔다. 회사에 공용 설정 테이블이 있으면 그 테이블에 같은 키로 넣는다. 2048 기준 폭만 <code>확정</code>이고 나머지 수치는 시작값이다.</p>
+<section id="s13"><h2><span class="sec">§13</span>부록 B. 설정 키</h2>
+<p>튜닝 값은 모두 <code>map_config</code>에 둔다. 회사에 공용 설정 테이블이 있으면 그 테이블에 같은 키로 넣는다. 2048 기준 폭만 <code>확정</code>이고 나머지 수치는 시작값이다. <code>MAP_TOOL_</code> 키와 <code>MAP_RECOMMEND_</code> 키, <code>MAP_DIALOG_AREA_RATIO</code>는 툴만 읽는다.</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -1713,6 +1903,13 @@ td code{white-space:nowrap}
 <td>40</td>
 <td>%</td>
 <td>앞 궤적 불투명도</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>MAP_PREV_TRAIL_DEPTH</td>
+<td>0</td>
+<td>단</td>
+<td>흐리게 남길 앞 연출 수. 0은 전부 (R-56)</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
@@ -1814,6 +2011,27 @@ td code{white-space:nowrap}
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
+<td>MAP_PIN_SIZE_MIN</td>
+<td>36</td>
+<td>기기 독립 px</td>
+<td>핀 지름 최솟값 (R-57)</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>MAP_LABEL_FONT_MIN</td>
+<td>12</td>
+<td>기기 독립 px</td>
+<td>이름표 글자 최솟값 (R-57)</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>MAP_PLACE_FONT_MIN</td>
+<td>13</td>
+<td>기기 독립 px</td>
+<td>장소 글자 최솟값 (R-57)</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
 <td>MAP_SPEED_WARN_PX</td>
 <td>1600</td>
 <td>px/초</td>
@@ -1824,7 +2042,28 @@ td code{white-space:nowrap}
 <td>MAP_RECOMMEND_MAX_MS</td>
 <td>8000</td>
 <td>ms</td>
-<td>툴 경고: 이동 끝 시각이 이보다 늦으면</td>
+<td>툴 경고: 이동 끝 시각이 이보다 늦으면 (G-01)</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>MAP_RECOMMEND_MOVING_PINS</td>
+<td>3</td>
+<td>개</td>
+<td>툴 경고: 동시에 움직이는 핀이 이보다 많으면 (G-02)</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>MAP_RECOMMEND_PLACES</td>
+<td>8</td>
+<td>개</td>
+<td>툴 경고: 보이는 장소 마크가 이보다 많으면 (G-05)</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>MAP_DIALOG_AREA_RATIO</td>
+<td>22</td>
+<td>%</td>
+<td>툴: 대사창이 덮는 배경 아래쪽 비율. 대사창 가이드와 G-04 경고에 쓴다. 회사 UI에 맞춘다</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -1887,13 +2126,108 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s10"><h2><span class="sec">§10</span>연출 타임라인 (예시)</h2>
-<p>아래 「예시 데이터」와 같은 값이다. 캐릭터와 장소 이름은 자리표시다. 프로토타입 첫 화면이 이 두 장면이다.</p>
+<section id="s14"><h2><span class="sec">§14</span>부록 C. 계산 규칙</h2>
+<p>게임과 툴 미리보기가 같은 화면을 내려면 같은 식을 써야 한다. 프로토타입이 이 식 그대로 동작한다. 식 자체는 제안이고, 엔진에 같은 결과를 내는 기능이 있으면 그것을 써도 된다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>항목</th>
+<th>식</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="warn">
+<td class="id">F-01</td>
+<td>화면 배치</td>
+<td>화면 안에 16:9 영역을 가운데에 가장 크게 잡는다(전체가 보이게). 화면 좌표 = 영역 원점 + 배경 px × (영역 폭 ÷ 배경 <code>width</code>).</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">F-02</td>
+<td>곡선 (<code>SMOOTH</code>)</td>
+<td>점 i에서 i+1까지를 3차 베지어로 잇는다. 제어점은 P[i] + out[i], P[i+1] + in[i+1]. 핸들이 없는 점은 out[i] = (P[i+1] − P[i−1]) ÷ 6, in[i] = −out[i]를 쓴다. 양 끝 점은 없는 이웃 대신 자기 자신을 쓴다. (Catmull-Rom과 같은 모양)</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">F-03</td>
+<td>직선 (<code>LINE</code>)</td>
+<td>점과 점을 직선으로 잇는다. 핸들은 무시한다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">F-04</td>
+<td>경로 길이</td>
+<td>곡선은 구간마다 <code>MAP_CURVE_SAMPLES</code>(16)등분한 점을 직선으로 이은 길이의 합. 단위는 배경 px.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">F-05</td>
+<td>이동 시간</td>
+<td>속도 v = 프리셋 <code>speed_px</code> × 배경 <code>width</code> ÷ <code>MAP_SPEED_BASE_WIDTH</code>(2048). 이동 시간 = 길이 ÷ v × 1000을 <code>MAP_DURATION_STEP_MS</code>(100) 단위로 반올림하고, 최소 <code>MAP_DURATION_MIN_MS</code>(100). <code>duration_ms</code>가 있으면 그 값을 쓴다. 점이 하나뿐이거나 길이가 0이면 이동 없음.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">F-06</td>
+<td>출발 시각</td>
+<td><code>TIME</code>: 오프셋. <code>AFTER_START</code>: 기준 핀 출발 시각 + 오프셋. <code>AFTER_ARRIVE</code>: 기준 핀 도착 시각(출발 + 이동 시간) + 오프셋. 기준 핀이 이동 없는 핀이면 도착 시각 = 출발 시각.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">F-07</td>
+<td>진행</td>
+<td>u = (지금 − 출발) ÷ 이동 시간을 0~1로 자른다. <code>INOUT</code>: u &lt; 0.5면 2u², 아니면 1 − (2 − 2u)² ÷ 2. <code>LINEAR</code>: u 그대로. 핀 위치는 경로 길이의 그 비율 지점(거리 기준).</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">F-08</td>
+<td>연출 길이</td>
+<td>등장 = 열린 맵에서 이어지면 0, 아니면 <code>MAP_BG_FADE_MS</code> + <code>MAP_PIN_FADE_MS</code>. 이동 끝 = 가장 늦은 도착 시각. 종료 = 이동 끝 + 마무리 대기(연출의 <code>outro_ms</code>, 없으면 <code>MAP_OUTRO_MS</code>).</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">F-09</td>
+<td>겹침 벌리기</td>
+<td>쉬는 핀끼리 화면 거리가 핀 지름 × <code>MAP_OVERLAP_RATIO</code>(0.9)보다 가까우면 한 무리다. 무리의 중심은 평균 위치. 간격은 핀 지름 × <code>MAP_SPREAD_GAP_RATIO</code>(1.15)와 (무리에서 가장 긴 이름표 폭 + <code>MAP_SPREAD_LABEL_PAD_PX</code>(6)) 중 큰 값. 원래 x가 작은 핀부터, 같으면 핀 번호 순으로 왼쪽에서 오른쪽으로 놓는다. k번째 핀의 x = 중심 + (k − (n − 1) ÷ 2) × 간격.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">F-10</td>
+<td>이어가기 시작 상태</td>
+<td>맨 앞 연출부터 차례로 따라가며 계산한다. ① 핀 위치: 핀 번호마다 가장 마지막에 나온 연출의 끝 위치(사라진 핀, 목록에서 빠진 핀은 없음). ② 장소 마크: 연출마다 보임 목록을 더하고 숨김 목록을 뺀 결과. ③ 앞 궤적: 지나온 모든 연출의 경로 모음(보이는 단 수는 R-56).</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">F-11</td>
+<td>탭 완료</td>
+<td>탭한 순간의 연출 시각을 t0라 하면, 표시 시각 = t0 + (종료 − t0) × (탭 뒤 지난 시간 ÷ <code>MAP_TAP_FINISH_MS</code>).</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">F-12</td>
+<td>방향 표시</td>
+<td>이동 중인 핀의 삼각형은 지금 구간의 진행 방향을 가리킨다. 쉬는 핀에는 삼각형이 없다.</td>
+<td><span class="badge b-ok">확정</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">F-13</td>
+<td>표시 크기</td>
+<td>화면에 그리는 크기 = max(최솟값, UI px 값 × 화면 높이 ÷ <code>MAP_UI_BASE_HEIGHT</code>). 핀 지름·이름표 글자·장소 글자에만 최솟값이 있다(R-57).</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="s15"><h2><span class="sec">§15</span>부록 D. 예시 연출과 데이터</h2>
+<p>아래 타임라인과 데이터는 같은 예시(장면 1, 장면 2)다. 프로토타입 첫 화면도 이 두 연출이다.</p>
+<h3>타임라인</h3>
+<p>캐릭터와 장소 이름은 자리표시다.</p>
 <ul>
 <li>총 길이: 장면 1은 등장 800ms + 이동 3200ms + 마무리 1000ms = 5000ms, 장면 2(열린 맵에서 이어짐)는 이동 2800ms + 마무리 1000ms = 3800ms</li>
 <li>건너뛰기: 화면 탭으로 즉시 완료(R-12). 다시보기와 대사 로그에서 다시 재생 가능(R-14, R-35)</li>
 </ul>
-<h3>장면 1 (30001): 일반 연출</h3>
+<h4>장면 1 (30001): 일반 연출</h4>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -1949,7 +2283,7 @@ td code{white-space:nowrap}
 </tr>
 </tbody>
 </table></div>
-<h3>장면 2 (30002): 장면 1에서 이어가기</h3>
+<h4>장면 2 (30002): 장면 1에서 이어가기</h4>
 <p>대사 몇 줄 뒤 재생. 장면 1의 맵이 열려 있어 페이드인 없음.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -2006,8 +2340,7 @@ td code{white-space:nowrap}
 </tr>
 </tbody>
 </table></div>
-</section>
-<section id="s11"><h2><span class="sec">§11</span>예시 데이터</h2>
+<h3>예시 데이터</h3>
 <p>장면 1·2를 실제 형식으로 적은 것이다. 프로토타입의 「데이터」 탭에서 같은 내용을 볼 수 있다.</p>
 <p><code>map_background</code>:</p>
 <div class="tablewrap"><table>
@@ -2080,7 +2413,7 @@ td code{white-space:nowrap}
 <td>10</td>
 <td>MAP_PLACE_1005</td>
 <td class="num">1802</td>
-<td class="num">922</td>
+<td class="num">880</td>
 <td>숲</td>
 </tr>
 <tr>
@@ -2222,7 +2555,7 @@ td code{white-space:nowrap}
 }
 </code></pre>
 </section>
-<section id="s12"><h2><span class="sec">§12</span>예외 처리</h2>
+<section id="s16"><h2><span class="sec">§16</span>부록 E. 예외 처리</h2>
 <p>게임에서 남기는 로그는 <code>[Map] scene=30002 pin=2 내용</code> 형식으로 통일한다(형식은 회사 로그 규칙을 따른다).</p>
 <div class="tablewrap"><table>
 <thead>
@@ -2326,7 +2659,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s13"><h2><span class="sec">§13</span>회사 데이터 연결</h2>
+<section id="s17"><h2><span class="sec">§17</span>부록 F. 회사 데이터 연결</h2>
 <p>이 기획이 회사의 기존 데이터·시스템에 기대는 지점을 모았다. 회사에서 이 표를 위에서부터 채우면 기획서의 자리표시 이름을 실제 이름으로 바꿀 수 있다.</p>
 <h3>연결 지점</h3>
 <div class="tablewrap"><table>
@@ -2370,7 +2703,7 @@ td code{white-space:nowrap}
 <td>새 테이블 5개</td>
 <td>행마다 <code>id</code>, 참조는 <code>link_*_id</code>, 소문자 + 밑줄, 그룹 없음</td>
 <td>테이블 이름 규칙, id 숫자 범위, bool·열거값 표기(TRUE/FALSE인지 1/0인지), 빈 칸 처리</td>
-<td>「데이터 설계」 전체</td>
+<td>「부록 A 데이터 설계」 전체</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -2391,10 +2724,10 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td>설정 테이블</td>
-<td>튜닝 값 28개</td>
+<td>튜닝 값 35개</td>
 <td><code>key</code>와 값</td>
 <td>공용 설정 테이블이 있는지. 있으면 그 테이블에 넣는다</td>
-<td>「설정 키」</td>
+<td>「부록 B 설정 키」</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -2442,15 +2775,15 @@ td code{white-space:nowrap}
 <td>맵이 열린 상태에서 저장·복귀</td>
 <td>스토리 중간 저장이 있다면 열린 연출 id 하나만 저장하면 복원된다(상태는 데이터에서 계산)</td>
 <td>스토리 중간 저장이 있는지, 있으면 어떤 값을 저장하는지</td>
-<td>「구현 전달사항」</td>
+<td>「부록 G 구현 전달사항」</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
 <td>UI 기준 해상도</td>
-<td>UI px 값의 기준</td>
-<td>1920×1080</td>
-<td>회사 UI 기준 해상도</td>
-<td><code>MAP_UI_BASE_HEIGHT</code>, UI px 설정 값</td>
+<td>UI px 값의 기준, 폰 최소 글자 크기</td>
+<td>1920×1080. 폰에서는 최솟값(R-57)으로 받친다</td>
+<td>회사 UI 기준 해상도, 회사 UI의 최소 글자 크기 규칙</td>
+<td><code>MAP_UI_BASE_HEIGHT</code>, UI px 설정 값, <code>MAP_*_MIN</code></td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -2534,140 +2867,23 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s14"><h2><span class="sec">§14</span>구현 전달사항</h2>
-<p>프로그래머에게 전하는 제안이다. 더 나은 방법이 있으면 바꿔도 되고, 화면 결과만 「계산 규칙」과 같으면 된다.</p>
+<section id="s18"><h2><span class="sec">§18</span>부록 G. 구현 전달사항</h2>
+<p>프로그래머에게 전하는 제안이다. 더 나은 방법이 있으면 바꿔도 되고, 화면 결과만 「부록 C 계산 규칙」과 같으면 된다.</p>
 <ul>
 <li><strong>시각 하나로 화면을 계산한다</strong>: "연출 데이터 + 연출 시각 t → 배경 불투명도, 장소별 불투명도, 핀별 위치·불투명도·방향, 궤적 길이"를 돌려주는 함수 하나로 만든다. 탭 완료(R-53), 배속(R-54), 툴의 시간 이동, 로그 다시 재생(R-45), 세이브 복원이 모두 t만 바꾸면 해결된다. 겹침 정렬(R-34)만 프레임 사이 보간이 필요하다.</li>
 <li><strong>미리 계산</strong>: 연출을 불러올 때 경로 샘플 점, 구간 길이, 핀별 출발·도착 시각을 한 번 계산해 둔다. 이어가기는 앞 연출을 따라가 시작 상태를 계산한다(F-10).</li>
 <li><strong>설정 값은 코드에 적지 않는다</strong>: 모든 수치는 설정 키에서 읽는다. 값을 바꾸고 다시 빌드하지 않고 확인할 수 있으면 좋다.</li>
+<li><strong>폰 최소 크기</strong>: 핀·이름표·장소 글자는 F-13의 최솟값 아래로 줄이지 않는다. 폰 가로 화면에서 가장 먼저 깨지는 곳이다.</li>
 <li><strong>궤적은 코드로 그린다</strong>: 리소스 없이 핀 색의 둥근 점선을 그린다. 두께와 간격은 UI px 설정 값이다.</li>
 <li><strong>미리 불러오기</strong>: 스토리에 들어갈 때 그 스토리 행들이 가리키는 연출의 배경과 핀 아이콘을 미리 불러온다. 재생 순간에 멈칫하지 않게 한다. <code>검증필요</code></li>
 <li><strong>데이터 검사</strong>: 연출 JSON 안의 <code>actor_id</code>, <code>place_id</code>, <code>speed_preset_id</code>는 엑셀 검사가 닿지 않는다. 툴의 저장 전 검사(툴 기획서 T-07)와 같은 규칙으로 빌드 때 한 번 더 검사하는 스크립트를 둔다. 손으로 고친 JSON도 걸러진다.</li>
 <li><strong>JSON 형식 버전</strong>: <code>version</code>이 아는 값이 아니면 연출을 건너뛰고 로그를 남긴다. 형식을 바꿀 때 버전을 올린다.</li>
 <li><strong>세이브</strong>: 스토리 중간 저장이 있다면 "지금 열린 연출 id" 하나만 저장한다. 복원할 때 그 연출의 최종 상태를 계산해 바로 유지 상태로 띄운다.</li>
 <li><strong>확인용 기능</strong>: 연출 id를 넣으면 스토리 없이 바로 재생하는 개발용 명령이 있으면 기획·QA 확인이 빨라진다.</li>
-<li><strong>로그</strong>: 「예외 처리」의 모든 줄은 연출 id와 핀 번호를 담은 로그를 남긴다.</li>
+<li><strong>로그</strong>: 「부록 E 예외 처리」의 모든 줄은 연출 id와 핀 번호를 담은 로그를 남긴다.</li>
 </ul>
 </section>
-<section id="s15"><h2><span class="sec">§15</span>편집 툴 요구</h2>
-<p>툴 상세는 별도 기획서 「맵 이동 연출 편집 툴」(<code>plans/map-move-tool/spec.md</code>)에 있다. 이 기획과 직접 묶이는 요구만 적는다. 번호는 두 문서가 함께 쓰며, T-05~T-08과 나머지 세부는 툴 기획서에 있다.</p>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>요구</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td class="id">T-01</td>
-<td>핀마다 Actor를 지정한다(캐릭터, 함대, 오브젝트 등).</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-02</td>
-<td>핀마다 이동 경로를 지정한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-09</td>
-<td>편집 보기에서 앞으로 갈 경로, 도착 지점, 웨이포인트를 보여주고, 게임 보기로 바꿔 게임과 같은 화면을 확인한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-10</td>
-<td>배경 위에 장소 마크를 추가·이동·이름 변경·삭제하고, 연출마다 보임/숨김을 정한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-11</td>
-<td>앞 연출의 끝 상태를 한 번에 가져오는 「앞 연출에서 이어가기」 기능.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-12</td>
-<td>결과를 「데이터 설계」 형식(연출 JSON + 엑셀 행)으로 저장·내보내기 한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-</tbody>
-</table></div>
-</section>
-<section id="s16"><h2><span class="sec">§16</span>아트·사운드 전달사항</h2>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>항목</th>
-<th>내용</th>
-<th>담당</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td>배경 리소스</td>
-<td>비율 16:9, 해상도 자유(권장 2048×1152 이상). 장소 이름은 배경에 그리지 않는다(장소 마크가 글자를 올린다)</td>
-<td>배경</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td>핀 아이콘</td>
-<td>원형 핀 아이콘. Actor 테이블의 리소스 경로를 쓴다. 함대 등 대상 Actor에도 핀용 아이콘이 있는지 확인</td>
-<td>아트</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td>로그 아이콘</td>
-<td>대사 로그의 맵 연출 줄에 쓰는 전용 아이콘 1종</td>
-<td>UI 아트</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="ok">
-<td>핀 프레임</td>
-<td>원형 흰 링, 이동 중 진행 방향 삼각형. 지름 <code>MAP_PIN_SIZE_PX</code>(86)</td>
-<td>UI 아트</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>이름표</td>
-<td>핀 아래 알약 모양. 반투명 어두운 바탕. 글자 <code>MAP_LABEL_FONT_PX</code>(24)</td>
-<td>UI 아트</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>궤적 점선</td>
-<td>핀 색과 같은 색의 둥근 점선. 코드로 그린다</td>
-<td>클라이언트</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>장소 마크</td>
-<td>작은 점 + 장소 이름. 배경 위에서 읽히도록 글자에 어두운 외곽선. 이름표와 모양을 다르게 한다. 글자 <code>MAP_PLACE_FONT_PX</code>(28)</td>
-<td>UI 아트</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td>기본 실루엣 핀</td>
-<td>Actor나 아이콘이 없을 때 쓰는 대체 핀 1종</td>
-<td>UI 아트</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td>핀 색 팔레트</td>
-<td>핀 번호별 기본 색. 배경 위에서 서로 구분되는 색 8개 이상</td>
-<td>UI 아트</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td>이동 효과음</td>
-<td>짧은 이동 시작음 1종(1초 이내)</td>
-<td>사운드</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-</tbody>
-</table></div>
-</section>
-<section id="s17"><h2><span class="sec">§17</span>검수 항목</h2>
+<section id="s19"><h2><span class="sec">§19</span>부록 H. 검수 항목</h2>
 <p>구현이 끝났을 때 확인할 것이다. 프로토타입에서 같은 동작을 미리 볼 수 있다.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -2749,6 +2965,11 @@ td code{white-space:nowrap}
 <td>배경 전체가 보이고 남는 곳은 여백이다. 핀과 글자 크기 비율이 유지된다</td>
 </tr>
 <tr>
+<td class="id">Q-21</td>
+<td>가장 작은 지원 폰을 가로로 두고 재생한다</td>
+<td>이름표·장소 글자·핀이 최솟값(R-57) 이상으로 보이고 읽힌다</td>
+</tr>
+<tr>
 <td class="id">Q-15</td>
 <td>가로가 4096인 배경으로 같은 연출을 만든다</td>
 <td>화면에서 보이는 이동 속도가 2048 배경과 같다</td>
@@ -2761,7 +2982,7 @@ td code{white-space:nowrap}
 <tr>
 <td class="id">Q-17</td>
 <td>없는 Actor id, 없는 배경, 깨진 JSON으로 재생한다</td>
-<td>「예외 처리」대로 동작하고 로그가 남는다. 스토리가 멈추지 않는다</td>
+<td>「부록 E 예외 처리」대로 동작하고 로그가 남는다. 스토리가 멈추지 않는다</td>
 </tr>
 <tr>
 <td class="id">Q-18</td>
@@ -2781,7 +3002,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s18"><h2><span class="sec">§18</span>작업 목록</h2>
+<section id="s20"><h2><span class="sec">§20</span>부록 I. 작업 목록</h2>
 <p>담당별 작업과 우선순위 제안이다. P0은 첫 구현에 꼭 필요한 것, P1은 같은 버전 안에 넣을 것, P2는 여유가 있을 때다. 기간은 회사에서 산정한다.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -2807,7 +3028,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td>클라이언트</td>
-<td>경로 계산과 재생(곡선, 속도, 출발 조건), 궤적·핀·이름표·장소 마크 그리기</td>
+<td>경로 계산과 재생(곡선, 속도, 출발 조건), 궤적·핀·이름표·장소 마크 그리기, 표시 크기 최솟값</td>
 <td>P0</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
@@ -2866,6 +3087,12 @@ td code{white-space:nowrap}
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
+<td>스토리 기획</td>
+<td>「연출 작성 기준」과 툴 사용 안내를 기획자들과 공유, 첫 연출로 기준 검증</td>
+<td>P1</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
 <td>배경</td>
 <td>맵 배경 리소스(연출을 쓸 스토리마다)</td>
 <td>P0</td>
@@ -2891,50 +3118,14 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td>QA</td>
-<td>「검수 항목」 Q-01~Q-20</td>
+<td>「부록 H 검수 항목」 Q-01~Q-21</td>
 <td>P1</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
 </table></div>
 </section>
-<section id="s19"><h2><span class="sec">§19</span>검증·미결 목록</h2>
-<h3>회사에서 확인할 것</h3>
-<p>회사 밖에서는 알 수 없는 회사 데이터·구조 정보다. 자세한 질문은 「회사 데이터 연결」 표에 있다.</p>
-<ul class="check">
-<li><span class="mono">□</span><span>테이블 이름, id 범위, bool·열거값 표기, 부모-자식 연결 형식 (데이터 설계)</span></li>
-<li><span class="mono">□</span><span>스토리 테이블에 열 2개를 더하는 방식과 열 이름 (R-46)</span></li>
-<li><span class="mono">□</span><span>연출 JSON의 저장 위치와 불러오는 방식 (<code>scene_json</code>)</span></li>
-<li><span class="mono">□</span><span>Actor 테이블에 함대 등 캐릭터가 아닌 대상도 들어갈 수 있는지, 핀용 원형 아이콘 경로가 있는지 (R-33)</span></li>
-<li><span class="mono">□</span><span>문자열 키 규칙과 새 키 추가 절차 (R-39)</span></li>
-<li><span class="mono">□</span><span>스토리 배속 배율 값 (R-13)</span></li>
-<li><span class="mono">□</span><span>스토리 화면의 실제 UI(대사창 위치, 여백 처리, 연출 중 남는 버튼)에 맞는지 (R-15, R-19)</span></li>
-<li><span class="mono">□</span><span>대사 로그 UI에 전용 아이콘 줄과 다시 재생 팝업을 넣는 방식 (R-35, R-45)</span></li>
-<li><span class="mono">□</span><span>스토리 중간 세이브가 있는지, 스토리 전체 건너뛰기가 있는지</span></li>
-<li><span class="mono">□</span><span>UI 기준 해상도, 공용 설정 테이블 유무</span></li>
-<li><span class="mono">□</span><span>로그 아이콘, 이동 효과음 리소스 (아트·사운드)</span></li>
-</ul>
-<h3>기획자가 정할 것</h3>
-<p>v0.9에서 구현 공백을 메우려고 제안한 규칙 중 남은 것이다. 회사 엔진·데이터 사정에 맞춰 정해도 된다.</p>
-<ul class="check">
-<li><span class="mono">□</span><span>핀끼리 그리는 순서 (R-48)</span></li>
-<li><span class="mono">□</span><span>이어가기 최대 길이 (R-51, <code>MAP_CHAIN_MAX</code>)</span></li>
-</ul>
-<h3>프로그램실 회의 안건</h3>
-<ul class="check">
-<li><span class="mono">□</span><span>편집 툴 플랫폼(엔진 에디터 확장 / 웹 툴) (툴 T-08)</span></li>
-<li><span class="mono">□</span><span>툴이 엑셀 행을 쓰는 방식: 엑셀 파일 직접 쓰기 / 붙여넣기용 행 내보내기 (툴 D-03)</span></li>
-<li><span class="mono">□</span><span>툴 편의 기능 범위: 경로 복사, 경로 뒤집기, 이어서 미리보기, PC 단축키 (툴 P-12, P-13, C-05)</span></li>
-<li><span class="mono">□</span><span>자유 그리기: 이번 버전은 제외. 프로그램실 의견 확인 (툴 P-02)</span></li>
-<li><span class="mono">□</span><span>「계산 규칙」의 식을 엔진 기능으로 대체할 수 있는지 (F-02, F-04)</span></li>
-</ul>
-<h3>나중에 다시 볼 것</h3>
-<ul class="check">
-<li><span class="mono">□</span><span>기능을 다 만든 뒤 카메라 연출 여부 재검토 (R-16)</span></li>
-<li><span class="mono">□</span><span>속도 프리셋 값(걷기 500, 달리기 800, 고속 1200 px/초)과 설정 키의 시간 값은 시작값. 실제 연출을 만들며 조정</span></li>
-</ul>
-</section>
-<section id="s20"><h2><span class="sec">§20</span>변경 이력</h2>
+<section id="s21"><h2><span class="sec">§21</span>변경 이력</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -2944,6 +3135,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.12</td>
+<td>2026-11-21</td>
+<td>전체 검토(플레이어 경험 → 기획자 작업 효율 → 문서 읽기 쉬움). 본문/부록으로 재구성, 「플레이어가 보는 장면」(컷 4장)과 「연출 작성 기준」(G-01~G-09) 신설, 폰 최소 표시 크기(R-57, F-13), 앞 궤적 단 수 설정(R-56), 설정 키 7개 추가, 검수 Q-21. 용어 「연출 맵」을 「연출」로 통일. 예시의 숲(1005)이 대사창 영역에 걸려 y 922 → 880으로 옮김(이동 시간은 그대로)</td>
+</tr>
 <tr>
 <td>v0.11</td>
 <td>2026-11-16</td>
@@ -2957,7 +3153,7 @@ td code{white-space:nowrap}
 <tr>
 <td>v0.9</td>
 <td>2026-11-15</td>
-<td>회사 검토용 정리. 회사 테이블 규칙(행마다 id, <code>link_*_id</code>, 소문자 + 밑줄, 그룹 없음, 엑셀 + JSON) 반영: 테이블 8개 → 엑셀 5개 + 연출 JSON, 스토리 명령 → 스토리 행의 열 2개(R-46), 단일 ID 합성식 삭제(R-06). 「회사 데이터 연결」「계산 규칙」「구현 전달사항」「검수 항목」「작업 목록」 신설. 상태 전이표 추가(R-52). 구현 공백 제안 R-47~R-55. 규칙 속 수치를 설정 키 표기로 통일하고 설정 키 9개 추가. 핵심 규칙을 주제별로 묶음</td>
+<td>회사 검토용 정리. 회사 테이블 규칙(행마다 id, <code>link_*_id</code>, 소문자 + 밑줄, 그룹 없음, 엑셀 + JSON) 반영: 테이블 8개 → 엑셀 5개 + 연출 JSON, 스토리 명령 → 스토리 행의 열 2개(R-46), 단일 ID 합성식 삭제(R-06). 「부록 F 회사 데이터 연결」「부록 C 계산 규칙」「부록 G 구현 전달사항」「부록 H 검수 항목」「부록 I 작업 목록」 신설. 상태 전이표 추가(R-52). 구현 공백 제안 R-47~R-55. 규칙 속 수치를 설정 키 표기로 통일하고 설정 키 9개 추가. 핵심 규칙을 주제별로 묶음</td>
 </tr>
 <tr>
 <td>v0.8.1</td>

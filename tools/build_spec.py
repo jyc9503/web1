@@ -14,6 +14,7 @@
   * 표 셀에 {확정} {검증필요} {미정} 을 쓰면 배지가 되고 행에 상태가 붙는다
   * 첫 열이 R-01, T-03 같은 ID면 ID 서식 + 상단 건수 집계 대상
   * `[[svg:파일명.svg]]` 한 줄이면 같은 폴더의 SVG를 흐름도로 삽입
+  * `[[cuts:a.svg=캡션|b.svg=캡션]]` 한 줄이면 화면 컷을 2열 격자(폰 1열)로 삽입
   * `> ` 인용은 전달사항 박스
 - --artifact 를 주면 Artifact 게시용 조각(doctype·head 없음)을 따로 쓴다.
 """
@@ -31,6 +32,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SAMPLE = ROOT / ".claude/skills/plan-doc/assets/spec-sample.html"
 BADGES = {"확정": ("ok", "b-ok"), "검증필요": ("warn", "b-warn"), "미정": ("tbd", "b-tbd")}
 TOKEN = re.compile(r"\{(확정|검증필요|미정)\}")
+CUTS = {"list": []}
 ID_RE = re.compile(r"^[A-Z]{1,3}-\d+$")
 
 EXTRA_CSS = """
@@ -40,6 +42,11 @@ main pre{margin:12px 0 16px;padding:14px 16px;background:var(--surface);border:1
 main pre code{background:none;color:var(--ink);padding:0;font-size:inherit}
 .tablewrap{margin:12px 0 18px}
 .flow{margin:12px 0 18px}
+.cuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin:12px 0 18px}
+.cuts figure{margin:0;min-width:0}
+.cuts svg{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
+.cuts figcaption{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.55}
+main h4{font-size:14px;margin:18px 0 6px}
 .note ul{margin:8px 0 0}
 .note p{margin:0}
 td code{white-space:nowrap}
@@ -92,6 +99,13 @@ def process_rows(html_text, stats):
 def convert(md_text, plan_dir):
     meta, body = parse_front(md_text)
     body = re.sub(r"^\[\[svg:(.+?)\]\][ \t]*$", r"@@SVG:\1@@", body, flags=re.M)
+    CUTS["list"] = []
+
+    def keep_cuts(m):
+        CUTS["list"].append(m.group(1))
+        return f"@@CUTS:{len(CUTS['list']) - 1}@@"
+
+    body = re.sub(r"^\[\[cuts:(.+?)\]\][ \t]*$", keep_cuts, body, flags=re.M)
     html_body = markdown.markdown(body, extensions=["tables", "fenced_code"])
 
     html_body = html_body.replace(' style="text-align: right;"', ' class="num"')
@@ -105,6 +119,16 @@ def convert(md_text, plan_dir):
         return f'<div class="flow">{data}</div>'
 
     html_body = re.sub(r"<p>@@SVG:(.+?)@@</p>", svg, html_body)
+
+    def cuts(m):
+        items = []
+        for part in CUTS["list"][int(m.group(1))].split("|"):
+            name, _, cap = part.partition("=")
+            data = (plan_dir / name.strip()).read_text(encoding="utf-8")
+            items.append(f'<figure>{data}<figcaption>{cap.strip()}</figcaption></figure>')
+        return '<div class="cuts">' + "".join(items) + "</div>"
+
+    html_body = re.sub(r"<p>@@CUTS:(\d+)@@</p>", cuts, html_body)
     html_body = re.sub(r"<blockquote>\s*(.*?)\s*</blockquote>", r'<div class="note dev">\1</div>', html_body, flags=re.S)
 
     chunks = re.split(r"(?=<h2>)", html_body)

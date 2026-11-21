@@ -16,7 +16,7 @@ INTRO, PINFADE = 0.4, 0.4
 COL = {"char_a": "#e2576b", "char_b": "#3d8bfd", "char_c": "#35b37e"}
 NAME = {"char_a": "전투원 A", "char_b": "전투원 B", "char_c": "전투원 C"}
 PLACES = [("정거장", .10, .74), ("관측소", .78, .30), ("북문", .14, .30), ("광장", .62, .50),
-          ("숲", .88, .80), ("항구", .84, .52), ("탑", .45, .16)]
+          ("숲", .88, .764), ("항구", .84, .52), ("탑", .45, .16)]
 R = 14.5
 FONT = 'font-family="Noto Sans KR, Apple SD Gothic Neo, Malgun Gothic, sans-serif"'
 
@@ -27,9 +27,9 @@ def pin(c, path, delay=0.0, dur=2.0, curve="smooth"):
 
 S1 = [pin("char_a", [(.10, .74), (.28, .56), (.50, .62), (.78, .30)], 0, 2.0),  # 달리기 2000ms
       pin("char_b", [(.14, .30), (.40, .36), (.62, .50)], 0.6, 2.0),
-      pin("char_c", [(.88, .80), (.66, .74), (.84, .52)], 1.4, 1.8, "line")]
+      pin("char_c", [(.88, .764), (.66, .74), (.84, .52)], 1.4, 1.8, "line")]
 S2 = [pin("char_a", [(.78, .30), (.70, .18), (.45, .16)], 0, 1.5),  # 걷기 1500ms
-      pin("char_b", [(.62, .50), (.70, .68), (.88, .80)], 1.5, 1.3),  # 핀 1 도착 후
+      pin("char_b", [(.62, .50), (.70, .68), (.88, .764)], 1.5, 1.3),  # 핀 1 도착 후
       pin("char_c", [(.84, .52)], 0, 2.0, "line")]
 
 
@@ -321,7 +321,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
 """
     html = HEAD.format(title="맵 핀 이동 화면 시안", layout="Layout: 장면 컷 4장, 게임/편집 보기 비교, 해부도, 리소스 요청표를 위에서 아래로.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
-  <span class="tag">카제나 · 스토리 연출 · v0.11 시안</span>
+  <span class="tag">카제나 · 스토리 연출 · v0.12 시안</span>
   <h1>맵 핀 이동 화면 시안</h1>
   <p class="sub">아트팀과 배경 담당에게 보여주는 장면 컷과 리소스 요청 내용입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다. 화면은 가로 16:9로 확정했고, 스토리 화면의 실제 UI(대사창 위치 등)는 확인 전입니다. <span class="badge b-warn">검증필요</span></p>
 
@@ -373,92 +373,115 @@ td.spec{font-family:var(--f-mono);font-size:13px}
 
 
 def summary():
+    """기획팀 리드·PD 회의용 한 장. 왜 필요한가 → 유저가 보는 것 → 범위 → 만드는 쪽 규모 → 위험 → 결정할 것."""
     c = counts()
     css = """
 body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.65 var(--f-body);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
-.wrap{max-width:1120px;margin:0 auto;display:grid;gap:18px}
-.top{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:end;justify-content:space-between}
-h1{font-size:26px;line-height:1.3;margin:0;text-wrap:balance}
-.one{margin:4px 0 0;color:var(--muted);max-width:62ch}
-.counts{display:flex;gap:8px;flex-wrap:wrap}
-.main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
-@media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}}
-.cap{font-size:12.5px;color:var(--muted);margin:6px 0 0}
-h2{font-size:12px;letter-spacing:.1em;color:var(--muted);font-weight:500;margin:0 0 8px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:22px}
+.top{display:grid;gap:6px;justify-items:start}
+h1{font-size:28px;line-height:1.25;margin:0;text-wrap:balance}
+.one{margin:0;font-size:16px;max-width:60ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+h2{font-size:12px;letter-spacing:.1em;color:var(--muted);font-weight:500;margin:0 0 10px}
+.why{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.why div{border-left:3px solid var(--accent);padding:2px 0 2px 12px}
+.why b{display:block;font-size:15px}
+.why span{font-size:13px;color:var(--muted)}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.strip figure{margin:0;min-width:0}
+.strip figcaption{font-size:12.5px;color:var(--muted);margin-top:6px}
+.strip figcaption b{color:var(--ink);font-weight:500}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
 .block{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
-.col{display:grid;gap:14px;min-width:0}
-ul.rules{list-style:none;margin:0;padding:0;display:grid;gap:6px}
-ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:baseline}
-.id{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.stats div{background:var(--surface);padding:8px 10px}
-.stats b{display:block;font:600 20px/1.2 var(--f-mono);font-variant-numeric:tabular-nums}
-.stats span{font-size:12px;color:var(--muted)}
-.decide{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
-.decide .block{padding:12px 14px}
-.decide h3{font-size:14px;margin:0 0 4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+ul.plain{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+ul.plain li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:6px}
+ul.plain li::before{content:"·";color:var(--muted);text-align:center}
+.scope{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.scope h3{font-size:13px;margin:0 0 6px}
+table.work{width:100%;border-collapse:collapse;font-size:13.5px}
+table.work th,table.work td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.work th{font-size:12px;color:var(--muted);font-weight:500;white-space:nowrap}
+table.work tr:last-child td{border-bottom:0}
+.size{font:600 12px var(--f-mono);white-space:nowrap}
+.decide{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.decide h3{font-size:14px;margin:0 0 4px}
 .decide p{margin:0;font-size:13px;color:var(--muted)}
 .decide p b{color:var(--ink);font-weight:500}
+.foot{font-size:12.5px;color:var(--muted)}
 """
-    html = HEAD.format(title="맵 핀 이동 연출 한 장 요약", layout="Layout: 한 화면 요약. 왼쪽 완성 컷, 오른쪽 규칙·수치, 아래 결정 필요.", tokens=TOKENS, css=css)
+    html = HEAD.format(title="맵 핀 이동 연출 한 장 요약", layout="Layout: 리드·PD 회의용 한 장. 한 줄 요약 → 왜 → 유저가 보는 장면 3컷 → 범위·만드는 쪽 규모 → 위험 → 결정할 것.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
   <header class="top">
-    <div>
-      <span class="tag">카제나 · 스토리 연출 · v0.11</span>
-      <h1>맵 핀 이동 연출</h1>
-      <p class="one">스토리 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 움직여, 누가 어디서 어디로 갔는지 보여준다. 스토리 테이블로 맵을 열고 닫으며, 열린 맵에서 다음 이동을 이어간다.</p>
-    </div>
-    <div class="counts" aria-label="상태 집계 (규칙·툴 요구 ID 기준)"><span class="badge b-ok">확정 {c['확정']}</span><span class="badge b-warn">검증필요 {c['검증필요']}</span><span class="badge b-tbd">미정 {c['미정']}</span></div>
+    <span class="tag">카제나 · 스토리 연출 · v0.12 · 회의용 한 장</span>
+    <h1>맵 핀 이동 연출</h1>
+    <p class="one">메인 스토리의 중요한 이동 장면에서, 지도 위 핀이 움직여 <b>누가 어디서 어디로 갔는지</b>를 3~8초 안에 보여준다.</p>
+    <div class="meta"><span class="badge b-ok">확정 {c['확정']}</span><span class="badge b-warn">검증필요 {c['검증필요']}</span><span class="badge b-tbd">미정 {c['미정']}</span><span>규칙·기준 ID 기준. 회사 데이터 확인 전 초안</span></div>
   </header>
 
-  <div class="main">
-    <div>
-      <div class="shot">{game(S2, 2.8, PREV, True, dialog=False, modes=S2_PLACES)}</div>
-      <p class="cap">장면 2 완료 모습. 진한 점선은 이번 장면, 흐린 점선은 앞 장면 궤적. 배경과 캐릭터는 자리표시용.</p>
-    </div>
-    <div class="col">
-      <section class="block">
-        <h2>핵심 규칙</h2>
-        <ul class="rules">
-          <li><span class="id">R-01~03</span><span>배경 위 핀(Actor)이 지정한 경로로 이동</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-07</span><span>자동 곡선 + 필요한 점만 베지어 핸들</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-09</span><span>게임에는 지나온 구간만 점선. 앞 경로·도착 지점은 툴에서만</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-21</span><span>장소 마크는 연출마다 보임/숨김</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-26</span><span>맵은 스토리 행의 맵 닫기 전까지 대사 뒤에 남음</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-22</span><span>열린 맵에서 이어가기, 툴에서 버튼 하나로 가져옴</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-08</span><span>이동 시간은 속도 프리셋으로 자동 계산, 출발 조건으로 순서 지정</span><span class="badge b-ok">확정</span></li>
-          <li><span class="id">R-37</span><span>좌표는 배경 px 정수, 시간은 ms, 0ms = 이동 시작</span><span class="badge b-ok">확정</span></li>
-        </ul>
-      </section>
-      <section class="block">
-        <h2>핵심 수치 <span class="badge b-warn" style="margin-left:6px">검증필요</span></h2>
-        <div class="stats">
-          <div><b>500</b><span>걷기 px/초</span></div>
-          <div><b>800</b><span>달리기 px/초</span></div>
-          <div><b>400</b><span>페이드 ms</span></div>
-          <div><b>300</b><span>탭 완료 ms</span></div>
-        </div>
-      </section>
-      <section class="block">
-        <h2>함께 보는 문서</h2>
-        <ul class="rules">
-          <li><span class="id">툴</span><span>「맵 이동 연출 편집 툴」: 경로 그리기, 장소 마크, 이어가기</span><span></span></li>
-          <li><span class="id">테이블</span><span>기획서 「데이터 설계」: 엑셀 테이블 5개 + 연출 JSON, 설정 키 28개</span><span></span></li>
-        </ul>
-      </section>
-    </div>
-  </div>
-
   <section>
-    <h2>남은 확인</h2>
-    <div class="decide">
-      <div class="block"><h3><span class="id">R-45</span>로그 다시 재생 <span class="badge b-warn">회사 확인</span></h3><p><b>제안</b> 로그의 「위치 정보 확인」을 누르면 팝업으로 그 연출을 다시 재생. 기존 로그 UI에 넣을 수 있는지 확인.</p></div>
-      <div class="block"><h3><span class="id">R-46</span>스토리 테이블 열 <span class="badge b-warn">회사 확인</span></h3><p><b>제안</b> 스토리 행에 <code>link_map_scene_id</code>, <code>map_close</code> 열 2개를 더한다. 이름과 형식은 회사 규칙에 맞춘다.</p></div>
-      <div class="block"><h3><span class="id">회의</span>프로그램실 안건 <span class="badge b-warn">회의</span></h3><p><b>안건</b> 툴 플랫폼, 편의 기능 범위(경로 복사·뒤집기·이어서 미리보기·단축키), 자유 그리기 필요 여부.</p></div>
-      <div class="block"><h3><span class="id">R-16</span>카메라 연출 <span class="badge b-ok">나중에</span></h3><p><b>예정</b> 이번 버전은 고정. 기능을 다 만든 뒤 다시 검토한다.</p></div>
+    <h2>왜 필요한가</h2>
+    <div class="why">
+      <div><b>글로는 위치가 안 남는다</b><span>"관측소로 간다"를 대사로만 읽으면 지형과 거리감이 남지 않는다.</span></div>
+      <div><b>여러 명이 흩어지는 장면</b><span>세 명이 각자 다른 곳으로 가는 장면을 한 화면에서 정리해 준다.</span></div>
+      <div><b>짧게, 가끔</b><span>메인 스토리의 중요한 이동에만 쓴다. 한 번 3~8초, 탭 한 번이면 끝 상태로 넘어간다.</span></div>
     </div>
   </section>
+
+  <section>
+    <h2>유저가 보는 장면</h2>
+    <div class="strip">
+      <figure><div class="shot">{game(S1, 0.8, dialog=False, modes=S1_PLACES)}</div><figcaption><b>① 등장</b> 장소 이름이 먼저 읽히고, 핀이 출발점에 선다.</figcaption></figure>
+      <figure><div class="shot">{game(S1, 2.3, dialog=False, modes=S1_PLACES)}</div><figcaption><b>② 이동</b> 지나온 길만 점선으로 남는다. 갈 길은 보이지 않는다.</figcaption></figure>
+      <figure><div class="shot">{game(S2, 2.8, PREV, True, dialog=False, modes=S2_PLACES)}</div><figcaption><b>③ 이어가기</b> 대사 뒤 지도가 남아 있다가 다음 이동이 바로 이어진다.</figcaption></figure>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="block">
+      <h2>이번 범위</h2>
+      <div class="scope">
+        <div><h3>넣는 것</h3><ul class="plain"><li>지도 위 핀 이동, 지나온 길 점선</li><li>장소 이름 표시</li><li>앞 연출에서 이어가기, 대사 뒤 지도 유지</li><li>탭으로 넘기기, 배속·자동 진행·다시보기·대사 로그</li><li>기획자용 편집 툴</li></ul></div>
+        <div><h3>빼는 것</h3><ul class="plain"><li>카메라 이동·확대 (기능 완성 후 재검토)</li><li>유저가 핀을 조작</li><li>전투·탐험 화면의 지도</li><li>도착 강조 같은 추가 표현</li></ul></div>
+      </div>
+    </section>
+    <section class="block">
+      <h2>만드는 쪽 규모</h2>
+      <table class="work">
+        <thead><tr><th>담당</th><th>할 일</th><th>덩어리</th></tr></thead>
+        <tbody>
+          <tr><td>클라이언트</td><td>지도 레이어, 경로 재생, 이어가기, 스토리 행 연동, 로그</td><td class="size">중</td></tr>
+          <tr><td>툴</td><td>별도 편집 툴(경로 그리기, 장소, 미리보기, 저장·검사)</td><td class="size">대</td></tr>
+          <tr><td>데이터</td><td>엑셀 테이블 5개 + 연출 JSON, 스토리 테이블 열 2개</td><td class="size">소</td></tr>
+          <tr><td>아트·사운드</td><td>지도 배경(스토리마다), 핀 프레임·이름표, 로그 아이콘, 효과음 1종</td><td class="size">소~중</td></tr>
+        </tbody>
+      </table>
+      <p class="foot">덩어리는 담당끼리 비교한 크기다. 기간은 회사에서 산정한다.</p>
+    </section>
+  </div>
+
+  <div class="two">
+    <section class="block">
+      <h2>위험과 대응</h2>
+      <ul class="plain">
+        <li><span><b>폰에서 글자가 작다.</b> 1080 기준 크기를 폰 가로에 줄이면 이름표가 9pt 안팎이 된다. 최솟값을 둬서 받친다(R-57).</span></li>
+        <li><span><b>기획자마다 품질이 다르다.</b> 「연출 작성 기준」 9개를 두고, 툴이 길이·동시 이동 수·대사창 가림을 경고한다.</span></li>
+        <li><span><b>툴이 가장 큰 일이다.</b> 툴 플랫폼(엔진 확장 / 웹)과 편의 기능 범위를 프로그램실과 먼저 정한다.</span></li>
+        <li><span><b>넓은 폰의 좌우 여백.</b> 지도 전체를 보이게 하므로 19.5:9 폰에서는 좌우에 검은 여백이 생긴다. 다음 버전에서 배경 확장을 검토한다.</span></li>
+      </ul>
+    </section>
+    <section class="block">
+      <h2>이 회의에서 정할 것</h2>
+      <div class="decide">
+        <div><h3>1. 이번 버전 범위 승인</h3><p><b>제안</b> 위 「넣는 것」 그대로. 카메라는 기능 완성 후.</p></div>
+        <div><h3>2. 툴 플랫폼</h3><p><b>제안</b> 프로그램실과 엔진 에디터 확장 / 웹 툴 중 결정.</p></div>
+        <div><h3>3. 첫 적용 스토리</h3><p><b>제안</b> 이동이 많은 메인 스토리 한 장을 골라 기준과 툴을 함께 검증.</p></div>
+      </div>
+    </section>
+  </div>
+
+  <p class="foot">자세한 내용: 기획서 본문(10분), 툴 기획서, 툴 사용 안내, 동작 프로토타입. 배경·인물은 자리표시.</p>
 </div>
 </body>
 </html>
@@ -466,7 +489,16 @@ ul.rules li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;
     (HERE / "summary.html").write_text(html, encoding="utf-8")
 
 
+def export_cuts():
+    """기획서 본문 「플레이어가 보는 장면」에 넣는 컷 SVG."""
+    cuts = [game(S1, 0.8, dialog=False, modes=S1_PLACES), game(S1, 2.3, dialog=False, modes=S1_PLACES),
+            game(S1, 4.0, dialog=False, modes=S1_PLACES), game(S2, 1.8, PREV, True, dialog=False, modes=S2_PLACES)]
+    for i, svg in enumerate(cuts, 1):
+        (HERE / f"cut{i}.svg").write_text(svg, encoding="utf-8")
+
+
 if __name__ == "__main__":
     mockups()
     summary()
-    print("wrote mockups/index.html, summary.html", counts())
+    export_cuts()
+    print("wrote mockups/index.html, summary.html, cut1~4.svg", counts())
