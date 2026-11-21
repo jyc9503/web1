@@ -168,7 +168,7 @@ th{white-space:nowrap}
       <h1>스토리 맵 핀 이동 연출</h1>
       <p class="sub">스토리 진행 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 이동하며 "누가 어디서 어디로 갔는지"를 보여주는 연출 기능.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.20 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.21 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>클라이언트 · 편집 툴 · 데이터</dd></div>
         <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">15건</span></dd></div>
@@ -181,6 +181,7 @@ th{white-space:nowrap}
 <li><strong>쓰는 곳</strong>: 메인 스토리에서 이동이 중요한 장면에 가끔 쓴다. 한 번에 8초 안쪽으로 짧게 끝난다.</li>
 <li><strong>만드는 법</strong>: 스토리 기획자가 편집 툴에서 배경을 고르고, 장소 이름을 새기고, 핀마다 Actor와 경로를 정한다. 스토리 테이블의 행에서 연출 id로 맵을 열고 닫는다.</li>
 <li><strong>이번 범위가 아닌 것</strong>: 카메라 이동, 유저가 핀을 조작하는 기능, 전투·탐험 화면의 지도.</li>
+<li><strong>본 문서</strong>: 회사에 내는 짧은 본 문서는 <code>core.md</code>(핵심 기획서)다. 이 문서는 그 참고 자료이고, 규칙 전체와 구현 세부를 담는다.</li>
 <li><strong>읽는 법</strong>: 본문은 무엇을 만드는지, 부록은 어떻게 만드는지(데이터, 수치, 계산식, 예외, 검수, 구현 규칙)다. 배지가 없는 항목은 확정이고, <code>검증필요</code>·<code>미정</code>만 배지로 표시한다. 테이블·키 이름과 수치는 자리표시다. 용어와 담당별 읽을 곳은 부록 K, 아트·사운드 요청은 부록 L, 프로그램실 회의 안건은 부록 F 끝에 있다.</li>
 </ul>
 </section>
@@ -2843,6 +2844,11 @@ th{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
+<td>v0.21</td>
+<td>2026-11-21</td>
+<td>핵심 기획서 <code>core.md</code> 분리(이 문서는 참고 자료로). 규칙 내용은 그대로</td>
+</tr>
+<tr>
 <td>v0.20</td>
 <td>2026-11-21</td>
 <td>과한 경고 정리: 정해진 동작(자동 닫기)에 붙은 경고 삭제, 이름표 겹침은 툴 CK-17로 한 곳만, 스토리 테이블이 없는 연출 id를 가리킬 때 동작 추가(부록 E)</td>
@@ -2851,11 +2857,6 @@ th{white-space:nowrap}
 <td>v0.19</td>
 <td>2026-11-21</td>
 <td>3차 정리: 배경 2048×1152 고정(R-18, <code>width</code>·<code>height</code> 열과 <code>MAP_SPEED_BASE_WIDTH</code>, Q-15 삭제), 과한 작성 기준 정리(G-03·G-07·G-08·G-09 삭제, G-01 하한 삭제), 아트·사운드 표를 부록 L로, 회의 안건을 부록 F로, 규칙 문장 다듬기</td>
-</tr>
-<tr>
-<td>v0.18</td>
-<td>2026-11-21</td>
-<td>2차 복잡성 검토. 기능: 도착 후 사라짐(<code>on_end</code>, R-47)·핀별 궤적 끄기(<code>trail</code>, R-50)·이징 선택(<code>easing</code>)·핀 색 지정(<code>color</code>) 삭제, 겹침 다시 정렬 애니메이션 삭제(R-34), 설정 키 35 → 23개(<code>MAP_FADE_MS</code> 하나로, 계산 상수는 부록 C로). 문서: 본문을 무엇을 만드는지만 남기고 구현 규칙·상태 전이표·스토리 테이블·이어가기 세부를 부록 J로, 용어·읽는 법을 부록 K로, 규칙을 읽는 순서로 배치, 확정 배지 숨김, 문서 묶음 버전을 하나로(연출·툴·안내·프로토 공통)</td>
 </tr>
 </tbody>
 </table></div></section>

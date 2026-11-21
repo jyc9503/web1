@@ -52,6 +52,7 @@
 
 ```
 plans/<기획-슬러그>/
+  core.md          핵심 기획서 (회사에 내는 짧은 본 문서, 있으면. spec.md 와 같이 고친다)
   spec.md          기획서 원본 (수정은 항상 여기서 시작)
   spec.html        프로그래머·아트 공유용 출력물 (tools/build_spec.py 로 생성)
   flow.svg         spec.md 가 삽입하는 흐름도
