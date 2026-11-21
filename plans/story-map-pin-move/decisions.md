@@ -109,7 +109,8 @@
 - v0.1 (2026-11-08): 최초 작성
 
 ## 게시 링크 (Artifact, 비공개)
-- 한 장 요약: https://claude.ai/artifact/ATo7ETCCrbn7aebjtBF69D
+- 검토 리포트(2026-11): https://claude.ai/artifact/WtMC1Fm3qS939KdpAQ7r4E
+- 회의용 한 장: https://claude.ai/artifact/ATo7ETCCrbn7aebjtBF69D
 - 기획서: https://claude.ai/artifact/Pyeta9tKgdRzDXNPwvG8Lq
 - 화면 시안: https://claude.ai/artifact/JYmuQfx4EmzcSKiCpXDR8f
 - 동작 프로토타입: https://claude.ai/artifact/PG9AVSaonaYP694yNCsEzZ
