@@ -155,7 +155,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.19</span>
+    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.20</span>
     <h1>맵 핀 이동 연출</h1>
     <p>세 탭이 같은 데이터를 봅니다. <b>스토리 시연</b>은 스토리 행을 따라 맵이 열리고 이어지고 닫히는 과정을, <b>편집 툴</b>은 기획자가 연출을 만드는 조작을, <b>데이터</b>는 저장되는 엑셀 행과 연출 JSON을 보여줍니다. 배경, 핀, 장소 이름, 대사는 모두 자리표시입니다.</p>
   </header>
@@ -306,6 +306,7 @@ code{font-family:var(--f-mono);font-size:.92em}
             <label for="p-x">위치 (배경 px)</label><div class="pair"><input type="number" id="p-x" min="0" step="1" aria-label="X"><input type="number" id="p-y" min="0" step="1" aria-label="Y"></div>
             <label for="p-mode">이 연출에서</label><select id="p-mode"></select>
           </div>
+          <p class="note" id="p-used"></p>
           <div class="tools"><button class="btn sm" id="b-delplace" type="button">마크 삭제</button></div>
           <p class="note"><span class="badge">프로토 검토용 안내</span> 빈 곳을 <b>더블클릭</b>하면 마크를 추가합니다. 마크를 한 번 누르면 고르고, 끌어서 옮깁니다. 핀이나 점을 누르면 핀·경로 편집으로 바뀝니다. 핀이 장소 위에 서 있으면 장소는 이름 글자를 눌러 고릅니다. 위치와 이름은 엑셀 <code>map_place</code>에 저장되어 같은 배경의 모든 연출이 함께 씁니다. 보임/숨김은 연출 JSON에 저장하며, 이어가기 연출은 앞 연출에서 보이던 마크를 이어받습니다.</p>
         </div>
@@ -920,7 +921,7 @@ function syncScenes(){
 function syncForm(){
   var sc=S(),sch=schedule(sc);
   var box=$('chips');box.innerHTML='';
-  sc.pins.forEach(function(p,i){box.appendChild(chipBtn(p.no+'. '+labelOf(p)+(p.from_prev?' (이어감)':'')+(broken(sc,p)?' ⚠':''),res(p.res)[2],i===sel,function(){sel=i;selPt=-1;syncForm();}));});
+  sc.pins.forEach(function(p,i){box.appendChild(chipBtn(p.no+'. '+labelOf(p)+(p.from_prev?' (이어감)':''),res(p.res)[2],i===sel,function(){sel=i;selPt=-1;syncForm();}));});
   var p=sc.pins[sel];
   if(p){
     fRes.value=p.res;fRes.disabled=p.from_prev;
@@ -938,9 +939,9 @@ function syncForm(){
     $('f-curve').value=p.curve;
     $('adv-mark').hidden=!(p.label||!p.show_label||p.show_from!=='START'||p.fixed); /* 고급 값이 기본과 다르면 표시 (툴 K-09) */
     var c=build(sc,p),s=sch[p.no],v=s.dur?c.total/(s.dur/1000):0,inf=$('speed'),warn=v>CFG.SPEED_WARN;
-    inf.textContent=broken(sc,p)?'⚠ 앞 연출에 같은 번호 핀이 없거나 사라짐으로 끝났습니다':
+    inf.textContent=broken(sc,p)?'앞 연출에 같은 번호 핀이 없어 첫 점에서 출발합니다':
       (moves(sc,p)?('길이 '+Math.round(c.total)+'px · '+Math.round(v)+'px/초 · '+s.dur+'ms · 출발 '+s.start+'ms'+(warn?' · 너무 빠름':'')):'이동 없음 (위치만 표시)');
-    inf.className='info'+(warn||broken(sc,p)?' warn':'');
+    inf.className='info'+(warn?' warn':'');
   }
   var pst=placeState(sc),pb=$('pchips');pb.innerHTML='';
   state.places.forEach(function(pl,i){var m=pst[pl.id];pb.appendChild(chipBtn(pl.name+(!m||m==='HIDE'?' · 안 보임':(m==='NEW'?' · 새로 보임':'')),null,i===psel,function(){psel=i;syncForm();}));});
@@ -958,6 +959,7 @@ function syncForm(){
 function syncPlaceXY(){ /* 장소 위치 입력칸 (툴 M-06) */
   var pl=state.places[psel],px=$('p-x'),py=$('p-y');
   px.max=BG.w;py.max=BG.h;
+  $('p-used').textContent='같은 배경을 쓰는 연출 '+state.scenes.length+'개가 이 장소를 함께 씁니다. (툴 M-03)';
   if(document.activeElement!==px)px.value=pl?pl.x:'';
   if(document.activeElement!==py)py.value=pl?pl.y:'';
 }
@@ -987,7 +989,6 @@ function checks(sc){
     if(seen[p.no])add('err','CK-12','핀 번호 '+p.no+'이(가) 겹칩니다.',pi);seen[p.no]=1;
     if(res(p.res)[1]==='알 수 없음')add('err','CK-10','핀 '+p.no+'의 Actor '+p.res+'을(를) 찾을 수 없습니다.',pi);
     if(!p.from_prev&&!p.pts.length)add('err','CK-02','핀 '+p.no+'에 시작점이 없습니다.',pi);
-    if(broken(sc,p))add('err','CK-05','핀 '+p.no+'이(가) 앞 연출에 없거나 사라졌습니다.',pi);
     p.pts.forEach(function(e,k){
       if(e.place){if(!place(e.place))add('err','CK-04','핀 '+p.no+'의 점 '+(k+1)+'이(가) 없는 장소를 가리킵니다.',pi);}
       else if(e.x<0||e.y<0||e.x>BG.w||e.y>BG.h)add('err','CK-01','핀 '+p.no+'의 점 '+(k+1)+'이(가) 배경 밖에 있습니다.',pi);});
@@ -1047,7 +1048,7 @@ pName.addEventListener('change',syncForm);
   el.addEventListener('focus',commit);
   el.addEventListener('input',function(){var pl=state.places[psel];if(!pl||el.value==='')return;
     var v=Math.round(+el.value);if(id==='p-x')pl.x=clamp(v,0,BG.w);else pl.y=clamp(v,0,BG.h);});
-  el.addEventListener('change',function(){syncPlaceXY();say('위치를 바꿨습니다. 이 장소를 지나는 경로도 따라갑니다.');});});
+  el.addEventListener('change',function(){syncPlaceXY();});});
 function placeSet(fn){var pl=state.places[psel];if(!pl)return;commit();var sc=S();fn(sc,pl.id);syncForm();}
 $('p-mode').addEventListener('change',function(e){placeSet(function(sc,id){
   var v=e.target.value;if(!v)delete sc.places[id];else sc.places[id]={visible:v==='SHOW'};});});
@@ -1098,7 +1099,7 @@ cv.addEventListener('pointerdown',function(e){
   if(panOn||spaceDown||e.button===1){e.preventDefault();spaceUsed=true;startDrag(e,{type:'pan',px:panX,py:panY});return;} /* 화면 이동 (V-06) */
   var q=ptr(e);
   if(view==='game'){if(playing&&!tapping)tapping={start:performance.now(),from:t};return;}
-  if(playing){playing=false;setPlay();say('재생을 멈췄습니다.');return;} /* E-07 */
+  if(playing){playing=false;setPlay();return;} /* E-07 */
   if(tab==='place'){
     var hi=hitPlaceLabel(q); /* 장소 편집 우선순위: 장소 이름 → 핀 → 점 → 장소 점 (E-11) */
     if(hi>=0){psel=hi;startDrag(e,{type:'place',i:hi});syncForm();return;}
@@ -1111,7 +1112,7 @@ cv.addEventListener('pointerdown',function(e){
     if(!isDouble(e))return;
     commit();var nid=Math.max.apply(null,state.places.map(function(x){return x.id;}).concat([1000]))+1; /* 새 id = 가장 큰 id + 1 (툴 D-05) */
     state.places.push({id:nid,name:'새 장소',x:Math.round(q.x*BG.w),y:Math.round(q.y*BG.h)});
-    psel=state.places.length-1;syncForm();pName.focus();pName.select();say('장소를 추가했습니다.');return;
+    psel=state.places.length-1;syncForm();pName.focus();pName.select();return;
   }
   var sc=S(),p=sc.pins[sel];
   if(p&&selPt>=0&&p.pts[selPt]){var e0=p.pts[selPt],q0=ptOf(e0); /* 1. 선택한 점의 핸들 */
@@ -1132,8 +1133,8 @@ cv.addEventListener('pointerdown',function(e){
     placeTimer=setTimeout(function(){psel=hpl;setTab('place');say(state.places[hpl].name+' 선택 · 장소 편집으로 바꿨습니다');},DBL_MS);return;}
   if(dbl){ /* 5. 더블클릭에서만 점이 생긴다 (E-01). 장소 위면 장소에 붙은 점 */
     var ins=hitSegment(sc,p,q);commit();
-    if(ins>=0&&!(ins===0&&!p.from_prev)){p.pts.splice(ins,0,snapTo(q));selPt=ins;say('점을 끼워 넣었습니다.');}
-    else{p.pts.push(snapTo(q));selPt=p.pts.length-1;say('점을 추가했습니다.');}
+    if(ins>=0&&!(ins===0&&!p.from_prev)){p.pts.splice(ins,0,snapTo(q));selPt=ins;}
+    else{p.pts.push(snapTo(q));selPt=p.pts.length-1;}
     syncForm();return;
   }
   for(var j=0;j<sc.pins.length;j++){if(hitSegment(sc,sc.pins[j],q)>=0){if(j!==sel){sel=j;selPt=-1;syncForm();say(labelOf(sc.pins[j])+' 선택');}return;}} /* 6. 경로 선: 그 핀 선택 */
@@ -1211,25 +1212,30 @@ $('b-hon').addEventListener('click',function(){ /* 지금 곡선 모양 그대�
   var sc=S(),p=sc.pins[sel];if(!p||selPt<0||!p.pts[selPt])return say('먼저 점을 누르세요.',true);
   if(p.curve!=='SMOOTH')return say('직선 경로에는 핸들이 없습니다.',true);
   commit();var P=rpath(sc,p),i=selPt+(p.from_prev&&P.length>p.pts.length?1:0),tn=autoTan(P,i),e=p.pts[selPt];
-  e.hout={x:Math.round(tn[0]*BG.w),y:Math.round(tn[1]*BG.h)};e.hin={x:-e.hout.x,y:-e.hout.y};syncForm();say('핸들을 꺼냈습니다.');});
+  e.hout={x:Math.round(tn[0]*BG.w),y:Math.round(tn[1]*BG.h)};e.hin={x:-e.hout.x,y:-e.hout.y};syncForm();});
 $('b-hoff').addEventListener('click',function(){var p=S().pins[sel];if(!p||selPt<0||!p.pts[selPt])return;commit();delete p.pts[selPt].hin;delete p.pts[selPt].hout;syncForm();say('자동 곡선으로 되돌렸습니다.');});
 $('b-addpin').addEventListener('click',function(){
   var sc=S(),usedNo={},c=sc,g=0;while(c&&g++<CFG.CHAIN_MAX){c.pins.forEach(function(q){usedNo[q.no]=1;});c=prevOf(c);}
   var no=1;while(usedNo[no])no++; /* 이어가기 연결 전체에서 안 쓴 가장 작은 번호 (K-03) */
   var usedRes=sc.pins.map(function(p){return p.res;}),fr=RES.filter(function(r){return usedRes.indexOf(r[0])<0;})[0]||RES[0];
-  commit();sc.pins.push(pin(no,fr[0],[]));sel=sc.pins.length-1;selPt=-1;syncForm();say('핀 '+no+'을 추가했습니다.');
+  commit();sc.pins.push(pin(no,fr[0],[]));sel=sc.pins.length-1;selPt=-1;syncForm();
 });
 $('b-delpin').addEventListener('click',function(){
   var sc=S();if(sc.pins.length<=1){say('핀이 최소 1개는 있어야 합니다.',true);return;}
   commit();var dp=sc.pins[sel],no=dp.no;sc.pins.splice(sel,1);
-  sc.pins.forEach(function(q){if(q.start.ref===no){q.start={type:'TIME',ref:null,delay:0};}});
+  var waited=0;sc.pins.forEach(function(q){if(q.start.ref===no){q.start={type:'TIME',ref:null,delay:0};waited++;}});
+  state.scenes.forEach(function(s){if(s.prev===sc.id)s.pins.forEach(function(q){if(q.no===no)q.from_prev=false;});}); /* 뒤 연출의 같은 번호 핀은 새 핀 (툴 C-04) */
   sel=Math.max(0,sel-1);selPt=-1;syncForm();
-  say('핀 '+no+'을 지웠습니다. 이 핀을 기준으로 한 출발 조건은 시간 0ms로 바꿨습니다.'+(dp.from_prev?' 앞 연출에서 온 핀이라 연출이 시작될 때 사라집니다(R-49).':''));
+  var m=[];if(waited)m.push('핀 '+no+'을 기다리던 출발 조건을 시간 0ms로 바꿨습니다.');if(dp.from_prev)m.push('앞 연출에서 온 핀이라 연출이 시작될 때 사라집니다(R-49).');
+  say(m.join(' ')); /* 해당할 때만 알린다 (툴 K-07) */
 });
 $('b-delplace').addEventListener('click',function(){
-  if(!state.places.length)return;commit();var pl=state.places[psel];
+  if(!state.places.length)return;var pl=state.places[psel],cur0=S();
+  var users=state.scenes.filter(function(s){return s!==cur0&&(s.places[pl.id]!==undefined||s.pins.some(function(p){return p.pts.some(function(e){return e.place===pl.id;});}));}).length;
+  if(users&&!window.confirm('다른 연출 '+users+'개가 이 장소를 씁니다. 지울까요?'))return; /* 툴 M-08 */
+  commit();
   state.scenes.forEach(function(s){delete s.places[pl.id];s.pins.forEach(function(p){p.pts=p.pts.map(function(e){return e.place===pl.id?{x:pl.x,y:pl.y}:e;});});});
-  state.places.splice(psel,1);psel=Math.max(0,psel-1);syncForm();say('장소를 지웠습니다. 이 장소를 지나던 점은 좌표로 바꿨습니다.');
+  state.places.splice(psel,1);psel=Math.max(0,psel-1);syncForm();
 });
 $('b-continue').addEventListener('click',function(){
   var src=S();commit();
