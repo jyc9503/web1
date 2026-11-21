@@ -152,7 +152,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · 프로토타입 v0.15 (기획서 v0.12 / 툴 v0.14)</span>
+    <span class="tag">카제나 · 스토리 연출 · 프로토타입 v0.16 (기획서 v0.13 / 툴 v0.15)</span>
     <h1>맵 핀 이동 연출</h1>
     <p>세 탭이 같은 데이터를 봅니다. <b>스토리 시연</b>은 스토리 행을 따라 맵이 열리고 이어지고 닫히는 과정을, <b>편집 툴</b>은 기획자가 연출을 만드는 조작을, <b>데이터</b>는 저장되는 엑셀 행과 연출 JSON을 보여줍니다. 배경, 핀, 장소 이름, 대사는 모두 자리표시입니다.</p>
   </header>
@@ -365,7 +365,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 /* ---------- 설정 (map_config, map_speed_preset). 값은 기획서 「설정 키」와 같다 ---------- */
 var CFG={BG_FADE:400,PIN_FADE:400,PLACE_FADE:400,OUTRO:1000,TAP:300,PIN_HOLD:400,PIN_FADEOUT:400,CLOSE:400,SETTLE:250,PREV_ALPHA:40,
   SPEED_BASE_W:2048,DUR_STEP:100,DUR_MIN:100,CURVE_SAMPLES:16,OVERLAP:0.9,GAP_RATIO:1.15,LABEL_PAD:6,CHAIN_MAX:20,
-  SPEED_WARN:1600,RECOMMEND_MAX:8000,RECOMMEND_MOVING:3,RECOMMEND_PLACES:8,DIALOG_AREA:22,PREV_DEPTH:0,SNAP_PX:40,FAST:2,AUTO_WAIT:1600};
+  SPEED_WARN:1600,RECOMMEND_MAX:8000,RECOMMEND_MOVING:3,RECOMMEND_PLACES:8,DIALOG_AREA:22,PREV_DEPTH:1,SNAP_PX:40,FAST:2,AUTO_WAIT:1600};
 var CFG_UI=[['MAP_BG_FADE_MS','BG_FADE'],['MAP_PIN_FADE_MS','PIN_FADE'],['MAP_PLACE_FADE_MS','PLACE_FADE'],['MAP_OUTRO_MS','OUTRO'],['MAP_TAP_FINISH_MS','TAP'],
   ['MAP_PIN_HOLD_MS','PIN_HOLD'],['MAP_PIN_FADEOUT_MS','PIN_FADEOUT'],['MAP_CLOSE_MS','CLOSE'],['MAP_SETTLE_MS','SETTLE'],['MAP_PREV_TRAIL_ALPHA (%)','PREV_ALPHA'],['배속 배율 (가정)','FAST']];
 var PRESETS=[[1,'걷기',500],[2,'달리기',800],[3,'고속',1200]];

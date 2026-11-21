@@ -165,16 +165,16 @@ td code{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기, 데이터 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.14 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.15 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">32건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">25건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
 <p>「스토리 맵 핀 이동 연출」(<code>plans/story-map-pin-move/</code>)의 데이터를 만드는 편집 툴이다. 연출 규칙(R-xx), 계산식(F-xx), 데이터 형식은 그 기획서(이하 "연출 기획서")를 따르고, 이 문서는 <strong>툴에서 어떻게 만드는지</strong>만 다룬다.</p>
 <ul>
-<li><strong>사용자</strong>: 스토리 연출을 만드는 기획자 여러 명. 처음 쓰는 사람도 헷갈리지 않고, 사람마다 만든 연출의 품질이 비슷해야 한다. 같은 배경과 장소를 여러 사람이 나눠 쓴다.</li>
+<li><strong>사용자</strong>: 스토리 연출을 만드는 기획자 여러 명. 처음 쓰는 사람도 헷갈리지 않고, 사람마다 만든 연출의 품질이 비슷해야 한다. 같은 배경과 장소를 여러 사람이 나눠 쓰며, 회사에서는 파일 잠금(락)과 기존 협업 규칙(id, 이름)으로 충돌을 막는다.</li>
 <li><strong>대상 기기</strong>: PC(마우스와 키보드). 프로토타입이 폰 터치로도 조작되는 것은 기획 검토를 폰에서 하기 위한 것이고, 툴 요구가 아니다. 터치 기기 지원이 필요해지면 더블탭과 길게 누르기를 같은 규칙으로 쓴다. <code>검증필요</code></li>
 <li><strong>목표</strong>: 연출 하나를 5분 안에 만든다. 점 몇 개를 찍으면 곡선이 나오고, 앞 연출에서 이어갈 때는 버튼 하나로 시작 상태가 채워진다. <code>검증필요</code></li>
 <li><strong>원칙</strong>: 툴에서 보는 미리보기와 게임 화면이 같아야 한다. 같은 계산식(연출 기획서 「부록 C 계산 규칙」)을 쓴다.</li>
@@ -227,7 +227,7 @@ td code{white-space:nowrap}
 </tr>
 </tbody>
 </table></div>
-<p>지운 번호는 다시 쓰지 않는다(E-04, E-09는 v0.9에서 삭제).</p>
+<p>지운 번호는 다시 쓰지 않는다(E-04, E-09는 v0.9에서, M-09, S-07은 v0.15에서 삭제).</p>
 </section>
 <section id="s2"><h2><span class="sec">§2</span>화면 구성</h2>
 <div class="flow"><svg viewBox="0 0 860 380" role="img" aria-label="편집 툴 화면 구성: 왼쪽 연출 목록, 가운데 캔버스와 재생 바·타임라인 막대, 오른쪽 속성 패널과 검사 결과">
@@ -471,11 +471,6 @@ td code{white-space:nowrap}
 <tr data-s="warn">
 <td class="id">S-06</td>
 <td><strong>배경 등록</strong>: 배경 이미지를 고르면 원본 해상도를 읽어 <code>map_background</code> 행을 만든다(D-06).</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">S-07</td>
-<td><strong>묶음 이름 규칙</strong>: <code>tool_folder</code>는 <code>C&lt;챕터 두 자리&gt;_&lt;내용 영문&gt;</code>으로 짓는다(예: <code>C03_MOVE</code>). 이벤트 스토리는 <code>EV&lt;번호&gt;_&lt;내용&gt;</code>. 목록에서 챕터 순으로 정렬된다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -789,12 +784,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">M-08</td>
-<td>마크를 지우면 그 장소에 붙어 있던 점은 그 자리의 좌표 점으로 바뀌고, 모든 연출의 보임/숨김 목록에서 빠진다. 지우기 전에 영향받는 연출 목록(M-09)을 보여주고 확인을 받는다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">M-09</td>
-<td><strong>공유 장소 변경 확인</strong>: 장소를 옮기거나 이름을 바꾸거나 지울 때, 그 장소를 지나거나 보여주는 다른 연출의 목록(연출 id, 묶음, 메모)을 보여주고 확인을 받는다. 여러 기획자가 같은 배경을 쓰므로, 남의 연출이 모르게 바뀌는 일을 막는다.</td>
+<td>마크를 지우면 그 장소에 붙어 있던 점은 그 자리의 좌표 점으로 바뀌고, 모든 연출의 보임/숨김 목록에서 빠진다. 지우기 전에 영향을 받는 연출 수를 알린다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -884,20 +874,20 @@ td code{white-space:nowrap}
 <td><strong>문자열 추가 목록</strong>: 새로 만들거나 고친 장소 이름·이름표를 (키, 원문) 목록으로 내보낸다. 문자열 테이블에 넣는 절차는 회사 규칙을 따른다. 아직 문자열 테이블에 없는 키는 툴이 보관한 원문으로 보여준다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">D-05</td>
-<td><strong>id 채번</strong>: 기획자마다 id 대역을 나눠 쓴다(툴 설정에 내 대역을 입력). 새 연출·장소의 id는 내 대역 안에서 쓰고 있는 가장 큰 id + 1을 제안한다. 동시에 작업해도 id가 겹치지 않는다. 사용자가 고칠 수 있고, 이미 있는 id는 막는다. 회사 채번 규칙이 있으면 그것을 따른다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><strong>id 채번</strong>: 새 연출·장소·배경의 id는 회사 채번 규칙을 따른다. 툴은 이미 있는 id를 막는다.</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">D-06</td>
 <td><strong>배경 등록</strong>: 배경 이미지를 고르면 <code>width</code>, <code>height</code>를 읽어 채운다. 비율이 16:9가 아니면 경고한다(CK-16).</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">D-07</td>
-<td><strong>저장 단위</strong>: 저장은 연출 단위다. 저장하지 않은 변경이 있는 연출은 목록에 표시하고, 닫거나 다른 연출로 넘어갈 때 저장할지 묻는다. 여러 사람이 같은 연출을 고칠 때의 충돌은 회사 버전 관리 방식에 맡긴다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><strong>저장 단위</strong>: 저장은 연출 단위다. 저장하지 않은 변경이 있는 연출은 목록에 표시하고, 닫거나 다른 연출로 넘어갈 때 저장할지 묻는다. 여러 사람이 같은 데이터를 동시에 고치는 일은 회사의 파일 잠금(락)으로 막는다.</td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">D-08</td>
@@ -948,7 +938,6 @@ td code{white-space:nowrap}
 <li><span class="mono">□</span><span>툴이 읽을 회사 데이터의 위치와 형식: Actor, 문자열, 엑셀 테이블을 내보낸 데이터 (D-01)</span></li>
 <li><span class="mono">□</span><span>연출 JSON을 두는 위치와 이름 규칙 (D-02)</span></li>
 <li><span class="mono">□</span><span>문자열 테이블에 새 키를 넣는 절차 (D-04)</span></li>
-<li><span class="mono">□</span><span>새 id의 범위 규칙 (D-05)</span></li>
 </ul>
 <h3>프로그램실 회의 안건</h3>
 <ul class="check">
@@ -959,12 +948,7 @@ td code{white-space:nowrap}
 </ul>
 <h3>기획자가 정할 것</h3>
 <ul class="check">
-<li><span class="mono">□</span><span>
-<p>여러 기획자 운영: id 대역(D-05), 공유 장소 변경 확인(M-09), 묶음 이름 규칙(S-07)</p>
-</span></li>
-<li><span class="mono">□</span><span>
-<p>v0.12에서 추가한 제안(V-06, V-07, S-01~S-06, K-07, K-08, M-08, D-01~D-07, CK-11, CK-12, CK-16, CK-17)</p>
-</span></li>
+<li><span class="mono">□</span><span>v0.12에서 추가한 제안(V-06, V-07, S-01~S-06, K-07, K-08, M-08, D-01~D-07, CK-11, CK-12, CK-16, CK-17)</span></li>
 </ul>
 <h3>나중에 다시 볼 것</h3>
 <ul class="check">
@@ -1256,26 +1240,26 @@ td code{white-space:nowrap}
 <td>{장소}의 이름이 이름표에 가려집니다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">CK-18</td>
 <td>동시에 움직이는 핀이 <code>MAP_RECOMMEND_MOVING_PINS</code>(3)개보다 많은 순간이 있음 (연출 G-02)</td>
 <td>경고</td>
 <td>{시각}ms에 핀 {개수}개가 함께 움직입니다. 출발 시차를 두면 따라 보기 쉽습니다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">CK-19</td>
 <td>도착 지점이나 보이는 장소 마크가 대사창 영역(배경 아래 <code>MAP_DIALOG_AREA_RATIO</code>(22)%) 안에 있음 (연출 G-04)</td>
 <td>경고</td>
 <td>{이름}이(가) 대사창에 가려집니다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
-<tr data-s="warn">
+<tr data-s="ok">
 <td class="id">CK-20</td>
 <td>보이는 장소 마크가 <code>MAP_RECOMMEND_PLACES</code>(8)개보다 많음 (연출 G-05)</td>
 <td>경고</td>
 <td>보이는 장소가 {개수}개입니다. 이야기에 나오는 장소만 남기세요.</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td><span class="badge b-ok">확정</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1347,14 +1331,14 @@ td code{white-space:nowrap}
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
-<td>연출 작성 기준 경고, 공유 장소 변경 확인, id 대역</td>
-<td>CK-18~CK-20, M-09, D-05</td>
+<td>연출 작성 기준 경고</td>
+<td>CK-18~CK-20</td>
 <td>P1</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
-<td>연출 관리(새 연출, 복제, 삭제, 목록 순서, 묶음 이름), 배경 등록</td>
-<td>S-01~S-07, D-06</td>
+<td>연출 관리(새 연출, 복제, 삭제, 목록 순서), id 채번, 배경 등록</td>
+<td>S-01~S-06, D-05, D-06</td>
 <td>P1</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
@@ -1395,6 +1379,11 @@ td code{white-space:nowrap}
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>v0.15</td>
+<td>2026-11-21</td>
+<td>검토 결정 반영: 회사가 파일 잠금과 기존 협업 규칙을 쓰므로 공유 장소 변경 확인(M-09)과 묶음 이름 규칙(S-07)을 삭제하고, id 채번은 회사 규칙(D-05), 동시 편집은 파일 잠금(D-07)으로 확정. M-08은 v0.13 문구로 되돌림. 작성 기준 경고 CK-18~CK-20 확정</td>
+</tr>
 <tr>
 <td>v0.14</td>
 <td>2026-11-21</td>
