@@ -50,6 +50,7 @@ main h4{font-size:14px;margin:18px 0 6px}
 .note ul{margin:8px 0 0}
 .note p{margin:0}
 td code{white-space:nowrap}
+th{white-space:nowrap}
 """
 
 SCRIPT = """(function(){
@@ -85,7 +86,8 @@ def process_rows(html_text, stats):
         if tokens:
             state = BADGES[tokens[0]][0]
             attrs = f' data-s="{state}"'
-            body = TOKEN.sub(lambda t: f'<span class="badge {BADGES[t.group(1)][1]}">{t.group(1)}</span>', body)
+            # 확정은 기본값이라 배지를 그리지 않는다. 행의 data-s 상태는 남겨 「검증필요·미정만 강조」 버튼이 동작한다.
+            body = TOKEN.sub(lambda t: '' if t.group(1) == '확정' else f'<span class="badge {BADGES[t.group(1)][1]}">{t.group(1)}</span>', body)
         cells = re.findall(r"<td[^>]*>(.*?)</td>", body, re.S)
         if cells and ID_RE.match(re.sub(r"<[^>]+>", "", cells[0]).strip()):
             body = re.sub(r"<td([^>]*)>", r'<td class="id"\1>', body, count=1)
@@ -94,6 +96,20 @@ def process_rows(html_text, stats):
         return f"<tr{attrs}>{body}</tr>"
 
     return re.sub(r"<tr>(.*?)</tr>", row, html_text, flags=re.S)
+
+
+def drop_empty_status(m):
+    """마지막 열이 「상태」이고 모든 행이 확정(배지 없음)이면 그 열을 지운다."""
+    t = m.group(0)
+    heads = re.findall(r"<th[^>]*>(.*?)</th>", t, re.S)
+    if not heads or heads[-1].strip() != "상태":
+        return t
+    rows = re.findall(r"<tr[^>]*>(.*?)</tr>", t, re.S)[1:]
+    lasts = [re.findall(r"<td[^>]*>(.*?)</td>", r, re.S)[-1].strip() for r in rows if "<td" in r]
+    if any(lasts):
+        return t
+    t = re.sub(r"<th[^>]*>\s*상태\s*</th>\s*(?=</tr>)", "", t, count=1)
+    return re.sub(r"<td[^>]*>\s*</td>(\s*</tr>)", r"\1", t)
 
 
 def convert(md_text, plan_dir):
@@ -111,6 +127,7 @@ def convert(md_text, plan_dir):
     html_body = html_body.replace(' style="text-align: right;"', ' class="num"')
     stats = {"verify": 0}
     html_body = process_rows(html_body, stats)
+    html_body = re.sub(r"<table>.*?</table>", drop_empty_status, html_body, flags=re.S)
     html_body = re.sub(r"<table>", '<div class="tablewrap"><table>', html_body)
     html_body = html_body.replace("</table>", "</table></div>")
 
@@ -162,7 +179,7 @@ def build(plan_dir, md="spec.md"):
     <p class="label">목차</p>
     {toc}
     <div class="legend">
-      <span><span class="badge b-ok">확정</span> 그대로 구현</span>
+      <span>배지 없음 = 확정, 그대로 구현</span>
       <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
       <span><span class="badge b-tbd">미정</span> 결정 대기</span>
     </div>

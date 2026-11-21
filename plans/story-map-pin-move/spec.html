@@ -129,6 +129,7 @@ main h4{font-size:14px;margin:18px 0 6px}
 .note ul{margin:8px 0 0}
 .note p{margin:0}
 td code{white-space:nowrap}
+th{white-space:nowrap}
 
 </style>
 </head>
@@ -139,26 +140,23 @@ td code{white-space:nowrap}
     <a href="#s1">개요</a>
 <a href="#s2">플레이어가 보는 장면</a>
 <a href="#s3">핵심 규칙</a>
-<a href="#s4">게임 화면과 툴 화면</a>
-<a href="#s5">처리 흐름</a>
-<a href="#s6">이어가기</a>
-<a href="#s7">스토리 테이블 연동</a>
-<a href="#s8">연출 작성 기준</a>
-<a href="#s9">아트·사운드 전달사항</a>
-<a href="#s10">편집 툴 요구</a>
-<a href="#s11">검증·미결 목록</a>
-<a href="#s12">부록 A. 데이터 설계</a>
-<a href="#s13">부록 B. 설정 키</a>
-<a href="#s14">부록 C. 계산 규칙</a>
-<a href="#s15">부록 D. 예시 연출과 데이터</a>
-<a href="#s16">부록 E. 예외 처리</a>
-<a href="#s17">부록 F. 회사 데이터 연결</a>
-<a href="#s18">부록 G. 구현 전달사항</a>
-<a href="#s19">부록 H. 검수 항목</a>
-<a href="#s20">부록 I. 작업 목록</a>
-<a href="#s21">변경 이력</a>
+<a href="#s4">연출 작성 기준</a>
+<a href="#s5">아트·사운드 전달사항</a>
+<a href="#s6">검증·미결 목록</a>
+<a href="#s7">부록 A. 데이터 설계</a>
+<a href="#s8">부록 B. 설정 키</a>
+<a href="#s9">부록 C. 계산 규칙</a>
+<a href="#s10">부록 D. 예시 연출과 데이터</a>
+<a href="#s11">부록 E. 예외 처리</a>
+<a href="#s12">부록 F. 회사 데이터 연결</a>
+<a href="#s13">부록 G. 구현 전달사항</a>
+<a href="#s14">부록 H. 검수 항목</a>
+<a href="#s15">부록 I. 작업 목록</a>
+<a href="#s16">부록 J. 구현 규칙</a>
+<a href="#s17">부록 K. 읽는 법과 용어</a>
+<a href="#s18">변경 이력</a>
     <div class="legend">
-      <span><span class="badge b-ok">확정</span> 그대로 구현</span>
+      <span>배지 없음 = 확정, 그대로 구현</span>
       <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
       <span><span class="badge b-tbd">미정</span> 결정 대기</span>
     </div>
@@ -170,157 +168,20 @@ td code{white-space:nowrap}
       <h1>스토리 맵 핀 이동 연출</h1>
       <p class="sub">스토리 진행 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 이동하며 "누가 어디서 어디로 갔는지"를 보여주는 연출 기능.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.14 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.18 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>클라이언트 · 편집 툴 · 데이터</dd></div>
         <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">19건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
-<p>스토리 대사 사이에 배경 이미지 한 장을 깔고, 그 위에 장소 이름과 핀(캐릭터나 함대 같은 대상)을 올려 정해진 경로로 이동시킨다. 유저는 글을 읽지 않아도 인물들이 어디서 어디로 움직였는지 알 수 있다.</p>
+<p>스토리 대사 사이에 배경 지도 한 장을 깔고, 장소 이름과 핀(캐릭터나 함대 같은 대상)을 올려 정해진 경로로 움직인다. 유저는 글을 읽지 않아도 누가 어디서 어디로 갔는지 알 수 있다.</p>
 <ul>
-<li><strong>목적</strong>: 이동과 위치 정보를 시각으로 전달해 스토리 몰입을 높인다.</li>
-<li><strong>감정 중심</strong>: 이동 및 위치 정보. 성공 기준은 "누가 어디서 어디로 갔는지 한 번에 읽힌다"이다.</li>
-<li><strong>쓰는 곳</strong>: 메인 스토리에서 이동이 중요한 장면에 가끔 쓴다. 자주 나오지 않으므로 한 번 볼 때 인상적이어야 하고, 한 번에 3~8초로 짧게 끝난다.</li>
-<li><strong>사용 위치</strong>: 스토리 테이블의 행에서 연출 id로 맵을 열고(재생) 닫는다. 맵은 닫기 전까지 대사 뒤에 남고, 앞 연출이 끝난 상태에서 이어서 시작할 수 있다.</li>
-<li><strong>기획자 작업</strong>: 편집 툴에서 배경을 고르고, 장소 마크를 새기고, 핀마다 Actor·경로·속도·출발 조건을 정한다. 결과는 엑셀 테이블 5개와 연출마다 JSON 1개로 저장된다(「부록 A 데이터 설계」). 툴 상세는 별도 기획서 「맵 이동 연출 편집 툴」(<code>plans/map-move-tool/</code>)에 있다.</li>
-<li><strong>이 문서의 상태</strong>: 회사 밖에서 회사 데이터 없이 썼다. 테이블·열·키 이름은 모두 자리표시다. 회사 기존 데이터에 붙이는 방법은 「부록 F 회사 데이터 연결」에 모았다.</li>
-<li><strong>문서 구성</strong>: 앞쪽 본문은 무엇을 만드는지(10분 분량), 뒤쪽 부록은 어떻게 만드는지(데이터, 수치, 계산식, 예외, 검수)다.</li>
-</ul>
-<h3>누가 어디를 읽나</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>읽는 사람</th>
-<th>먼저 볼 곳</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>기획 리드·PD</td>
-<td>본문 전체 (개요 ~ 검증·미결)</td>
-</tr>
-<tr>
-<td>스토리 기획자</td>
-<td>플레이어가 보는 장면, 연출 작성 기준, 툴 사용 안내(<code>plans/map-move-tool/guide.md</code>)</td>
-</tr>
-<tr>
-<td>클라이언트 프로그래머</td>
-<td>핵심 규칙, 처리 흐름, 부록 A·B·C·E·G</td>
-</tr>
-<tr>
-<td>툴 프로그래머</td>
-<td>부록 A, 별도 기획서 「맵 이동 연출 편집 툴」</td>
-</tr>
-<tr>
-<td>시스템·데이터 담당</td>
-<td>부록 A·B·F</td>
-</tr>
-<tr>
-<td>아트·사운드</td>
-<td>플레이어가 보는 장면, 게임 화면과 툴 화면, 아트·사운드 전달사항</td>
-</tr>
-<tr>
-<td>QA</td>
-<td>처리 흐름, 부록 E·H</td>
-</tr>
-</tbody>
-</table></div>
-<h3>범위</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>포함</th>
-<th>제외 (다음 버전)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>게임 화면의 핀 이동 연출</td>
-<td>전투·탐험 화면의 맵</td>
-</tr>
-<tr>
-<td>장소 마크(장소 이름 표시)</td>
-<td>3D 지도, 지형 상호작용</td>
-</tr>
-<tr>
-<td>이전 연출에서 이어가기</td>
-<td>유저가 직접 핀을 조작하는 기능</td>
-</tr>
-<tr>
-<td>스토리 테이블에서 맵 열기·닫기</td>
-<td>배경 리소스 제작 (배경 담당)</td>
-</tr>
-<tr>
-<td>탭·배속·자동 진행·다시보기·대사 로그 규칙</td>
-<td>카메라 연출 (기능 완성 후 재검토)</td>
-</tr>
-<tr>
-<td>데이터 설계(엑셀 + JSON), 설정 키</td>
-<td>툴 상세 (별도 기획서)</td>
-</tr>
-</tbody>
-</table></div>
-<h3>용어</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>용어</th>
-<th>뜻</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>연출</td>
-<td>맵 이동 연출 한 건. 배경 1장, 장소 마크, 핀 여러 개로 이뤄진다. 예시에서는 「장면 1」처럼 이름을 붙인다</td>
-</tr>
-<tr>
-<td>핀</td>
-<td>Actor 1개(캐릭터, 함대, 오브젝트 등)를 나타내는 표식. 회사 Actor 테이블을 참조한다</td>
-</tr>
-<tr>
-<td>핀 번호</td>
-<td>연출 안에서 핀을 가리키는 번호. 이어가기로 연결된 연출들 사이에서는 같은 번호가 같은 핀이다</td>
-</tr>
-<tr>
-<td>웨이포인트</td>
-<td>경로를 이루는 점 하나. 좌표 또는 장소 마크를 가리키고, 곡선을 다듬는 핸들을 가질 수 있다</td>
-</tr>
-<tr>
-<td>궤적</td>
-<td>핀이 이미 지나온 구간. 게임에서는 점선으로 남는다</td>
-</tr>
-<tr>
-<td>장소 마크</td>
-<td>배경 위 특정 위치에 새긴 장소 이름</td>
-</tr>
-<tr>
-<td>이어가기</td>
-<td>앞 연출이 끝난 위치에서 다음 연출을 시작하는 것</td>
-</tr>
-<tr>
-<td>맵 열기 / 맵 닫기</td>
-<td>스토리 행이 연출을 재생하게 하는 것 / 열린 맵을 닫게 하는 것</td>
-</tr>
-<tr>
-<td>맵 열림</td>
-<td>맵 연출이 재생되었고 아직 닫히지 않은 상태. 대사 뒤에 배경으로 남는다</td>
-</tr>
-<tr>
-<td>이동 시작</td>
-<td>연출의 시간 기준점(0ms). 등장 페이드인은 이보다 앞에 붙는다</td>
-</tr>
-<tr>
-<td>쉬는 핀</td>
-<td>출발 전, 제자리, 도착 후처럼 움직이지 않고 있는 핀</td>
-</tr>
-</tbody>
-</table></div>
-<h3>표기 약속</h3>
-<ul>
-<li>본문의 시간·크기 수치(400ms 등)는 시작값이다. 값의 원본과 조정용 설정 키 이름은 「부록 B 설정 키」 표에 모았다. 규칙의 동작이 <code>확정</code>이어도 수치는 구현 후 조정한다.</li>
-<li>테이블·열·필드·키 이름, id 숫자, 설정 키 수치는 모두 자리표시이며 회사 확인 대상이다(부록 F). 이 이유만으로 확인이 필요한 표에는 배지를 붙이지 않는다.</li>
-<li><code>확정</code>은 기획자가 정한 것, <code>검증필요</code>는 가정했거나 회사 데이터로 확인해야 하는 것, <code>미정</code>은 결정을 미룬 것이다.</li>
+<li><strong>목표</strong>: "누가 어디서 어디로 갔는지 한 번에 읽힌다."</li>
+<li><strong>쓰는 곳</strong>: 메인 스토리에서 이동이 중요한 장면에 가끔 쓴다. 한 번에 3~8초로 짧게 끝난다.</li>
+<li><strong>만드는 법</strong>: 스토리 기획자가 편집 툴에서 배경을 고르고, 장소 이름을 새기고, 핀마다 Actor와 경로를 정한다. 스토리 테이블의 행에서 연출 id로 맵을 열고 닫는다.</li>
+<li><strong>이번 범위가 아닌 것</strong>: 카메라 이동, 유저가 핀을 조작하는 기능, 전투·탐험 화면의 지도.</li>
+<li><strong>읽는 법</strong>: 본문은 무엇을 만드는지, 부록은 어떻게 만드는지(데이터, 수치, 계산식, 예외, 검수, 구현 규칙)다. 배지가 없는 항목은 확정이고, <code>검증필요</code>·<code>미정</code>만 배지로 표시한다. 테이블·키 이름과 수치는 자리표시다. 용어와 담당별 읽을 곳은 부록 K에 있다.</li>
 </ul>
 </section>
 <section id="s2"><h2><span class="sec">§2</span>플레이어가 보는 장면</h2>
@@ -334,455 +195,8 @@ td code{white-space:nowrap}
 <li><strong>궤적</strong>: 지나온 길만 점선으로 남아, 끝난 뒤에도 "어디서 왔는지"가 보인다.</li>
 <li><strong>도착과 대사</strong>: 대사창이 돌아와도 도착 지점은 가려지지 않는다. 지도는 닫힐 때까지 대사 뒤에 남는다.</li>
 </ol>
-<p>화면 탭 한 번으로 언제든 끝 상태로 넘길 수 있다. 처음 보는 유저와 다시 보는 유저 모두를 위한 장치다.</p>
-</section>
-<section id="s3"><h2><span class="sec">§3</span>핵심 규칙</h2>
-<p>규칙 번호는 처음 붙인 번호를 유지한다(중간에 지운 번호는 다시 쓰지 않는다. R-44는 v0.7에서 삭제). R-46부터는 v0.9 이후 구현 공백과 검토 결과를 메우려고 추가한 제안이다.</p>
-<h3>기본</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>규칙</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td class="id">R-01</td>
-<td>배경 리소스 1장 위에 핀을 올린다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-02</td>
-<td>핀 1개는 Actor 1개를 나타낸다. 캐릭터뿐 아니라 Actor 테이블에 있는 대상(함대, 탈것, 오브젝트 등)을 모두 쓸 수 있다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-03</td>
-<td>핀은 기획자가 지정한 경로를 따라 이동한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-04</td>
-<td>기획자가 툴에서 각 핀의 Actor와 경로를 지정한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-06</td>
-<td>연출당 핀 수와 핀당 점 수에 한도를 두지 않는다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-16</td>
-<td>이번 버전은 카메라를 고정하고 전체 지도를 보여준다. 카메라 연출 여부는 기능을 다 만든 뒤 다시 검토한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-33</td>
-<td>핀은 Actor 테이블의 id로 고르고, 이름과 리소스 경로를 Actor 테이블에서 가져온다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-</tbody>
-</table></div>
-<h3>좌표와 단위</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>규칙</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td class="id">R-05</td>
-<td>좌표는 배경 원본 이미지의 픽셀 정수로 저장한다(왼쪽 위 0,0). 배경 정의에 원본 해상도를 두고, 화면 배치는 엔진이 비율로 변환한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-18</td>
-<td>맵 배경은 비율만 16:9로 통일하고 해상도는 자유다(권장 2048×1152 이상). 속도는 가로 2048px 기준이고, 배경 가로가 다르면 엔진이 비례로 환산한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-19</td>
-<td>스토리 화면은 가로다. 화면 비율이 배경과 다르면 배경 전체가 보이도록 맞추고 남는 곳은 여백으로 둔다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-37</td>
-<td>모든 시간은 ms 정수다. 연출의 0ms는 이동 시작이고, 등장 페이드인은 그 앞(음수 구간)에 붙는다. 핀 출발 시간이 모두 같은 0ms를 쓴다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-39</td>
-<td>장소 이름, 이름표, 로그 문구는 문자열 테이블 키로 저장한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-41</td>
-<td>위치·길이·속도는 모두 배경 픽셀 기준이다. 핀 지름, 글자, 점선 같은 표시 크기는 UI 기준 해상도의 px로 정한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">R-55</td>
-<td>UI px 값은 화면 높이 ÷ 1080 배율로 키우거나 줄인다. 여백은 검은색으로 채운다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-57</td>
-<td>폰에서도 읽히도록 핀 지름, 이름표 글자, 장소 글자에는 최솟값을 두고 그 아래로 줄이지 않는다(F-13). 값은 회사 UI의 최소 글자 크기 규칙을 따르고, 그때까지는 핀 36, 이름표 12, 장소 글자 13(기기 독립 단위)을 시작값으로 쓴다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-</tbody>
-</table></div>
-<h3>경로와 시간</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>규칙</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td class="id">R-07</td>
-<td>경로는 직선 또는 곡선으로 그린다. 곡선은 점만 찍으면 자동으로 부드럽게 이어지고(Catmull-Rom), 모양을 잡고 싶은 점에서만 베지어 핸들을 꺼내 조절한다. 핸들이 없는 점은 자동 곡선을 따른다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-08</td>
-<td>이동 시간은 속도 프리셋(걷기, 달리기 등)과 경로 길이로 자동 계산한다. 필요하면 핀마다 이동 시간을 ms로 직접 고정한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-29</td>
-<td>웨이포인트가 없는 핀(시작점만 있음)은 이동 없이 위치만 보여준다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-38</td>
-<td>핀 출발 조건은 시간 / 다른 핀 도착 후 두 가지 중에서 고르고, 각각 지연(ms)을 더한다. 다른 핀과 함께 출발시키려면 같은 시간을 준다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-40</td>
-<td>웨이포인트가 장소 마크를 가리키면 좌표 대신 장소 id를 저장한다. 장소 마크를 옮기면 그 장소를 지나는 모든 경로가 따라 바뀐다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-</tbody>
-</table></div>
-<h3>화면 표시</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>규칙</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td class="id">R-09</td>
-<td>게임 화면에는 핀이 지나온 구간만 점선 궤적으로 남긴다. 앞으로 갈 경로와 도착 지점은 게임에서 보이지 않는다(툴에서만 보인다).</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-10</td>
-<td>핀 아래에 이름표를 표시한다. 기본 글자는 Actor 테이블의 이름이고, 연출마다 문자열 키로 바꾸거나 이름표를 끌 수 있다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-11</td>
-<td>도착 후 핀은 화면에 남는다(기본). 선택하면 400ms 동안 사라진다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-17</td>
-<td>도착한 핀끼리 겹치면 자동으로 비켜 놓는다. 이름표가 읽히도록 그 자리 중심으로 가로로 나란히 벌린다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-20</td>
-<td>배경 이미지 위 각 장소에 이름 마크(장소 마크)를 새길 수 있다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-21</td>
-<td>장소 마크는 연출마다 보임/숨김만 정한다. 보이는 마크는 배경과 함께 나타난다. 이어가기 연출에서 새로 보이게 된 마크는 0ms부터 400ms 동안 페이드인한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-28</td>
-<td>그리기 순서는 배경 → 장소 마크 → 앞 연출 궤적 → 궤적 → 핀 → 이름표다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-30</td>
-<td>이동 효과음은 연출당 한 번, 첫 핀이 움직이기 시작할 때 울린다. 핀이 여럿이어도 한 번만 울린다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-34</td>
-<td>쉬고 있는 핀(출발 전, 제자리, 도착 후)끼리 같은 자리면 가로로 나란히 둔다. 핀이 출발하거나 도착해 묶음이 바뀌면 남은 핀들이 250ms 동안 다시 정렬한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-42</td>
-<td>핀 등장 시점은 처음부터(기본) 또는 출발할 때 중에서 고른다. 출발할 때 등장하는 핀은 출발 시각에 시작 위치에서 400ms 동안 페이드인하며 출발한다. 이어가기로 이미 화면에 있는 핀은 처음부터만 쓴다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-47</td>
-<td>사라지는 핀은 도착하고 400ms 머문 뒤 사라지기 시작한다. 그 핀이 이번 연출에서 그린 궤적도 함께 사라진다. 사라짐이 마무리 대기보다 늦게 끝나면 연출 종료를 그때까지 미룬다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">R-48</td>
-<td>핀끼리는 쉬는 핀을 먼저 그리고 이동 중인 핀을 그 위에 그린다. 같은 쪽 안에서는 핀 번호가 큰 핀이 위다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-</tbody>
-</table></div>
-<h3>이어가기</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>규칙</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td class="id">R-22</td>
-<td>연출은 앞 이동 연출이 끝난 상태에서 이어서 시작할 수 있다. 툴에서 앞 연출의 끝 상태를 쉽게 가져올 수 있어야 한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-23</td>
-<td>이어가기 연출에서 앞 연출과 같은 번호의 핀은 앞 연출에서 그 핀이 끝난 위치에서 출발한다. 따로 표시하지 않는다. 새 번호의 핀은 첫 웨이포인트에서 출발한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-24</td>
-<td>이어가기 연출을 재생할 때 화면에 그 앞 연출의 맵이 열려 있으면 페이드인 없이 바로 이동을 시작한다. 열려 있지 않으면 일반 등장한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-25</td>
-<td>앞 연출의 궤적은 흐린 점선(불투명도 40%)으로 남긴다. 기본은 남기고, 연출마다 끌 수 있다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-27</td>
-<td>이어가기 연출은 앞 연출 id만 저장한다. 시작 위치, 앞 궤적, 이어서 보일 장소 마크는 앞 연출 데이터에서 계산한다. 앞 연출을 재생하지 않았어도 데이터는 읽을 수 있으므로 복사본이 필요 없다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-43</td>
-<td>이어가기 연출의 배경은 앞 연출과 같아야 한다. 툴이 앞 연출의 배경으로 자동으로 채우고 바꾸지 못하게 한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-49</td>
-<td>이어가기 연출의 핀 목록에 없는 앞 연출 핀은 0ms부터 400ms 동안 사라진다. 맵이 닫혀 있다가 일반 등장하는 경우에는 처음부터 보이지 않는다. (툴은 앞 연출 핀을 모두 가져오므로, 기획자가 일부러 지운 핀만 해당한다.)</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-50</td>
-<td>앞 연출 궤적에는 궤적을 끈 핀과 사라짐으로 끝난 핀의 경로를 넣지 않는다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">R-51</td>
-<td>앞 연출은 하나만 가리킨다. 이어가기 연결은 돌아와서는 안 되고(순환 금지), 최대 20단까지다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-56</td>
-<td>앞 연출의 궤적은 바로 앞 연출 하나만 흐리게 남긴다. 그보다 앞 연출의 궤적은 그리지 않는다. 이어가기가 여러 단이어도 지도가 지저분해지지 않게 한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-</tbody>
-</table></div>
-<h3>스토리 연동</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>규칙</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td class="id">R-15</td>
-<td>연출 재생 중에는 대사창을 숨기고, 끝나면 다시 표시한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-26</td>
-<td>연출이 끝나도 맵은 화면에 남아 대사 뒤 배경이 된다. 맵 닫기가 오면 400ms 동안 닫는다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-31</td>
-<td>스토리 테이블에서 연출 id로 맵을 열고(재생) 닫는 명령을 준다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-32</td>
-<td>이 문서는 두 명령을 「맵 열기」「맵 닫기」라고 부른다. 맵이 열린 채 다른 배경으로 바뀌거나 스토리가 끝나면 자동으로 닫는다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">R-46</td>
-<td>맵 열기는 스토리 행의 <code>link_map_scene_id</code> 열, 맵 닫기는 <code>map_close</code> 열로 준다. 한 행은 맵 닫기 → 맵 열기 → 그 행의 대사 순서로 처리한다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">R-52</td>
-<td>맵은 닫힘 / 등장 / 재생 / 유지 / 닫는 중 다섯 상태를 가진다. 전이는 「처리 흐름」의 상태 전이표를 따른다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-</tbody>
-</table></div>
-<h3>탭·배속·자동 진행·다시보기·로그</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>규칙</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td class="id">R-12</td>
-<td>연출 재생 중 화면을 탭하면 이 연출만 300ms 만에 최종 상태로 끝난다. 다음 대사는 그 다음 탭부터 넘어간다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-13</td>
-<td>스토리 배속(켬/끔)을 따른다. 배속이 켜져 있으면 스토리 배속 배율만큼 연출 시간이 줄어든다(페이드 포함).</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-14</td>
-<td>스토리 다시보기에서도 같은 연출이 재생되고 탭으로 넘길 수 있다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-35</td>
-<td>대사 로그에는 맵 연출마다 같은 형식의 한 줄을 남긴다: 전용 아이콘 + "위치 정보 확인"(문자열 키). 이 줄을 누르면 그 연출을 다시 재생한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-36</td>
-<td>자동 진행을 켜든 끄든 연출은 끝나면 다음 대사로 넘어간다. 자동 진행 중에도 탭하면 즉시 완료된다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-45</td>
-<td>대사 로그에서 다시 재생하는 연출은 로그 위 팝업으로 보여준다. 이어가기 연출이면 앞 연출 끝 상태(핀 위치, 앞 궤적, 장소 마크)에서 시작한다. 탭하면 즉시 완료, 끝나면 최종 상태로 멈추고 닫기 버튼으로 로그로 돌아간다. 회사 로그 UI 구조에 맞지 않으면 그쪽 방식을 따른다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">R-53</td>
-<td>탭 완료는 남은 구간을 빨리 감는 방식이다. 핀이 경로를 따라 빠르게 끝까지 가고 궤적도 끝까지 그려진다. 등장 페이드인 도중의 탭도 같다. 탭 완료 뒤에는 마무리 대기 없이 바로 유지 상태가 된다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">R-54</td>
-<td>배속은 이동, 페이드, 마무리 대기, 닫기, 다시 정렬에 모두 걸린다. 탭 완료 시간에는 걸리지 않는다. 재생 중에 배속을 바꾸면 그 순간부터 바로 반영한다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-</tbody>
-</table></div>
-</section>
-<section id="s4"><h2><span class="sec">§4</span>게임 화면과 툴 화면</h2>
-<p>같은 데이터라도 게임과 툴에서 보이는 요소가 다르다.</p>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>요소</th>
-<th>게임 보기</th>
-<th>툴 편집 보기</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td>배경</td>
-<td>보임</td>
-<td>보임</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>장소 마크</td>
-<td>보임</td>
-<td>보임, 편집 가능</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>지나온 궤적</td>
-<td>점선으로 보임</td>
-<td>미리보기 재생 시 보임</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>앞으로 갈 경로</td>
-<td>안 보임</td>
-<td>핀 색 파선으로 보임</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>도착 지점</td>
-<td>안 보임</td>
-<td>링으로 보임</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>웨이포인트와 번호</td>
-<td>안 보임</td>
-<td>모든 핀의 점과 번호. 선택하지 않은 핀은 흐리게</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>앞 연출 궤적</td>
-<td>설정에 따라 흐린 점선</td>
-<td>흐린 점선</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>핀과 이름표</td>
-<td>보임</td>
-<td>보임</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>대사창 영역</td>
-<td>안 보임</td>
-<td>켜고 끄는 점선 상자(기본 꺼짐). 맵 유지 중 가려지는 곳 확인용</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-</tbody>
-</table></div>
-</section>
-<section id="s5"><h2><span class="sec">§5</span>처리 흐름</h2>
-<h3>한 연출의 흐름</h3>
-<ol>
-<li>스토리 행의 맵 열기가 연출을 재생하고, 대사 로그에 「위치 정보 확인」 줄을 남긴다. 대사창을 숨긴다.</li>
-<li>일반 연출이면 배경과 장소 마크를 400ms 동안 페이드인하고(-800ms부터), 핀을 시작 위치에 400ms 동안 페이드인한다(-400ms부터).</li>
-<li>이어가기 연출이고 앞 연출의 맵이 열려 있으면 2를 건너뛰고 지금 화면 그대로 0ms에서 시작한다.</li>
-<li>0ms(이동 시작)부터 핀마다 출발 조건이 맞으면 경로를 따라 이동한다. 지난 구간은 점선 궤적으로 남는다. 첫 핀이 출발할 때 효과음을 한 번 낸다.</li>
-<li>핀이 도착하면 설정에 따라 그 자리에 남거나 사라진다. 같은 자리에 모인 핀은 나란히 정렬한다.</li>
-<li>마지막 핀이 도착하고 1000ms가 지나면 연출이 끝나고 그 행의 대사로 넘어간다. 맵은 닫기 전까지 대사 뒤에 남는다.</li>
-<li>재생 중 화면을 탭하면 300ms 만에 최종 상태가 된 뒤 끝난다.</li>
-</ol>
+<p>화면 탭 한 번으로 언제든 끝 상태로 넘길 수 있다.</p>
+<p>시간으로 보면, 일반 연출은 배경·장소 이름(-800ms부터)과 핀(-400ms부터)이 400ms씩 나타난 뒤 0ms에 이동을 시작한다. 열린 맵에서 이어지는 연출은 나타나는 단계 없이 바로 0ms에서 시작한다. 마지막 핀이 도착하고 1000ms가 지나면 연출이 끝나고, 맵은 닫힐 때까지 대사 뒤에 남는다. 맵의 상태 변화는 아래 그림과 같다(전체 전이표는 부록 J).</p>
 <div class="flow"><svg viewBox="0 0 880 330" role="img" aria-label="맵 상태 흐름: 닫힘에서 맵 열기로 등장, 0ms에 재생, 마지막 도착 뒤 유지, 맵 닫기로 닫는 중을 거쳐 닫힘. 화면 탭은 등장·재생에서 바로 유지로, 이어가기는 유지에서 바로 재생으로 간다">
   <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
   <rect class="n" x="10" y="120" width="110" height="56" rx="8"/><text x="65" y="144" text-anchor="middle">닫힘</text><text class="sm" x="65" y="162" text-anchor="middle">맵 없음</text>
@@ -806,232 +220,253 @@ td code{white-space:nowrap}
   <text x="530" y="38" text-anchor="middle">이어가기 연출 열기</text><text class="sm" x="530" y="54" text-anchor="middle">앞 연출의 맵이 열려 있으면 페이드인 없이 (R-24)</text>
 </svg>
 </div>
-<h3>상태 전이표</h3>
-<p>맵 레이어는 아래 다섯 상태 중 하나다. 대사창은 등장·재생 중에만 숨긴다.</p>
+</section>
+<section id="s3"><h2><span class="sec">§3</span>핵심 규칙</h2>
+<p>플레이어가 보거나 기획자가 정하는 규칙이다. 저장 방식·단위·구현 세부 규칙은 부록 J에 있다.</p>
+<h3>지도와 핀</h3>
 <div class="tablewrap"><table>
 <thead>
 <tr>
-<th>지금 상태</th>
-<th>들어온 것</th>
-<th>처리</th>
-<th>다음 상태</th>
-<th>상태</th>
+<th>ID</th>
+<th>규칙</th>
 </tr>
 </thead>
 <tbody>
 <tr data-s="ok">
-<td>닫힘</td>
-<td>맵 열기</td>
-<td>일반 등장(페이드인)을 시작한다</td>
-<td>등장</td>
-<td><span class="badge b-ok">확정</span></td>
+<td class="id">R-01</td>
+<td>배경 리소스 1장 위에 핀을 올린다.</td>
+
 </tr>
 <tr data-s="ok">
-<td>등장</td>
-<td>0ms 도달</td>
-<td>이동을 시작한다</td>
-<td>재생</td>
-<td><span class="badge b-ok">확정</span></td>
+<td class="id">R-20</td>
+<td>배경 이미지 위 각 장소에 이름 마크(장소 마크)를 새길 수 있다.</td>
+
 </tr>
 <tr data-s="ok">
-<td>등장, 재생</td>
-<td>화면 탭</td>
-<td>남은 구간을 빨리 감아 최종 상태로 만든다</td>
-<td>유지</td>
-<td><span class="badge b-ok">확정</span></td>
+<td class="id">R-21</td>
+<td>장소 마크는 연출마다 보임/숨김만 정한다. 보이는 마크는 배경과 함께 나타나고, 이어가기 연출에서 새로 보이게 된 마크는 0ms부터 400ms 동안 나타난다.</td>
+
 </tr>
 <tr data-s="ok">
-<td>등장, 재생</td>
-<td>탭을 여러 번</td>
-<td>첫 탭만 처리한다</td>
-<td>(그대로)</td>
-<td><span class="badge b-ok">확정</span></td>
+<td class="id">R-02</td>
+<td>핀 1개는 Actor 1개를 나타낸다. 캐릭터뿐 아니라 Actor 테이블에 있는 대상(함대, 탈것, 오브젝트 등)을 모두 쓸 수 있다.</td>
+
 </tr>
 <tr data-s="ok">
-<td>재생</td>
-<td>마지막 도착 + 마무리 대기</td>
-<td>연출을 끝내고 대사창을 다시 보여준다</td>
-<td>유지</td>
-<td><span class="badge b-ok">확정</span></td>
+<td class="id">R-03</td>
+<td>핀은 기획자가 지정한 경로를 따라 이동한다.</td>
+
 </tr>
 <tr data-s="ok">
-<td>유지</td>
-<td>화면 탭</td>
-<td>맵은 그대로 두고 스토리 대사를 넘긴다(기존 스토리 입력)</td>
-<td>유지</td>
-<td><span class="badge b-ok">확정</span></td>
+<td class="id">R-04</td>
+<td>기획자가 툴에서 각 핀의 Actor와 경로를 지정한다.</td>
+
 </tr>
 <tr data-s="ok">
-<td>유지</td>
-<td>맵 열기: 이어가기 연출이고 앞 연출이 지금 열린 연출</td>
-<td>페이드인 없이 0ms부터 재생한다</td>
-<td>재생</td>
-<td><span class="badge b-ok">확정</span></td>
+<td class="id">R-19</td>
+<td>스토리 화면은 가로다. 화면 비율이 배경과 다르면 배경 전체가 보이도록 맞추고 남는 곳은 여백으로 둔다.</td>
+
 </tr>
 <tr data-s="ok">
-<td>유지</td>
-<td>맵 열기: 그 밖의 다른 연출</td>
-<td>지금 맵을 닫고 새 맵을 일반 등장시킨다</td>
-<td>닫는 중 → 등장</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>유지</td>
-<td>맵 열기: 지금 열린 연출과 같은 연출</td>
-<td>페이드 없이 그 연출의 시작 상태로 되돌려 0ms부터 다시 재생한다</td>
-<td>재생</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>유지</td>
-<td>맵 닫기</td>
-<td>400ms 동안 닫고, 끝난 뒤 그 행의 대사를 보여준다</td>
-<td>닫는 중 → 닫힘</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>유지</td>
-<td>배경이 바뀌는 행, 스토리 종료</td>
-<td>자동으로 닫는다</td>
-<td>닫는 중 → 닫힘</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td>닫힘</td>
-<td>맵 닫기</td>
-<td>무시하고 로그를 남긴다</td>
-<td>닫힘</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td>닫는 중</td>
-<td>화면 탭</td>
-<td>무시한다</td>
-<td>(그대로)</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="ok">
-<td>등장, 재생</td>
-<td>앱이 백그라운드로 감</td>
-<td>일시정지하고 복귀하면 이어서 재생한다</td>
-<td>(그대로)</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="warn">
-<td>모든 상태</td>
-<td>스토리 전체 건너뛰기(기능이 있다면)</td>
-<td>페이드 없이 바로 닫는다. 로그 줄은 남긴다</td>
-<td>닫힘</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<td class="id">R-57</td>
+<td>폰에서도 읽히도록 핀·이름표·장소 글자에는 최소 크기가 있다. 값은 회사 UI의 최소 글자 규칙을 따르고, 그때까지는 핀 36, 이름표 12, 장소 글자 13을 쓴다.</td>
+
 </tr>
 </tbody>
 </table></div>
-<ul>
-<li>스토리 행은 차례로 처리되므로, 재생이 끝나기 전에 다음 행의 맵 열기·닫기가 들어오는 경우는 없다.</li>
-<li>자동 진행은 상태에 영향을 주지 않는다. 연출이 끝나면 켜져 있든 꺼져 있든 대사로 넘어간다.</li>
-</ul>
-</section>
-<section id="s6"><h2><span class="sec">§6</span>이어가기</h2>
-<p>연속된 이동을 여러 연출로 나눠 대사 사이에 끼워 넣기 위한 기능이다. 예를 들어 "A가 관측소로 간다 → 대사 → A가 탑으로 간다"를 두 연출로 만든다.</p>
-<ul>
-<li>이어가기 연출은 <strong>앞 연출 id만</strong> 가진다. 다음 값은 저장하지 않고 앞 연출 데이터를 따라가며 계산한다(계산 순서는 부록 C의 F-10).</li>
-<li>시작 위치: 앞 연출과 같은 번호의 핀은 앞 연출에서 그 핀이 끝난 위치</li>
-<li>앞 궤적: 바로 앞 연출의 경로(R-56, R-50에 해당하는 핀 제외)</li>
-<li>장소 마크: 앞 연출 끝에 보이던 마크는 계속 보인다. 이 연출의 장소 목록에는 <strong>새로 보일 마크와 숨길 마크만</strong> 적는다.</li>
-<li>앞 연출을 고치면 뒤 연출의 시작 위치도 자동으로 따라간다. 툴은 영향받는 뒤 연출 수를 알려준다.</li>
-<li>다른 연출이 참조 중인 연출은 툴에서 지울 수 없다.</li>
-<li>앞 연출에 없던 핀을 추가하면 그 핀만 일반 등장(400ms 페이드인)한다.</li>
-<li>앞 연출에서 "도착 후 사라짐"으로 끝난 핀의 번호는 이어가기 연출에서 다시 쓸 수 없다.</li>
-<li>앞 연출에 있던 핀을 이 연출의 핀 목록에서 지우면 그 핀은 연출이 시작될 때 사라진다.</li>
-</ul>
-</section>
-<section id="s7"><h2><span class="sec">§7</span>스토리 테이블 연동</h2>
-<p>회사 스토리 테이블은 한 행에 <code>id</code>가 있고 옆으로 열이 늘어선 형태이며, 내보내면 한 행이 <code>{}</code> 객체가 된다. 여기에 열 2개를 더한다. 열 이름은 자리표시다.</p>
+<h3>이동</h3>
 <div class="tablewrap"><table>
 <thead>
 <tr>
-<th>추가 열</th>
-<th>형식</th>
-<th>뜻</th>
-<th>상태</th>
+<th>ID</th>
+<th>규칙</th>
 </tr>
 </thead>
 <tbody>
-<tr data-s="warn">
-<td><code>link_map_scene_id</code></td>
-<td>int (비움 가능)</td>
-<td>이 행에서 재생할 연출의 id(<code>map_scene.id</code>). 비우면 아무 일도 없다</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<tr data-s="ok">
+<td class="id">R-07</td>
+<td>경로는 직선 또는 곡선이다. 곡선은 점만 찍으면 자동으로 부드럽게 이어지고, 모양을 잡고 싶은 점에서만 핸들을 꺼내 조절한다.</td>
+
 </tr>
-<tr data-s="warn">
-<td><code>map_close</code></td>
-<td>bool (비움 가능)</td>
-<td>TRUE면 이 행을 시작할 때 열린 맵을 닫는다</td>
-<td><span class="badge b-warn">검증필요</span></td>
+<tr data-s="ok">
+<td class="id">R-08</td>
+<td>이동 시간은 속도 프리셋(걷기, 달리기 등)과 경로 길이로 자동 계산한다. 필요하면 핀마다 이동 시간을 ms로 직접 고정한다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-38</td>
+<td>핀 출발 조건은 시간 / 다른 핀 도착 후 두 가지 중에서 고르고, 각각 지연(ms)을 더한다. 다른 핀과 함께 출발시키려면 같은 시간을 준다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-29</td>
+<td>웨이포인트가 없는 핀(시작점만 있음)은 이동 없이 위치만 보여준다.</td>
+
 </tr>
 </tbody>
 </table></div>
-<ul>
-<li>한 행의 처리 순서는 맵 닫기 → 맵 열기 → 그 행의 대사다. 대사가 없는 행이면 연출만 재생하고 다음 행으로 넘어간다.</li>
-<li>편집 툴은 별도 툴이라 스토리 순서를 모른다. 게임은 "지금 열린 맵"만 보고 이어가기 여부를 판단하므로 순서 정보가 필요 없다.</li>
-<li>행에 기존 배경 열 값이 있어 배경이 바뀌면 맵은 자동으로 닫힌다.</li>
-</ul>
-<p>예시 흐름:</p>
+<h3>화면에 남는 것</h3>
 <div class="tablewrap"><table>
 <thead>
 <tr>
-<th>순서</th>
-<th><code>link_map_scene_id</code></th>
-<th><code>map_close</code></th>
-<th>대사</th>
-<th>화면</th>
+<th>ID</th>
+<th>규칙</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>1</td>
-<td>30001</td>
-<td></td>
-<td>있음</td>
-<td>맵이 열리고 장면 1 재생. 끝나면 대사</td>
+<tr data-s="ok">
+<td class="id">R-09</td>
+<td>게임 화면에는 핀이 지나온 구간만 점선 궤적으로 남긴다. 앞으로 갈 경로와 도착 지점은 게임에서 보이지 않는다(툴에서만 보인다).</td>
+
 </tr>
-<tr>
-<td>2</td>
-<td></td>
-<td></td>
-<td>있음</td>
-<td>맵은 대사 뒤 배경으로 남음</td>
+<tr data-s="ok">
+<td class="id">R-10</td>
+<td>핀 아래에 이름표를 표시한다. 기본 글자는 Actor 테이블의 이름이고, 연출마다 문자열 키로 바꾸거나 이름표를 끌 수 있다.</td>
+
 </tr>
-<tr>
-<td>3</td>
-<td>30002</td>
-<td></td>
-<td>있음</td>
-<td>장면 1의 맵이 열려 있으므로 페이드인 없이 장면 2 재생. 끝나면 대사</td>
+<tr data-s="ok">
+<td class="id">R-11</td>
+<td>도착한 핀은 화면에 남는다. 중간에 빼려면 다음 이어가기 연출의 핀 목록에서 뺀다(R-49).</td>
+
 </tr>
-<tr>
-<td>4</td>
-<td></td>
-<td></td>
-<td>있음</td>
-<td>맵은 계속 배경</td>
+<tr data-s="ok">
+<td class="id">R-17</td>
+<td>도착한 핀끼리 겹치면 자동으로 비켜 놓는다. 이름표가 읽히도록 그 자리 중심으로 가로로 나란히 벌린다.</td>
+
 </tr>
-<tr>
-<td>5</td>
-<td></td>
-<td>TRUE</td>
-<td>있음</td>
-<td>400ms 동안 맵을 닫고 원래 스토리 배경에서 대사</td>
+<tr data-s="ok">
+<td class="id">R-34</td>
+<td>쉬고 있는 핀(출발 전, 제자리, 도착 후)끼리 같은 자리면 가로로 나란히 둔다. 핀이 출발하거나 도착해 묶음이 바뀌면 남은 핀은 움직임 없이 바로 새 자리에 놓인다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-42</td>
+<td>핀은 처음부터 보이거나(기본), 출발할 때 출발점에서 400ms 동안 나타나며 출발한다. 이어가기로 이미 화면에 있는 핀은 처음부터 보인다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-30</td>
+<td>이동 효과음은 연출당 한 번, 첫 핀이 움직이기 시작할 때 울린다. 핀이 여럿이어도 한 번만 울린다.</td>
+
 </tr>
 </tbody>
 </table></div>
-<p>내보낸 행의 모양(기존 열은 생략):</p>
-<pre><code class="language-json">{ &quot;id&quot;: 310105, &quot;link_map_scene_id&quot;: 30001 }
-{ &quot;id&quot;: 310109, &quot;map_close&quot;: true }
-</code></pre>
+<h3>이어가기</h3>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>규칙</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td class="id">R-22</td>
+<td>연출은 앞 이동 연출이 끝난 상태에서 이어서 시작할 수 있다. 툴에서 앞 연출의 끝 상태를 쉽게 가져올 수 있어야 한다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-23</td>
+<td>이어가기 연출에서 앞 연출과 같은 번호의 핀은 앞 연출에서 그 핀이 끝난 위치에서 출발한다. 따로 표시하지 않는다. 새 번호의 핀은 첫 웨이포인트에서 출발한다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-24</td>
+<td>이어가기 연출을 재생할 때 화면에 그 앞 연출의 맵이 열려 있으면 페이드인 없이 바로 이동을 시작한다. 열려 있지 않으면 일반 등장한다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-49</td>
+<td>이어가기 연출의 핀 목록에서 뺀 앞 연출 핀은 0ms부터 400ms 동안 사라진다. 맵이 닫혀 있다가 일반 등장할 때는 처음부터 보이지 않는다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-25</td>
+<td>앞 연출의 궤적은 흐린 점선(불투명도 40%)으로 남긴다. 기본은 남기고, 연출마다 끌 수 있다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-56</td>
+<td>앞 연출의 궤적은 바로 앞 연출 하나만 흐리게 남긴다. 그보다 앞 연출의 궤적은 그리지 않는다. 이어가기가 여러 단이어도 지도가 지저분해지지 않게 한다.</td>
+
+</tr>
+</tbody>
+</table></div>
+<h3>스토리와 함께</h3>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>규칙</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td class="id">R-31</td>
+<td>스토리 테이블에서 연출 id로 맵을 열고(재생) 닫는 명령을 준다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-15</td>
+<td>연출 재생 중에는 대사창을 숨기고, 끝나면 다시 표시한다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-26</td>
+<td>연출이 끝나도 맵은 화면에 남아 대사 뒤 배경이 된다. 맵 닫기가 오면 400ms 동안 닫는다.</td>
+
+</tr>
+</tbody>
+</table></div>
+<h3>탭·배속·로그</h3>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>규칙</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td class="id">R-12</td>
+<td>연출 재생 중 화면을 탭하면 이 연출만 300ms 만에 최종 상태로 끝난다. 다음 대사는 그 다음 탭부터 넘어간다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-53</td>
+<td>탭 완료는 남은 구간을 빨리 감는 방식이다. 핀이 경로를 따라 빠르게 끝까지 가고 궤적도 끝까지 그려진다. 등장 페이드인 도중의 탭도 같다. 탭 완료 뒤에는 마무리 대기 없이 바로 유지 상태가 된다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-13</td>
+<td>스토리 배속(켬/끔)을 따른다. 배속이 켜져 있으면 스토리 배속 배율만큼 연출 시간이 줄어든다(페이드 포함).</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-36</td>
+<td>자동 진행을 켜든 끄든 연출은 끝나면 다음 대사로 넘어간다. 자동 진행 중에도 탭하면 즉시 완료된다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-14</td>
+<td>스토리 다시보기에서도 같은 연출이 재생되고 탭으로 넘길 수 있다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-35</td>
+<td>대사 로그에는 맵 연출마다 같은 형식의 한 줄을 남긴다: 전용 아이콘 + "위치 정보 확인"(문자열 키). 이 줄을 누르면 그 연출을 다시 재생한다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-45</td>
+<td>대사 로그에서 다시 보는 연출은 로그 위 팝업에서 재생한다. 이어가기 연출이면 앞 연출 끝 상태에서 시작하고, 탭하면 바로 끝나고, 끝나면 최종 상태로 멈춘 뒤 닫기 버튼으로 로그에 돌아간다. 회사 로그 UI에 맞지 않으면 그쪽 방식을 따른다.</td>
+
+</tr>
+</tbody>
+</table></div>
 </section>
-<section id="s8"><h2><span class="sec">§8</span>연출 작성 기준</h2>
-<p>여러 기획자가 만들어도 비슷한 품질이 나오도록 지키는 기준이다. 규칙(R)이 아니라 작성 권장이며, 툴은 기계로 볼 수 있는 기준을 경고로 알려준다(저장은 막지 않는다). 기획자용 설명은 툴 사용 안내(<code>plans/map-move-tool/guide.md</code>)에 같은 내용이 있다.</p>
+<section id="s4"><h2><span class="sec">§4</span>연출 작성 기준</h2>
+<p>여러 기획자가 만들어도 품질이 비슷하도록 지키는 권장 기준이다. 툴이 볼 수 있는 기준은 경고로 알려주고, 저장은 막지 않는다.</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -1055,7 +490,7 @@ td code{white-space:nowrap}
 <td>동시에 움직이는 핀은 3개 이하. 더 많으면 출발 조건으로 시차를 둔다.</td>
 <td>눈은 움직이는 것을 두세 개까지 따라간다.</td>
 <td>툴 CK-18</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="warn">
 <td class="id">G-03</td>
@@ -1069,14 +504,14 @@ td code{white-space:nowrap}
 <td>도착 지점과 보이는 장소 마크는 대사창 영역(배경 아래 22%) 밖에 둔다.</td>
 <td>연출이 끝나면 대사창이 지도 아래를 덮는다.</td>
 <td>툴 CK-19</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">G-05</td>
 <td>한 연출에서 보이는 장소 마크는 8개 이하. 이야기에 나오는 장소만 보인다.</td>
 <td>이름이 많으면 도착지가 묻힌다.</td>
 <td>툴 CK-20</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="warn">
 <td class="id">G-06</td>
@@ -1101,7 +536,7 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">G-09</td>
-<td>핀 색은 기본 팔레트를 쓴다. 바꿀 때는 같은 연출의 다른 핀과 구분되는 색을 고른다.</td>
+<td>핀 색은 번호별 팔레트로 자동으로 정해진다. 같은 연출에서 비슷한 색이 겹치면 핀 번호를 바꾼다.</td>
 <td>궤적 색으로 누가 지나갔는지 읽는다.</td>
 <td>-</td>
 <td><span class="badge b-warn">검증필요</span></td>
@@ -1109,7 +544,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s9"><h2><span class="sec">§9</span>아트·사운드 전달사항</h2>
+<section id="s5"><h2><span class="sec">§5</span>아트·사운드 전달사항</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -1124,7 +559,7 @@ td code{white-space:nowrap}
 <td>배경 리소스</td>
 <td>비율 16:9, 해상도 자유(권장 2048×1152 이상). 장소 이름은 배경에 그리지 않는다(장소 마크가 글자를 올린다)</td>
 <td>배경</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="warn">
 <td>핀 아이콘</td>
@@ -1142,25 +577,25 @@ td code{white-space:nowrap}
 <td>핀 프레임</td>
 <td>원형 흰 링, 이동 중 진행 방향 삼각형. 지름 86px</td>
 <td>UI 아트</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td>이름표</td>
 <td>핀 아래 알약 모양. 반투명 어두운 바탕. 글자 24px</td>
 <td>UI 아트</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td>궤적 점선</td>
 <td>핀 색과 같은 색의 둥근 점선. 코드로 그린다</td>
 <td>클라이언트</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td>장소 마크</td>
 <td>작은 점 + 장소 이름. 배경 위에서 읽히도록 글자에 어두운 외곽선. 이름표와 모양을 다르게 한다. 글자 28px</td>
 <td>UI 아트</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="warn">
 <td>기본 실루엣 핀</td>
@@ -1183,66 +618,9 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s10"><h2><span class="sec">§10</span>편집 툴 요구</h2>
-<p>툴 상세는 별도 기획서 「맵 이동 연출 편집 툴」(<code>plans/map-move-tool/spec.md</code>)에 있다. 이 기획과 직접 묶이는 요구만 적는다. 번호는 두 문서가 함께 쓰며, T-05~T-08과 나머지 세부는 툴 기획서에 있다.</p>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>ID</th>
-<th>요구</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td class="id">T-01</td>
-<td>핀마다 Actor를 지정한다(캐릭터, 함대, 오브젝트 등).</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-02</td>
-<td>핀마다 이동 경로를 지정한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-09</td>
-<td>편집 보기에서 앞으로 갈 경로, 도착 지점, 웨이포인트를 보여주고, 게임 보기로 바꿔 게임과 같은 화면을 확인한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-10</td>
-<td>배경 위에 장소 마크를 추가·이동·이름 변경·삭제하고, 연출마다 보임/숨김을 정한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-11</td>
-<td>앞 연출의 끝 상태를 한 번에 가져오는 「앞 연출에서 이어가기」 기능.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">T-12</td>
-<td>결과를 「부록 A 데이터 설계」 형식(연출 JSON + 엑셀 행)으로 저장·내보내기 한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-</tbody>
-</table></div>
-</section>
-<section id="s11"><h2><span class="sec">§11</span>검증·미결 목록</h2>
+<section id="s6"><h2><span class="sec">§6</span>검증·미결 목록</h2>
 <h3>회사에서 확인할 것</h3>
-<p>회사 밖에서는 알 수 없는 회사 데이터·구조 정보다. 자세한 질문은 「부록 F 회사 데이터 연결」 표에 있다.</p>
-<ul class="check">
-<li><span class="mono">□</span><span>테이블 이름, id 범위, bool·열거값 표기, 부모-자식 연결 형식 (데이터 설계)</span></li>
-<li><span class="mono">□</span><span>스토리 테이블에 열 2개를 더하는 방식과 열 이름 (R-46)</span></li>
-<li><span class="mono">□</span><span>연출 JSON의 저장 위치와 불러오는 방식 (<code>scene_json</code>)</span></li>
-<li><span class="mono">□</span><span>Actor 테이블에 함대 등 캐릭터가 아닌 대상도 들어갈 수 있는지, 핀용 원형 아이콘 경로가 있는지 (R-33)</span></li>
-<li><span class="mono">□</span><span>문자열 키 규칙과 새 키 추가 절차 (R-39)</span></li>
-<li><span class="mono">□</span><span>스토리 배속 배율 값 (R-13)</span></li>
-<li><span class="mono">□</span><span>스토리 화면의 실제 UI(대사창 위치, 여백 처리, 연출 중 남는 버튼)에 맞는지 (R-15, R-19)</span></li>
-<li><span class="mono">□</span><span>대사 로그 UI에 전용 아이콘 줄과 다시 재생 팝업을 넣는 방식 (R-35, R-45)</span></li>
-<li><span class="mono">□</span><span>스토리 중간 세이브가 있는지, 스토리 전체 건너뛰기가 있는지</span></li>
-<li><span class="mono">□</span><span>UI 기준 해상도와 최소 글자 크기 규칙(R-57의 최솟값을 이 규칙 값으로 바꾼다), 공용 설정 테이블 유무</span></li>
-<li><span class="mono">□</span><span>로그 아이콘, 이동 효과음 리소스 (아트·사운드)</span></li>
-</ul>
+<p>회사 데이터를 봐야 정할 수 있는 것 14가지다. 가장 큰 것은 테이블·열 이름 규칙, 스토리 테이블에 열 2개를 더하는 방식, 연출 JSON을 두는 곳, 스토리 화면과 대사 로그 UI다. 전체 질문과 고칠 곳은 「부록 F 회사 데이터 연결」에 있다.</p>
 <h3>기획자가 정할 것</h3>
 <p>v0.9에서 구현 공백을 메우려고 제안한 규칙 중 남은 것이다. 회사 엔진·데이터 사정에 맞춰 정해도 된다.</p>
 <ul class="check">
@@ -1265,7 +643,7 @@ td code{white-space:nowrap}
 <li><span class="mono">□</span><span>속도 프리셋 값(걷기 500, 달리기 800, 고속 1200 px/초)과 설정 키의 시간 값은 시작값. 실제 연출을 만들며 조정</span></li>
 </ul>
 </section>
-<section id="s12"><h2><span class="sec">§12</span>부록 A. 데이터 설계</h2>
+<section id="s7"><h2><span class="sec">§7</span>부록 A. 데이터 설계</h2>
 <div class="note dev"><p><strong>설계 원칙</strong></p>
 <ul>
 <li><strong>엑셀과 JSON을 나눈다</strong>: 사람이 손으로 고치거나 다른 테이블과 이어지는 것(배경, 장소, 연출 머리, 속도 프리셋, 설정)은 엑셀 테이블에 둔다. 툴이 만드는 것(핀, 경로 점, 장소 보임)은 연출 1건당 JSON 1개에 둔다.</li>
@@ -1622,12 +1000,6 @@ td code{white-space:nowrap}
 <td>이름표 표시</td>
 </tr>
 <tr>
-<td><code>color</code></td>
-<td>string</td>
-<td>(없음)</td>
-<td>핀·궤적 색 <code>#RRGGBB</code>. 없으면 핀 번호별 기본 팔레트 색</td>
-</tr>
-<tr>
 <td><code>speed_preset_id</code></td>
 <td>int</td>
 <td>1</td>
@@ -1658,28 +1030,10 @@ td code{white-space:nowrap}
 <td>기준점에서 몇 ms 뒤에 출발하는지. 기준점은 <code>TIME</code>이면 0ms(이동 시작), 아니면 기준 핀의 출발·도착 시각</td>
 </tr>
 <tr>
-<td><code>easing</code></td>
-<td>enum</td>
-<td><code>INOUT</code></td>
-<td><code>INOUT</code> / <code>LINEAR</code></td>
-</tr>
-<tr>
 <td><code>curve</code></td>
 <td>enum</td>
 <td><code>SMOOTH</code></td>
 <td><code>SMOOTH</code> / <code>LINE</code></td>
-</tr>
-<tr>
-<td><code>trail</code></td>
-<td>bool</td>
-<td>true</td>
-<td>궤적 점선</td>
-</tr>
-<tr>
-<td><code>on_end</code></td>
-<td>enum</td>
-<td><code>KEEP</code></td>
-<td><code>KEEP</code> / <code>FADE</code></td>
 </tr>
 <tr>
 <td><code>waypoints</code></td>
@@ -1811,8 +1165,8 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s13"><h2><span class="sec">§13</span>부록 B. 설정 키</h2>
-<p>튜닝 값은 모두 <code>map_config</code>에 둔다. 회사에 공용 설정 테이블이 있으면 그 테이블에 같은 키로 넣는다. 확정된 값은 <code>MAP_SPEED_BASE_WIDTH</code>, <code>MAP_PREV_TRAIL_DEPTH</code>, <code>MAP_RECOMMEND_MOVING_PINS</code>, <code>MAP_RECOMMEND_PLACES</code>, <code>MAP_DIALOG_AREA_RATIO</code>이고, <code>MAP_TOOL_SIMPLIFY_PX</code>는 자유 그리기를 넣을 때만 쓴다(미정). 나머지 수치는 시작값이다. <code>MAP_TOOL_</code> 키와 <code>MAP_RECOMMEND_</code> 키, <code>MAP_DIALOG_AREA_RATIO</code>는 툴만 읽는다.</p>
+<section id="s8"><h2><span class="sec">§8</span>부록 B. 설정 키</h2>
+<p>튜닝 값은 모두 <code>map_config</code>에 둔다. 회사에 공용 설정 테이블이 있으면 그 테이블에 같은 키로 넣는다. 곡선 등분(16), 이동 시간 반올림(100ms), 겹침 비율처럼 기획자가 조정할 일이 없는 계산 상수는 설정 키로 두지 않고 부록 C 계산식에 적었다. 확정된 값은 <code>MAP_SPEED_BASE_WIDTH</code>, <code>MAP_PREV_TRAIL_DEPTH</code>, <code>MAP_RECOMMEND_MOVING_PINS</code>, <code>MAP_RECOMMEND_PLACES</code>, <code>MAP_DIALOG_AREA_RATIO</code>이고, <code>MAP_TOOL_SIMPLIFY_PX</code>는 자유 그리기를 넣을 때만 쓴다(미정). 나머지 수치는 시작값이다. <code>MAP_TOOL_</code> 키와 <code>MAP_RECOMMEND_</code> 키, <code>MAP_DIALOG_AREA_RATIO</code>는 툴만 읽는다.</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -1824,22 +1178,10 @@ td code{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
-<td>MAP_BG_FADE_MS</td>
+<td>MAP_FADE_MS</td>
 <td>400</td>
 <td>ms</td>
-<td>배경·장소 마크 페이드인</td>
-</tr>
-<tr>
-<td>MAP_PIN_FADE_MS</td>
-<td>400</td>
-<td>ms</td>
-<td>핀 등장 페이드인</td>
-</tr>
-<tr>
-<td>MAP_PLACE_FADE_MS</td>
-<td>400</td>
-<td>ms</td>
-<td>이어가기에서 새로 보이게 된 장소 마크 페이드인</td>
+<td>나타나고 사라지는 시간 하나: 배경·장소 마크·핀 등장, 핀 사라짐, 맵 닫기</td>
 </tr>
 <tr>
 <td>MAP_OUTRO_MS</td>
@@ -1852,30 +1194,6 @@ td code{white-space:nowrap}
 <td>300</td>
 <td>ms</td>
 <td>탭 즉시 완료</td>
-</tr>
-<tr>
-<td>MAP_PIN_HOLD_MS</td>
-<td>400</td>
-<td>ms</td>
-<td>사라지는 핀이 도착 후 머무는 시간</td>
-</tr>
-<tr>
-<td>MAP_PIN_FADEOUT_MS</td>
-<td>400</td>
-<td>ms</td>
-<td>핀 사라짐</td>
-</tr>
-<tr>
-<td>MAP_CLOSE_MS</td>
-<td>400</td>
-<td>ms</td>
-<td>맵 닫기</td>
-</tr>
-<tr>
-<td>MAP_SETTLE_MS</td>
-<td>250</td>
-<td>ms</td>
-<td>겹친 핀 다시 정렬</td>
 </tr>
 <tr>
 <td>MAP_PREV_TRAIL_ALPHA</td>
@@ -1894,42 +1212,6 @@ td code{white-space:nowrap}
 <td>2048</td>
 <td>px</td>
 <td>속도 기준 배경 가로</td>
-</tr>
-<tr>
-<td>MAP_DURATION_STEP_MS</td>
-<td>100</td>
-<td>ms</td>
-<td>자동 계산한 이동 시간의 반올림 단위</td>
-</tr>
-<tr>
-<td>MAP_DURATION_MIN_MS</td>
-<td>100</td>
-<td>ms</td>
-<td>자동 계산한 이동 시간의 최솟값</td>
-</tr>
-<tr>
-<td>MAP_CURVE_SAMPLES</td>
-<td>16</td>
-<td>등분</td>
-<td>곡선 구간 하나를 나누는 수</td>
-</tr>
-<tr>
-<td>MAP_OVERLAP_RATIO</td>
-<td>0.9</td>
-<td>핀 지름 배</td>
-<td>겹침으로 보는 거리</td>
-</tr>
-<tr>
-<td>MAP_SPREAD_GAP_RATIO</td>
-<td>1.15</td>
-<td>핀 지름 배</td>
-<td>벌려 놓는 최소 간격</td>
-</tr>
-<tr>
-<td>MAP_SPREAD_LABEL_PAD_PX</td>
-<td>6</td>
-<td>UI px</td>
-<td>벌릴 때 이름표 사이 여유</td>
 </tr>
 <tr>
 <td>MAP_CHAIN_MAX</td>
@@ -2073,7 +1355,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s14"><h2><span class="sec">§14</span>부록 C. 계산 규칙</h2>
+<section id="s9"><h2><span class="sec">§9</span>부록 C. 계산 규칙</h2>
 <p>게임과 툴 미리보기가 같은 화면을 내려면 같은 식을 써야 한다. 프로토타입이 이 식 그대로 동작한다. 식 자체는 제안이고, 엔진에 같은 결과를 내는 기능이 있으면 그것을 써도 된다.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -2101,61 +1383,61 @@ td code{white-space:nowrap}
 <td class="id">F-03</td>
 <td>직선 (<code>LINE</code>)</td>
 <td>점과 점을 직선으로 잇는다. 핸들은 무시한다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="warn">
 <td class="id">F-04</td>
 <td>경로 길이</td>
-<td>곡선은 구간마다 <code>MAP_CURVE_SAMPLES</code>(16)등분한 점을 직선으로 이은 길이의 합. 단위는 배경 px.</td>
+<td>곡선은 구간마다 16등분한 점을 직선으로 이은 길이의 합. 단위는 배경 px.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">F-05</td>
 <td>이동 시간</td>
-<td>속도 v = 프리셋 <code>speed_px</code> × 배경 <code>width</code> ÷ <code>MAP_SPEED_BASE_WIDTH</code>(2048). 이동 시간 = 길이 ÷ v × 1000을 <code>MAP_DURATION_STEP_MS</code>(100) 단위로 반올림하고, 최소 <code>MAP_DURATION_MIN_MS</code>(100). <code>duration_ms</code>가 있으면 그 값을 쓴다. 점이 하나뿐이거나 길이가 0이면 이동 없음.</td>
+<td>속도 v = 프리셋 <code>speed_px</code> × 배경 <code>width</code> ÷ <code>MAP_SPEED_BASE_WIDTH</code>(2048). 이동 시간 = 길이 ÷ v × 1000을 100ms 단위로 반올림하고, 최소 100ms. <code>duration_ms</code>가 있으면 그 값을 쓴다. 점이 하나뿐이거나 길이가 0이면 이동 없음.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">F-06</td>
 <td>출발 시각</td>
 <td><code>TIME</code>: 오프셋. <code>AFTER_ARRIVE</code>: 기준 핀 도착 시각(출발 + 이동 시간) + 오프셋. 기준 핀이 이동 없는 핀이면 도착 시각 = 출발 시각.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="warn">
 <td class="id">F-07</td>
 <td>진행</td>
-<td>u = (지금 − 출발) ÷ 이동 시간을 0~1로 자른다. <code>INOUT</code>: u &lt; 0.5면 2u², 아니면 1 − (2 − 2u)² ÷ 2. <code>LINEAR</code>: u 그대로. 핀 위치는 경로 길이의 그 비율 지점(거리 기준).</td>
+<td>u = (지금 − 출발) ÷ 이동 시간을 0~1로 자른다. 천천히 출발·도착: u &lt; 0.5면 2u², 아니면 1 − (2 − 2u)² ÷ 2. 핀 위치는 경로 길이의 그 비율 지점(거리 기준).</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">F-08</td>
 <td>연출 길이</td>
-<td>등장 = 열린 맵에서 이어지면 0, 아니면 <code>MAP_BG_FADE_MS</code> + <code>MAP_PIN_FADE_MS</code>. 이동 끝 = 가장 늦은 도착 시각. 종료 = 이동 끝 + 마무리 대기(연출의 <code>outro_ms</code>, 없으면 <code>MAP_OUTRO_MS</code>).</td>
-<td><span class="badge b-ok">확정</span></td>
+<td>등장 = 열린 맵에서 이어지면 0, 아니면 <code>MAP_FADE_MS</code> × 2(배경 다음 핀). 이동 끝 = 가장 늦은 도착 시각. 종료 = 이동 끝 + 마무리 대기(연출의 <code>outro_ms</code>, 없으면 <code>MAP_OUTRO_MS</code>).</td>
+<td></td>
 </tr>
 <tr data-s="warn">
 <td class="id">F-09</td>
 <td>겹침 벌리기</td>
-<td>쉬는 핀끼리 화면 거리가 핀 지름 × <code>MAP_OVERLAP_RATIO</code>(0.9)보다 가까우면 한 무리다. 무리의 중심은 평균 위치. 간격은 핀 지름 × <code>MAP_SPREAD_GAP_RATIO</code>(1.15)와 (무리에서 가장 긴 이름표 폭 + <code>MAP_SPREAD_LABEL_PAD_PX</code>(6)) 중 큰 값. 원래 x가 작은 핀부터, 같으면 핀 번호 순으로 왼쪽에서 오른쪽으로 놓는다. k번째 핀의 x = 중심 + (k − (n − 1) ÷ 2) × 간격.</td>
+<td>쉬는 핀끼리 화면 거리가 핀 지름 × 0.9보다 가까우면 한 무리다. 무리의 중심은 평균 위치. 간격은 핀 지름 × 1.15와 (무리에서 가장 긴 이름표 폭 + 6px) 중 큰 값. 원래 x가 작은 핀부터, 같으면 핀 번호 순으로 왼쪽에서 오른쪽으로 놓는다. k번째 핀의 x = 중심 + (k − (n − 1) ÷ 2) × 간격. 묶음이 바뀌면 그 프레임에 바로 새 자리를 쓴다(보간 없음).</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">F-10</td>
 <td>이어가기 시작 상태</td>
-<td>맨 앞 연출부터 차례로 따라가며 계산한다. ① 핀 위치: 핀 번호마다 가장 마지막에 나온 연출의 끝 위치(사라진 핀, 목록에서 빠진 핀은 없음). ② 장소 마크: 연출마다 보임 목록을 더하고 숨김 목록을 뺀 결과. ③ 앞 궤적: 바로 앞 연출의 경로(R-56).</td>
-<td><span class="badge b-ok">확정</span></td>
+<td>맨 앞 연출부터 차례로 따라가며 계산한다. ① 핀 위치: 핀 번호마다 가장 마지막에 나온 연출의 끝 위치(목록에서 빠진 핀은 없음). ② 장소 마크: 연출마다 보임 목록을 더하고 숨김 목록을 뺀 결과. ③ 앞 궤적: 바로 앞 연출의 경로(R-56).</td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">F-11</td>
 <td>탭 완료</td>
 <td>탭한 순간의 연출 시각을 t0라 하면, 표시 시각 = t0 + (종료 − t0) × (탭 뒤 지난 시간 ÷ <code>MAP_TAP_FINISH_MS</code>).</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">F-12</td>
 <td>방향 표시</td>
 <td>이동 중인 핀의 삼각형은 지금 구간의 진행 방향을 가리킨다. 쉬는 핀에는 삼각형이 없다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="warn">
 <td class="id">F-13</td>
@@ -2166,7 +1448,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s15"><h2><span class="sec">§15</span>부록 D. 예시 연출과 데이터</h2>
+<section id="s10"><h2><span class="sec">§10</span>부록 D. 예시 연출과 데이터</h2>
 <p>아래 타임라인과 데이터는 같은 예시(장면 1, 장면 2)다. 프로토타입 첫 화면도 이 두 연출이다.</p>
 <h3>타임라인</h3>
 <p>캐릭터와 장소 이름은 자리표시다.</p>
@@ -2191,14 +1473,14 @@ td code{white-space:nowrap}
 <td class="num">400</td>
 <td>배경·장소 마크</td>
 <td>페이드인</td>
-<td>MAP_BG_FADE_MS</td>
+<td>MAP_FADE_MS</td>
 </tr>
 <tr>
 <td class="num">-400</td>
 <td class="num">400</td>
 <td>핀 1·2·3</td>
 <td>시작 위치에서 페이드인</td>
-<td>MAP_PIN_FADE_MS</td>
+<td>MAP_FADE_MS</td>
 </tr>
 <tr>
 <td class="num">0</td>
@@ -2497,7 +1779,7 @@ td code{white-space:nowrap}
 }
 </code></pre>
 </section>
-<section id="s16"><h2><span class="sec">§16</span>부록 E. 예외 처리</h2>
+<section id="s11"><h2><span class="sec">§11</span>부록 E. 예외 처리</h2>
 <p>게임에서 남기는 로그는 <code>[Map] scene=30002 pin=2 내용</code> 형식으로 통일한다(형식은 회사 로그 규칙을 따른다).</p>
 <div class="tablewrap"><table>
 <thead>
@@ -2511,7 +1793,7 @@ td code{white-space:nowrap}
 <tr data-s="ok">
 <td>배경 리소스를 불러오지 못함</td>
 <td>연출을 건너뛰고 그 행의 대사로 넘어간다. 오류를 로그에 남긴다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="warn">
 <td>연출 id가 <code>map_scene</code>에 없음, 연출 JSON이 없거나 읽을 수 없음, <code>version</code>을 모름</td>
@@ -2521,32 +1803,27 @@ td code{white-space:nowrap}
 <tr data-s="ok">
 <td>Actor가 없거나 핀 리소스 경로가 비어 있음</td>
 <td>기본 실루엣 핀으로 표시하고 로그를 남긴다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td>이어가기인데 앞 연출의 맵이 열려 있지 않음 (스토리 스킵, 중간 불러오기, 닫은 뒤 재생)</td>
 <td>앞 연출 데이터로 계산한 시작 상태로 일반 등장(페이드인)한 뒤 이어서 재생한다.</td>
-<td><span class="badge b-ok">확정</span></td>
-</tr>
-<tr data-s="ok">
-<td>이어가기 연출의 핀 번호가 앞 연출에서 사라짐으로 끝난 핀의 번호와 같음</td>
-<td>툴이 저장 전에 막는다. 게임에서는 그 핀을 표시하지 않고 로그를 남긴다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td>출발 조건이 서로를 기다림 (핀 1은 핀 2 도착 후, 핀 2는 핀 1 도착 후)</td>
 <td>툴이 저장 전에 막는다. 게임에서는 0ms에 출발시키고 로그를 남긴다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td>출발 조건의 기준 핀이 연출에 없음</td>
 <td>툴이 저장 전에 막는다. 게임에서는 <code>TIME</code>으로 보고 로그를 남긴다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td>웨이포인트·장소 보임이 다른 배경의 장소를 가리킴</td>
 <td>툴이 저장 전에 막는다. 게임에서는 그 점·마크를 무시하고 로그를 남긴다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="warn">
 <td>이어가기 연결이 돌아오거나 <code>MAP_CHAIN_MAX</code>단을 넘음</td>
@@ -2565,28 +1842,28 @@ td code{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td>맵이 열린 채 이어가기가 아닌 다른 맵 연출 재생</td>
-<td>지금 맵을 <code>MAP_CLOSE_MS</code> 동안 닫고 새 맵을 일반 등장시킨다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td>지금 맵을 <code>MAP_FADE_MS</code> 동안 닫고 새 맵을 일반 등장시킨다.</td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td>맵이 열린 채 닫기 없이 배경 전환·스토리 종료</td>
 <td>자동으로 닫는다(R-32). 툴·스토리 검사에서 경고한다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td>재생 중 앱이 백그라운드로 감</td>
 <td>일시정지하고 복귀하면 이어서 재생한다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td>탭을 연속 입력</td>
 <td>첫 탭만 처리한다. 다음 대사 넘김은 연출이 끝난 뒤의 탭부터 받는다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="ok">
 <td>장소 마크와 이름표가 겹침</td>
 <td>이름표를 위에 그린다(R-28). 겹침 해소는 툴에서 경고만 한다.</td>
-<td><span class="badge b-ok">확정</span></td>
+<td></td>
 </tr>
 <tr data-s="warn">
 <td>번역된 장소 이름·이름표가 길어짐</td>
@@ -2601,7 +1878,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s17"><h2><span class="sec">§17</span>부록 F. 회사 데이터 연결</h2>
+<section id="s12"><h2><span class="sec">§12</span>부록 F. 회사 데이터 연결</h2>
 <p>이 기획이 회사의 기존 데이터·시스템에 기대는 지점을 모았다. 회사에서 이 표를 위에서부터 채우면 기획서의 자리표시 이름을 실제 이름으로 바꿀 수 있다.</p>
 <h3>연결 지점</h3>
 <div class="tablewrap"><table>
@@ -2659,7 +1936,7 @@ td code{white-space:nowrap}
 </tr>
 <tr>
 <td>설정 테이블</td>
-<td>튜닝 값 35개</td>
+<td>튜닝 값 23개</td>
 <td><code>key</code>와 값</td>
 <td>공용 설정 테이블이 있는지. 있으면 그 테이블에 넣는다</td>
 <td>「부록 B 설정 키」</td>
@@ -2794,10 +2071,10 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s18"><h2><span class="sec">§18</span>부록 G. 구현 전달사항</h2>
+<section id="s13"><h2><span class="sec">§13</span>부록 G. 구현 전달사항</h2>
 <p>프로그래머에게 전하는 제안이다. 더 나은 방법이 있으면 바꿔도 되고, 화면 결과만 「부록 C 계산 규칙」과 같으면 된다.</p>
 <ul>
-<li><strong>시각 하나로 화면을 계산한다</strong>: "연출 데이터 + 연출 시각 t → 배경 불투명도, 장소별 불투명도, 핀별 위치·불투명도·방향, 궤적 길이"를 돌려주는 함수 하나로 만든다. 탭 완료(R-53), 배속(R-54), 툴의 시간 이동, 로그 다시 재생(R-45), 세이브 복원이 모두 t만 바꾸면 해결된다. 겹침 정렬(R-34)만 프레임 사이 보간이 필요하다.</li>
+<li><strong>시각 하나로 화면을 계산한다</strong>: "연출 데이터 + 연출 시각 t → 배경 불투명도, 장소별 불투명도, 핀별 위치·불투명도·방향, 궤적 길이"를 돌려주는 함수 하나로 만든다. 탭 완료(R-53), 배속(R-54), 툴의 시간 이동, 로그 다시 재생(R-45), 세이브 복원이 모두 t만 바꾸면 해결된다. 겹침 정렬도 t 하나로 계산하므로 프레임 사이 상태가 없다.</li>
 <li><strong>미리 계산</strong>: 연출을 불러올 때 경로 샘플 점, 구간 길이, 핀별 출발·도착 시각을 한 번 계산해 둔다. 이어가기는 앞 연출을 따라가 시작 상태를 계산한다(F-10).</li>
 <li><strong>설정 값은 코드에 적지 않는다</strong>: 모든 수치는 설정 키에서 읽는다. 값을 바꾸고 다시 빌드하지 않고 확인할 수 있으면 좋다.</li>
 <li><strong>폰 최소 크기</strong>: 핀·이름표·장소 글자는 F-13의 최솟값 아래로 줄이지 않는다. 폰 가로 화면에서 가장 먼저 깨지는 곳이다.</li>
@@ -2810,7 +2087,7 @@ td code{white-space:nowrap}
 <li><strong>로그</strong>: 「부록 E 예외 처리」의 모든 줄은 연출 id와 핀 번호를 담은 로그를 남긴다.</li>
 </ul>
 </section>
-<section id="s19"><h2><span class="sec">§19</span>부록 H. 검수 항목</h2>
+<section id="s14"><h2><span class="sec">§14</span>부록 H. 검수 항목</h2>
 <p>구현이 끝났을 때 확인할 것이다. 프로토타입에서 같은 동작을 미리 볼 수 있다.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -2864,12 +2141,12 @@ td code{white-space:nowrap}
 <tr>
 <td class="id">Q-09</td>
 <td>두 핀이 같은 장소에 도착하게 만든다</td>
-<td>가로로 나란히 벌어지고 이름표가 읽힌다. 한 핀이 떠나면 남은 핀이 가운데로 돌아온다</td>
+<td>가로로 나란히 벌어지고 이름표가 읽힌다. 한 핀이 떠나면 남은 핀이 바로 가운데에 놓인다</td>
 </tr>
 <tr>
 <td class="id">Q-10</td>
 <td>맵이 열린 채 맵 닫기 행을 지난다</td>
-<td><code>MAP_CLOSE_MS</code> 동안 닫히고 원래 배경에서 대사가 나온다</td>
+<td><code>MAP_FADE_MS</code> 동안 닫히고 원래 배경에서 대사가 나온다</td>
 </tr>
 <tr>
 <td class="id">Q-11</td>
@@ -2907,11 +2184,6 @@ td code{white-space:nowrap}
 <td>「부록 E 예외 처리」대로 동작하고 로그가 남는다. 스토리가 멈추지 않는다</td>
 </tr>
 <tr>
-<td class="id">Q-18</td>
-<td>사라짐으로 설정한 핀을 재생한다</td>
-<td>도착 후 잠시 머문 뒤 궤적과 함께 사라진다</td>
-</tr>
-<tr>
 <td class="id">Q-19</td>
 <td>출발할 때 등장으로 설정한 핀을 재생한다</td>
 <td>출발 시각에 시작 위치에서 나타나며 출발한다</td>
@@ -2929,7 +2201,7 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s20"><h2><span class="sec">§20</span>부록 I. 작업 목록</h2>
+<section id="s15"><h2><span class="sec">§15</span>부록 I. 작업 목록</h2>
 <p>담당별 작업과 우선순위 제안이다(전체가 제안이라 배지를 붙이지 않는다). P0은 첫 구현에 꼭 필요한 것, P1은 같은 버전 안에 넣을 것, P2는 여유가 있을 때다. 기간은 회사에서 산정한다.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -2972,7 +2244,7 @@ td code{white-space:nowrap}
 </tr>
 <tr>
 <td>클라이언트</td>
-<td>겹침 벌리기와 다시 정렬</td>
+<td>겹침 벌리기</td>
 <td>P1</td>
 </tr>
 <tr>
@@ -3033,7 +2305,583 @@ td code{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s21"><h2><span class="sec">§21</span>변경 이력</h2>
+<section id="s16"><h2><span class="sec">§16</span>부록 J. 구현 규칙</h2>
+<p>본문에서 뺀 저장 방식·단위·구현 세부 규칙과 상태 전이표다. 규칙 번호는 처음 붙인 번호를 그대로 쓰고, 지운 번호(R-44, R-47, R-50)는 다시 쓰지 않는다.</p>
+<h3>구현 규칙</h3>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>규칙</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td class="id">R-06</td>
+<td>연출당 핀 수와 핀당 점 수에 한도를 두지 않는다.</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-16</td>
+<td>이번 버전은 카메라를 고정하고 전체 지도를 보여준다. 카메라 연출 여부는 기능을 다 만든 뒤 다시 검토한다.</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-32</td>
+<td>이 문서는 두 명령을 「맵 열기」「맵 닫기」라고 부른다. 맵이 열린 채 다른 배경으로 바뀌거나 스토리가 끝나면 자동으로 닫는다.</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-33</td>
+<td>핀은 Actor 테이블의 id로 고르고, 이름과 리소스 경로를 Actor 테이블에서 가져온다.</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-05</td>
+<td>좌표는 배경 원본 이미지의 픽셀 정수로 저장한다(왼쪽 위 0,0). 배경 정의에 원본 해상도를 두고, 화면 배치는 엔진이 비율로 변환한다.</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-18</td>
+<td>맵 배경은 비율만 16:9로 통일하고 해상도는 자유다(권장 2048×1152 이상). 속도는 가로 2048px 기준이고, 배경 가로가 다르면 엔진이 비례로 환산한다.</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-37</td>
+<td>모든 시간은 ms 정수다. 연출의 0ms는 이동 시작이고, 등장 페이드인은 그 앞(음수 구간)에 붙는다. 핀 출발 시간이 모두 같은 0ms를 쓴다.</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-39</td>
+<td>장소 이름, 이름표, 로그 문구는 문자열 테이블 키로 저장한다.</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-40</td>
+<td>웨이포인트가 장소 마크를 가리키면 좌표 대신 장소 id를 저장한다. 장소 마크를 옮기면 그 장소를 지나는 모든 경로가 따라 바뀐다.</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-41</td>
+<td>위치·길이·속도는 모두 배경 픽셀 기준이다. 핀 지름, 글자, 점선 같은 표시 크기는 UI 기준 해상도의 px로 정한다.</td>
+<td></td>
+</tr>
+<tr data-s="warn">
+<td class="id">R-55</td>
+<td>UI px 값은 화면 높이 ÷ 1080 배율로 키우거나 줄인다. 여백은 검은색으로 채운다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-28</td>
+<td>그리기 순서는 배경 → 장소 마크 → 앞 연출 궤적 → 궤적 → 핀 → 이름표다.</td>
+<td></td>
+</tr>
+<tr data-s="warn">
+<td class="id">R-48</td>
+<td>핀끼리는 쉬는 핀을 먼저 그리고 이동 중인 핀을 그 위에 그린다. 같은 쪽 안에서는 핀 번호가 큰 핀이 위다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-27</td>
+<td>이어가기 연출은 앞 연출 id만 저장한다. 시작 위치, 앞 궤적, 이어서 보일 장소 마크는 앞 연출 데이터에서 계산한다. 앞 연출을 재생하지 않았어도 데이터는 읽을 수 있으므로 복사본이 필요 없다.</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td class="id">R-43</td>
+<td>이어가기 연출의 배경은 앞 연출과 같아야 한다. 툴이 앞 연출의 배경으로 자동으로 채우고 바꾸지 못하게 한다.</td>
+<td></td>
+</tr>
+<tr data-s="warn">
+<td class="id">R-51</td>
+<td>앞 연출은 하나만 가리킨다. 이어가기 연결은 돌아와서는 안 되고(순환 금지), 최대 20단까지다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">R-46</td>
+<td>맵 열기는 스토리 행의 <code>link_map_scene_id</code> 열, 맵 닫기는 <code>map_close</code> 열로 준다. 한 행은 맵 닫기 → 맵 열기 → 그 행의 대사 순서로 처리한다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">R-52</td>
+<td>맵은 닫힘 / 등장 / 재생 / 유지 / 닫는 중 다섯 상태를 가진다. 전이는 아래 「맵 상태 전이표」를 따른다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td class="id">R-54</td>
+<td>배속은 이동, 페이드, 마무리 대기, 닫기에 모두 걸린다. 탭 완료 시간에는 걸리지 않는다. 재생 중에 배속을 바꾸면 그 순간부터 바로 반영한다.</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+</tbody>
+</table></div>
+<h3>맵 상태 전이표</h3>
+<p>맵 레이어는 아래 다섯 상태 중 하나다. 대사창은 등장·재생 중에만 숨긴다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>지금 상태</th>
+<th>들어온 것</th>
+<th>처리</th>
+<th>다음 상태</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td>닫힘</td>
+<td>맵 열기</td>
+<td>일반 등장(페이드인)을 시작한다</td>
+<td>등장</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>등장</td>
+<td>0ms 도달</td>
+<td>이동을 시작한다</td>
+<td>재생</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>등장, 재생</td>
+<td>화면 탭</td>
+<td>남은 구간을 빨리 감아 최종 상태로 만든다</td>
+<td>유지</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>등장, 재생</td>
+<td>탭을 여러 번</td>
+<td>첫 탭만 처리한다</td>
+<td>(그대로)</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>재생</td>
+<td>마지막 도착 + 마무리 대기</td>
+<td>연출을 끝내고 대사창을 다시 보여준다</td>
+<td>유지</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>유지</td>
+<td>화면 탭</td>
+<td>맵은 그대로 두고 스토리 대사를 넘긴다(기존 스토리 입력)</td>
+<td>유지</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>유지</td>
+<td>맵 열기: 이어가기 연출이고 앞 연출이 지금 열린 연출</td>
+<td>페이드인 없이 0ms부터 재생한다</td>
+<td>재생</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>유지</td>
+<td>맵 열기: 그 밖의 다른 연출</td>
+<td>지금 맵을 닫고 새 맵을 일반 등장시킨다</td>
+<td>닫는 중 → 등장</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>유지</td>
+<td>맵 열기: 지금 열린 연출과 같은 연출</td>
+<td>페이드 없이 그 연출의 시작 상태로 되돌려 0ms부터 다시 재생한다</td>
+<td>재생</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>유지</td>
+<td>맵 닫기</td>
+<td>400ms 동안 닫고, 끝난 뒤 그 행의 대사를 보여준다</td>
+<td>닫는 중 → 닫힘</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>유지</td>
+<td>배경이 바뀌는 행, 스토리 종료</td>
+<td>자동으로 닫는다</td>
+<td>닫는 중 → 닫힘</td>
+<td></td>
+</tr>
+<tr data-s="warn">
+<td>닫힘</td>
+<td>맵 닫기</td>
+<td>무시하고 로그를 남긴다</td>
+<td>닫힘</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>닫는 중</td>
+<td>화면 탭</td>
+<td>무시한다</td>
+<td>(그대로)</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td>등장, 재생</td>
+<td>앱이 백그라운드로 감</td>
+<td>일시정지하고 복귀하면 이어서 재생한다</td>
+<td>(그대로)</td>
+<td></td>
+</tr>
+<tr data-s="warn">
+<td>모든 상태</td>
+<td>스토리 전체 건너뛰기(기능이 있다면)</td>
+<td>페이드 없이 바로 닫는다. 로그 줄은 남긴다</td>
+<td>닫힘</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>스토리 행은 차례로 처리되므로, 재생이 끝나기 전에 다음 행의 맵 열기·닫기가 들어오는 경우는 없다.</li>
+<li>자동 진행은 상태에 영향을 주지 않는다. 연출이 끝나면 켜져 있든 꺼져 있든 대사로 넘어간다.</li>
+</ul>
+<h3>이어가기 세부</h3>
+<p>연속된 이동을 여러 연출로 나눠 대사 사이에 끼워 넣기 위한 기능이다. 예를 들어 "A가 관측소로 간다 → 대사 → A가 탑으로 간다"를 두 연출로 만든다.</p>
+<ul>
+<li>이어가기 연출은 <strong>앞 연출 id만</strong> 가진다. 다음 값은 저장하지 않고 앞 연출 데이터를 따라가며 계산한다(계산 순서는 부록 C의 F-10).</li>
+<li>시작 위치: 앞 연출과 같은 번호의 핀은 앞 연출에서 그 핀이 끝난 위치</li>
+<li>앞 궤적: 바로 앞 연출의 경로(R-56)</li>
+<li>장소 마크: 앞 연출 끝에 보이던 마크는 계속 보인다. 이 연출의 장소 목록에는 <strong>새로 보일 마크와 숨길 마크만</strong> 적는다.</li>
+<li>앞 연출을 고치면 뒤 연출의 시작 위치도 자동으로 따라간다. 툴은 영향받는 뒤 연출 수를 알려준다.</li>
+<li>다른 연출이 참조 중인 연출은 툴에서 지울 수 없다.</li>
+<li>앞 연출에 없던 핀을 추가하면 그 핀만 일반 등장(400ms 페이드인)한다.</li>
+<li>앞 연출에 있던 핀을 이 연출의 핀 목록에서 빼면 그 핀은 연출이 시작될 때 사라진다(R-49).</li>
+</ul>
+<h3>스토리 테이블 연동</h3>
+<p>회사 스토리 테이블은 한 행에 <code>id</code>가 있고 옆으로 열이 늘어선 형태이며, 내보내면 한 행이 <code>{}</code> 객체가 된다. 여기에 열 2개를 더한다. 열 이름은 자리표시다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>추가 열</th>
+<th>형식</th>
+<th>뜻</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="warn">
+<td><code>link_map_scene_id</code></td>
+<td>int (비움 가능)</td>
+<td>이 행에서 재생할 연출의 id(<code>map_scene.id</code>). 비우면 아무 일도 없다</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td><code>map_close</code></td>
+<td>bool (비움 가능)</td>
+<td>TRUE면 이 행을 시작할 때 열린 맵을 닫는다</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>한 행의 처리 순서는 맵 닫기 → 맵 열기 → 그 행의 대사다. 대사가 없는 행이면 연출만 재생하고 다음 행으로 넘어간다.</li>
+<li>편집 툴은 별도 툴이라 스토리 순서를 모른다. 게임은 "지금 열린 맵"만 보고 이어가기 여부를 판단하므로 순서 정보가 필요 없다.</li>
+<li>행에 기존 배경 열 값이 있어 배경이 바뀌면 맵은 자동으로 닫힌다.</li>
+</ul>
+<p>예시 흐름:</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>순서</th>
+<th><code>link_map_scene_id</code></th>
+<th><code>map_close</code></th>
+<th>대사</th>
+<th>화면</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>30001</td>
+<td></td>
+<td>있음</td>
+<td>맵이 열리고 장면 1 재생. 끝나면 대사</td>
+</tr>
+<tr>
+<td>2</td>
+<td></td>
+<td></td>
+<td>있음</td>
+<td>맵은 대사 뒤 배경으로 남음</td>
+</tr>
+<tr>
+<td>3</td>
+<td>30002</td>
+<td></td>
+<td>있음</td>
+<td>장면 1의 맵이 열려 있으므로 페이드인 없이 장면 2 재생. 끝나면 대사</td>
+</tr>
+<tr>
+<td>4</td>
+<td></td>
+<td></td>
+<td>있음</td>
+<td>맵은 계속 배경</td>
+</tr>
+<tr>
+<td>5</td>
+<td></td>
+<td>TRUE</td>
+<td>있음</td>
+<td>400ms 동안 맵을 닫고 원래 스토리 배경에서 대사</td>
+</tr>
+</tbody>
+</table></div>
+<p>내보낸 행의 모양(기존 열은 생략):</p>
+<pre><code class="language-json">{ &quot;id&quot;: 310105, &quot;link_map_scene_id&quot;: 30001 }
+{ &quot;id&quot;: 310109, &quot;map_close&quot;: true }
+</code></pre>
+<h3>게임 화면과 툴 화면</h3>
+<p>같은 데이터라도 게임과 툴에서 보이는 요소가 다르다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>요소</th>
+<th>게임 보기</th>
+<th>툴 편집 보기</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td>배경</td>
+<td>보임</td>
+<td>보임</td>
+
+</tr>
+<tr data-s="ok">
+<td>장소 마크</td>
+<td>보임</td>
+<td>보임, 편집 가능</td>
+
+</tr>
+<tr data-s="ok">
+<td>지나온 궤적</td>
+<td>점선으로 보임</td>
+<td>미리보기 재생 시 보임</td>
+
+</tr>
+<tr data-s="ok">
+<td>앞으로 갈 경로</td>
+<td>안 보임</td>
+<td>핀 색 파선으로 보임</td>
+
+</tr>
+<tr data-s="ok">
+<td>도착 지점</td>
+<td>안 보임</td>
+<td>링으로 보임</td>
+
+</tr>
+<tr data-s="ok">
+<td>웨이포인트와 번호</td>
+<td>안 보임</td>
+<td>모든 핀의 점과 번호. 선택하지 않은 핀은 흐리게</td>
+
+</tr>
+<tr data-s="ok">
+<td>앞 연출 궤적</td>
+<td>설정에 따라 흐린 점선</td>
+<td>흐린 점선</td>
+
+</tr>
+<tr data-s="ok">
+<td>핀과 이름표</td>
+<td>보임</td>
+<td>보임</td>
+
+</tr>
+<tr data-s="ok">
+<td>대사창 영역</td>
+<td>안 보임</td>
+<td>켜고 끄는 점선 상자(기본 꺼짐). 맵 유지 중 가려지는 곳 확인용</td>
+
+</tr>
+</tbody>
+</table></div>
+<h3>편집 툴 요구</h3>
+<p>툴 상세는 별도 기획서 「맵 이동 연출 편집 툴」(<code>plans/map-move-tool/spec.md</code>)에 있다. 이 기획과 직접 묶이는 요구만 적는다. 번호는 두 문서가 함께 쓰며, T-05~T-08과 나머지 세부는 툴 기획서에 있다.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>요구</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td class="id">T-01</td>
+<td>핀마다 Actor를 지정한다(캐릭터, 함대, 오브젝트 등).</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">T-02</td>
+<td>핀마다 이동 경로를 지정한다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">T-09</td>
+<td>편집 보기에서 앞으로 갈 경로, 도착 지점, 웨이포인트를 보여주고, 게임 보기로 바꿔 게임과 같은 화면을 확인한다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">T-10</td>
+<td>배경 위에 장소 마크를 추가·이동·이름 변경·삭제하고, 연출마다 보임/숨김을 정한다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">T-11</td>
+<td>앞 연출의 끝 상태를 한 번에 가져오는 「앞 연출에서 이어가기」 기능.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">T-12</td>
+<td>결과를 「부록 A 데이터 설계」 형식(연출 JSON + 엑셀 행)으로 저장·내보내기 한다.</td>
+
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="s17"><h2><span class="sec">§17</span>부록 K. 읽는 법과 용어</h2>
+<ul>
+<li>이 문서는 회사 밖에서 회사 데이터 없이 썼다. 테이블·열·필드·키 이름과 id 숫자, 설정 키 수치는 모두 자리표시이며 회사 확인 대상이다(부록 F).</li>
+<li>배지가 없는 항목은 기획자가 확정한 것이다. <code>검증필요</code>는 가정했거나 회사 데이터로 확인할 것, <code>미정</code>은 결정을 미룬 것이다. 확정이어도 수치는 구현 뒤 조정하는 시작값이며, 값의 원본은 부록 B다.</li>
+<li>툴 상세는 별도 기획서 「맵 이동 연출 편집 툴」(<code>plans/map-move-tool/</code>)에 있다.</li>
+</ul>
+<h3>누가 어디를 읽나</h3>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>읽는 사람</th>
+<th>먼저 볼 곳</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>기획 리드·PD</td>
+<td>본문 전체 (개요 ~ 검증·미결)</td>
+</tr>
+<tr>
+<td>스토리 기획자</td>
+<td>플레이어가 보는 장면, 연출 작성 기준, 툴 사용 안내(<code>plans/map-move-tool/guide.md</code>)</td>
+</tr>
+<tr>
+<td>클라이언트 프로그래머</td>
+<td>핵심 규칙, 부록 A·B·C·E·G·J</td>
+</tr>
+<tr>
+<td>툴 프로그래머</td>
+<td>부록 A·J, 별도 기획서 「맵 이동 연출 편집 툴」</td>
+</tr>
+<tr>
+<td>시스템·데이터 담당</td>
+<td>부록 A·B·F</td>
+</tr>
+<tr>
+<td>아트·사운드</td>
+<td>플레이어가 보는 장면, 아트·사운드 전달사항, 부록 J의 게임 화면과 툴 화면</td>
+</tr>
+<tr>
+<td>QA</td>
+<td>플레이어가 보는 장면, 부록 E·H·J</td>
+</tr>
+</tbody>
+</table></div>
+<h3>범위</h3>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>포함</th>
+<th>제외 (다음 버전)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>게임 화면의 핀 이동 연출</td>
+<td>전투·탐험 화면의 맵</td>
+</tr>
+<tr>
+<td>장소 마크(장소 이름 표시)</td>
+<td>3D 지도, 지형 상호작용</td>
+</tr>
+<tr>
+<td>이전 연출에서 이어가기</td>
+<td>유저가 직접 핀을 조작하는 기능</td>
+</tr>
+<tr>
+<td>스토리 테이블에서 맵 열기·닫기</td>
+<td>배경 리소스 제작 (배경 담당)</td>
+</tr>
+<tr>
+<td>탭·배속·자동 진행·다시보기·대사 로그 규칙</td>
+<td>카메라 연출 (기능 완성 후 재검토)</td>
+</tr>
+<tr>
+<td>데이터 설계(엑셀 + JSON), 설정 키</td>
+<td>툴 상세 (별도 기획서)</td>
+</tr>
+</tbody>
+</table></div>
+<h3>용어</h3>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>용어</th>
+<th>뜻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>연출</td>
+<td>맵 이동 연출 한 건. 배경 1장, 장소 마크, 핀 여러 개로 이뤄진다. 예시에서는 「장면 1」처럼 이름을 붙인다</td>
+</tr>
+<tr>
+<td>핀</td>
+<td>Actor 1개(캐릭터, 함대, 오브젝트 등)를 나타내는 표식. 회사 Actor 테이블을 참조한다</td>
+</tr>
+<tr>
+<td>핀 번호</td>
+<td>연출 안에서 핀을 가리키는 번호. 이어가기로 연결된 연출들 사이에서는 같은 번호가 같은 핀이다</td>
+</tr>
+<tr>
+<td>웨이포인트</td>
+<td>경로를 이루는 점 하나. 좌표 또는 장소 마크를 가리키고, 곡선을 다듬는 핸들을 가질 수 있다</td>
+</tr>
+<tr>
+<td>궤적</td>
+<td>핀이 이미 지나온 구간. 게임에서는 점선으로 남는다</td>
+</tr>
+<tr>
+<td>장소 마크</td>
+<td>배경 위 특정 위치에 새긴 장소 이름</td>
+</tr>
+<tr>
+<td>이어가기</td>
+<td>앞 연출이 끝난 위치에서 다음 연출을 시작하는 것</td>
+</tr>
+<tr>
+<td>맵 열기 / 맵 닫기</td>
+<td>스토리 행이 연출을 재생하게 하는 것 / 열린 맵을 닫게 하는 것</td>
+</tr>
+<tr>
+<td>맵 열림</td>
+<td>맵 연출이 재생되었고 아직 닫히지 않은 상태. 대사 뒤에 배경으로 남는다</td>
+</tr>
+<tr>
+<td>이동 시작</td>
+<td>연출의 시간 기준점(0ms). 등장 페이드인은 이보다 앞에 붙는다</td>
+</tr>
+<tr>
+<td>쉬는 핀</td>
+<td>출발 전, 제자리, 도착 후처럼 움직이지 않고 있는 핀</td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="s18"><h2><span class="sec">§18</span>변경 이력</h2>
+<p>최근 3개만 적는다. 이전 이력은 <code>decisions.md</code>에 있다.</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -3044,6 +2892,11 @@ td code{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
+<td>v0.18</td>
+<td>2026-11-21</td>
+<td>2차 복잡성 검토. 기능: 도착 후 사라짐(<code>on_end</code>, R-47)·핀별 궤적 끄기(<code>trail</code>, R-50)·이징 선택(<code>easing</code>)·핀 색 지정(<code>color</code>) 삭제, 겹침 다시 정렬 애니메이션 삭제(R-34), 설정 키 35 → 23개(<code>MAP_FADE_MS</code> 하나로, 계산 상수는 부록 C로). 문서: 본문을 무엇을 만드는지만 남기고 구현 규칙·상태 전이표·스토리 테이블·이어가기 세부를 부록 J로, 용어·읽는 법을 부록 K로, 규칙을 읽는 순서로 배치, 확정 배지 숨김, 문서 묶음 버전을 하나로(연출·툴·안내·프로토 공통)</td>
+</tr>
+<tr>
 <td>v0.14</td>
 <td>2026-11-21</td>
 <td>복잡도 줄이기: 이어가기 연출에서 같은 번호 핀은 자동으로 앞 끝 위치에서 출발(R-23, <code>from_prev</code> 필드 삭제), 출발 조건을 시간 / 다른 핀 도착 후 2종으로(R-38, F-06, 예시의 핀 2는 TIME 600). 문서: 본문 문장에서 설정 키 이름을 빼고 값만, 자리표시 이유뿐인 표의 배지 삭제, 규칙 번호 정렬, 본문의 ID 참조 정리</td>
@@ -3052,71 +2905,6 @@ td code{white-space:nowrap}
 <td>v0.13</td>
 <td>2026-11-21</td>
 <td>검토 결정 반영: 앞 궤적은 바로 앞 연출만(R-56, <code>MAP_PREV_TRAIL_DEPTH</code> 1), 폰 최솟값 규칙 확정·값은 회사 UI 규칙(R-57), 작성 기준 수치 확정(G-02, G-04, G-05)</td>
-</tr>
-<tr>
-<td>v0.12</td>
-<td>2026-11-21</td>
-<td>전체 검토(플레이어 경험 → 기획자 작업 효율 → 문서 읽기 쉬움). 본문/부록으로 재구성, 「플레이어가 보는 장면」(컷 4장)과 「연출 작성 기준」(G-01~G-09) 신설, 폰 최소 표시 크기(R-57, F-13), 앞 궤적 단 수 설정(R-56), 설정 키 7개 추가, 검수 Q-21. 용어 「연출 맵」을 「연출」로 통일. 예시의 숲(1005)이 대사창 영역에 걸려 y 922 → 880으로 옮김(이동 시간은 그대로)</td>
-</tr>
-<tr>
-<td>v0.11</td>
-<td>2026-11-16</td>
-<td>사용자 결정: 사라지는 핀은 궤적도 함께 사라진다(R-47), 앞 궤적에서 궤적을 끈 핀·사라진 핀은 뺀다(R-50), 열린 맵과 같은 연출을 다시 열면 처음부터 다시 재생(상태 전이표) 확정</td>
-</tr>
-<tr>
-<td>v0.10</td>
-<td>2026-11-16</td>
-<td>사용자 결정: 이어가기에서 지운 앞 연출 핀은 사라진다(R-49), 탭 완료는 빨리 감기(R-53, F-11) 확정</td>
-</tr>
-<tr>
-<td>v0.9</td>
-<td>2026-11-15</td>
-<td>회사 검토용 정리. 회사 테이블 규칙(행마다 id, <code>link_*_id</code>, 소문자 + 밑줄, 그룹 없음, 엑셀 + JSON) 반영: 테이블 8개 → 엑셀 5개 + 연출 JSON, 스토리 명령 → 스토리 행의 열 2개(R-46), 단일 ID 합성식 삭제(R-06). 「부록 F 회사 데이터 연결」「부록 C 계산 규칙」「부록 G 구현 전달사항」「부록 H 검수 항목」「부록 I 작업 목록」 신설. 상태 전이표 추가(R-52). 구현 공백 제안 R-47~R-55. 규칙 속 수치를 설정 키 표기로 통일하고 설정 키 9개 추가. 핵심 규칙을 주제별로 묶음</td>
-</tr>
-<tr>
-<td>v0.8.1</td>
-<td>2026-11-11</td>
-<td>배경 해상도는 툴이 이미지에서 읽어 채움, 장소 좌표 범위 명시</td>
-</tr>
-<tr>
-<td>v0.8</td>
-<td>2026-11-11</td>
-<td>미결 정리: 배경 비율 16:9·해상도 자유(R-18), 로그 재생은 팝업 기본(R-45), 예외 처리 전부 확정, 툴 화면 표시(모든 핀의 점, 대사창 가이드는 옵션), 아트 표현 확정. 남은 것은 「회사 확인」과 「프로그램실 회의 안건」으로 분리</td>
-</tr>
-<tr>
-<td>v0.7</td>
-<td>2026-11-09</td>
-<td>핵심 규칙 사용자 확인: 검증필요 16건 확정. Actor 테이블 참조(R-02, R-10, R-33), 배속 켬/끔(R-13), 한도 없음(R-06), 곡선은 자동 + 점별 베지어 핸들(R-07), 장소 마크는 보임/숨김만(R-21, R-44 삭제), 대사 로그는 공통 한 줄 + 누르면 다시 재생(R-35, R-45)</td>
-</tr>
-<tr>
-<td>v0.6</td>
-<td>2026-11-08</td>
-<td>시스템 기획 검토: 핀 번호, 핀 등장 시점(R-42), 출발 오프셋, 이어가기 배경 일치(R-43), 속도 프리셋 이름은 툴 전용, 툴 반경을 배경 px 설정 키로, 권장 길이 경고, 예외 2건 추가</td>
-</tr>
-<tr>
-<td>v0.5</td>
-<td>2026-11-08</td>
-<td>단위 통일: 좌표 배경 px 정수(R-05), 시간 ms·0ms=이동 시작(R-37), 위치·길이·속도 배경 기준·표시 크기 UI px(R-41). 속도 프리셋(R-08), 출발 조건(R-38), 문자열 키(R-39), 웨이포인트의 장소 참조(R-40). 이어가기는 앞 연출 id만 저장(R-27). 테이블 설계, 설정 키 목록과 예시 데이터 추가</td>
-</tr>
-<tr>
-<td>v0.4</td>
-<td>2026-11-08</td>
-<td>스토리 테이블에서 맵 열기·닫기로 맵 유지 확정(R-26, R-31), 이어가기 판단을 "열린 맵" 기준으로(R-24). 핀을 핀 규격 리소스 전체로 확장(R-02, R-33), 이름표 변경·끄기(R-10). 장소 마크 등장 방식(R-21). 쉬는 핀 정렬(R-34), 대사 로그(R-35), 자동 진행(R-36) 추가</td>
-</tr>
-<tr>
-<td>v0.3</td>
-<td>2026-11-08</td>
-<td>결정 반영: 화면 탭 즉시 완료(R-12), 카메라 고정·추후 재검토(R-16), 겹침 자동 비켜 놓기(R-17), 가로 화면·여백 맞춤(R-19), 앞 궤적 기본 남김(R-25), 이동 효과음 1회(R-30). 편집 툴은 별도 툴로 확정</td>
-</tr>
-<tr>
-<td>v0.2</td>
-<td>2026-11-08</td>
-<td>게임에서 앞으로 갈 경로·도착 지점 제거, 지나온 궤적을 점선으로(R-09). 장소 마크 추가(R-20, R-21). 이어가기 추가(R-22~R-27). 탭 완료 규칙(R-12). 그리기 순서(R-28), 이동 없는 핀(R-29), 효과음(R-30) 추가. 편집 툴을 별도 기획서로 분리</td>
-</tr>
-<tr>
-<td>v0.1</td>
-<td>2026-11-08</td>
-<td>최초 작성</td>
 </tr>
 </tbody>
 </table></div></section>

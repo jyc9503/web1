@@ -321,7 +321,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
 """
     html = HEAD.format(title="맵 핀 이동 화면 시안", layout="Layout: 장면 컷 4장, 게임/편집 보기 비교, 해부도, 리소스 요청표를 위에서 아래로.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
-  <span class="tag">카제나 · 스토리 연출 · v0.14 시안</span>
+  <span class="tag">카제나 · 스토리 연출 · v0.18 시안</span>
   <h1>맵 핀 이동 화면 시안</h1>
   <p class="sub">아트팀과 배경 담당에게 보여주는 장면 컷과 리소스 요청 내용입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다. 화면은 가로 16:9로 확정했고, 스토리 화면의 실제 UI(대사창 위치 등)는 확인 전입니다. <span class="badge b-warn">검증필요</span></p>
 
@@ -414,7 +414,7 @@ table.work tr:last-child td{border-bottom:0}
     html = HEAD.format(title="맵 핀 이동 연출 한 장 요약", layout="Layout: 리드·PD 회의용 한 장. 한 줄 요약 → 왜 → 유저가 보는 장면 3컷 → 범위·만드는 쪽 규모 → 위험 → 결정할 것.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
   <header class="top">
-    <span class="tag">카제나 · 스토리 연출 · v0.14 · 회의용 한 장</span>
+    <span class="tag">카제나 · 스토리 연출 · v0.18 · 회의용 한 장</span>
     <h1>맵 핀 이동 연출</h1>
     <p class="one">메인 스토리의 중요한 이동 장면에서, 지도 위 핀이 움직여 <b>누가 어디서 어디로 갔는지</b>를 3~8초 안에 보여준다.</p>
     <div class="meta"><span class="badge b-ok">확정 {c['확정']}</span><span class="badge b-warn">검증필요 {c['검증필요']}</span><span class="badge b-tbd">미정 {c['미정']}</span><span>규칙·기준 ID 기준. 회사 데이터 확인 전 초안</span></div>

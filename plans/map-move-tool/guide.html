@@ -129,6 +129,7 @@ main h4{font-size:14px;margin:18px 0 6px}
 .note ul{margin:8px 0 0}
 .note p{margin:0}
 td code{white-space:nowrap}
+th{white-space:nowrap}
 
 </style>
 </head>
@@ -148,7 +149,7 @@ td code{white-space:nowrap}
 <a href="#s10">검사 결과 읽기</a>
 <a href="#s11">단축키</a>
     <div class="legend">
-      <span><span class="badge b-ok">확정</span> 그대로 구현</span>
+      <span>배지 없음 = 확정, 그대로 구현</span>
       <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
       <span><span class="badge b-tbd">미정</span> 결정 대기</span>
     </div>
@@ -160,7 +161,7 @@ td code{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴 사용 안내</h1>
       <p class="sub">기획자가 툴을 처음 쓸 때 읽는 조작 안내. 툴 안에서는 조작 안내 문구를 띄우지 않으므로(툴 E-06) 이 문서가 그 역할을 한다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.16 기준</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.18 기준</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>스토리 연출 기획자</dd></div>
         <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">0건</span></dd></div>
@@ -227,7 +228,7 @@ td code{white-space:nowrap}
 <td>없음</td>
 </tr>
 <tr>
-<td>핀 색은 기본 팔레트. 바꿀 때는 다른 핀과 구분되게</td>
+<td>핀 색은 번호별로 자동. 비슷한 색이 겹치면 핀 번호를 바꾼다</td>
 <td>궤적 색으로 누가 지나갔는지 읽는다</td>
 <td>없음</td>
 </tr>
@@ -280,7 +281,7 @@ td code{white-space:nowrap}
 <li>장소마다 「이 연출에서」를 보임으로 바꾼다.</li>
 <li>「핀·경로」 탭에서 「핀 추가」를 누르고 Actor를 고른다.</li>
 <li>빈 곳을 더블클릭해 시작점을 찍고, 이어서 더블클릭으로 지나갈 점을 찍는다. 장소 가까이 찍으면 장소에 붙는다(◆ 표시).</li>
-<li>속도 프리셋과 출발 조건을 정한다. 패널에 길이, 속도, 이동 시간, 출발 시각이 보인다.</li>
+<li>속도 프리셋과 출발 조건을 정한다. 패널에 길이, 속도, 이동 시간, 출발 시각이 보인다. 이름표·등장 시점·시간 고정은 「고급」을 펼쳐서 바꾼다.</li>
 <li>재생해서 확인하고, 게임 보기로 한 번 더 본다.</li>
 <li>검사 결과가 「오류 0」이면 <code>Ctrl+S</code>로 저장한다.</li>
 </ol>
@@ -348,7 +349,7 @@ td code{white-space:nowrap}
 <li>앞 연출의 핀이 같은 번호로 들어오고, 시작점은 자물쇠로 고정된다(앞 연출 끝 위치).</li>
 <li>핀마다 더블클릭으로 다음 점을 찍는다. 움직이지 않을 핀은 그대로 둔다.</li>
 <li>
-<p>이번 연출에 필요 없는 핀은 「핀 삭제」. 게임에서 그 핀은 연출이 시작될 때 사라진다.</p>
+<p>이번 연출에 필요 없는 핀은 「핀 삭제」. 게임에서 그 핀은 연출이 시작될 때 사라진다. 핀을 지도에서 빼는 방법은 이것 하나다(도착 후 사라지는 설정은 없다).</p>
 </li>
 <li>
 <p>앞 연출을 고치면 이어진 연출의 시작 위치도 따라 바뀐다. 저장할 때 영향받는 연출 수를 알려준다.</p>
