@@ -321,7 +321,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
 """
     html = HEAD.format(title="맵 핀 이동 화면 시안", layout="Layout: 장면 컷 4장, 게임/편집 보기 비교, 해부도, 리소스 요청표를 위에서 아래로.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
-  <span class="tag">카제나 · 스토리 연출 · v0.18 시안</span>
+  <span class="tag">카제나 · 스토리 연출 · v0.19 시안</span>
   <h1>맵 핀 이동 화면 시안</h1>
   <p class="sub">아트팀과 배경 담당에게 보여주는 장면 컷과 리소스 요청 내용입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다. 화면은 가로 16:9로 확정했고, 스토리 화면의 실제 UI(대사창 위치 등)는 확인 전입니다. <span class="badge b-warn">검증필요</span></p>
 
@@ -355,7 +355,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
   <div class="tablewrap"><table>
     <thead><tr><th>리소스</th><th>규격</th><th>담당</th><th>상태</th></tr></thead>
     <tbody>
-      <tr><td>배경 이미지</td><td class="spec">비율 16:9, 해상도 자유 (권장 2048×1152 이상)</td><td>배경</td><td><span class="badge b-ok">확정</span></td></tr>
+      <tr><td>배경 이미지</td><td class="spec">2048×1152 고정 (더 큰 원본은 같은 비율로 줄여 넣는다)</td><td>배경</td><td><span class="badge b-ok">확정</span></td></tr>
       <tr><td>장소 마크 세트</td><td class="spec">배경마다 장소 이름과 위치 목록. 편집 툴에서 관리</td><td>기획</td><td><span class="badge b-ok">확정</span></td></tr>
       <tr><td>핀 아이콘</td><td class="spec">원형 128×128. Actor 테이블의 리소스 경로 사용. 함대 등 대상 Actor의 핀 아이콘 유무 확인</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
       <tr><td>로그 아이콘</td><td class="spec">대사 로그 「위치 정보 확인」 줄의 전용 아이콘 1종</td><td>아트</td><td><span class="badge b-warn">검증필요</span></td></tr>
@@ -414,7 +414,7 @@ table.work tr:last-child td{border-bottom:0}
     html = HEAD.format(title="맵 핀 이동 연출 한 장 요약", layout="Layout: 리드·PD 회의용 한 장. 한 줄 요약 → 왜 → 유저가 보는 장면 3컷 → 범위·만드는 쪽 규모 → 위험 → 결정할 것.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
   <header class="top">
-    <span class="tag">카제나 · 스토리 연출 · v0.18 · 회의용 한 장</span>
+    <span class="tag">카제나 · 스토리 연출 · v0.19 · 회의용 한 장</span>
     <h1>맵 핀 이동 연출</h1>
     <p class="one">메인 스토리의 중요한 이동 장면에서, 지도 위 핀이 움직여 <b>누가 어디서 어디로 갔는지</b>를 3~8초 안에 보여준다.</p>
     <div class="meta"><span class="badge b-ok">확정 {c['확정']}</span><span class="badge b-warn">검증필요 {c['검증필요']}</span><span class="badge b-tbd">미정 {c['미정']}</span><span>규칙·기준 ID 기준. 회사 데이터 확인 전 초안</span></div>
@@ -466,7 +466,7 @@ table.work tr:last-child td{border-bottom:0}
       <h2>위험과 대응</h2>
       <ul class="plain">
         <li><span><b>폰에서 글자가 작다.</b> 1080 기준 크기를 폰 가로에 줄이면 이름표가 9pt 안팎이 된다. 최솟값을 둬서 받치고, 값은 회사 UI 최소 글자 규칙을 따른다(R-57).</span></li>
-        <li><span><b>기획자마다 품질이 다르다.</b> 「연출 작성 기준」 9개를 두고, 툴이 길이·동시 이동 수·대사창 가림을 경고한다.</span></li>
+        <li><span><b>기획자마다 품질이 다르다.</b> 「연출 작성 기준」 5개를 두고, 툴이 길이·동시 이동 수·대사창 가림을 경고한다.</span></li>
         <li><span><b>툴이 가장 큰 일이다.</b> 툴 플랫폼(엔진 확장 / 웹)과 편의 기능 범위를 프로그램실과 먼저 정한다.</span></li>
         <li><span><b>넓은 폰의 좌우 여백.</b> 지도 전체를 보이게 하므로 19.5:9 폰에서는 좌우에 검은 여백이 생긴다. 다음 버전에서 배경 확장을 검토한다.</span></li>
       </ul>

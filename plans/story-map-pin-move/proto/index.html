@@ -155,7 +155,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.18</span>
+    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.19</span>
     <h1>맵 핀 이동 연출</h1>
     <p>세 탭이 같은 데이터를 봅니다. <b>스토리 시연</b>은 스토리 행을 따라 맵이 열리고 이어지고 닫히는 과정을, <b>편집 툴</b>은 기획자가 연출을 만드는 조작을, <b>데이터</b>는 저장되는 엑셀 행과 연출 JSON을 보여줍니다. 배경, 핀, 장소 이름, 대사는 모두 자리표시입니다.</p>
   </header>
@@ -276,7 +276,7 @@ code{font-family:var(--f-mono);font-size:.92em}
           <details class="adv" id="adv">
             <summary>고급 <span class="badge" id="adv-mark" hidden>기본값 아님</span></summary>
             <div class="form">
-              <label for="f-label">이름표</label><input type="text" id="f-label" maxlength="10">
+              <label for="f-label">이름표</label><input type="text" id="f-label">
               <label for="f-showlabel">이름표 표시</label><label class="check"><input type="checkbox" id="f-showlabel"> 보임</label>
               <label for="f-show">등장</label><select id="f-show"><option value="START">처음부터</option><option value="ON_DEPART">출발할 때</option></select>
               <label for="f-dur" id="l-dur">이동 시간(ms)</label><input type="number" id="f-dur" min="500" max="10000" step="100">
@@ -302,7 +302,7 @@ code{font-family:var(--f-mono);font-size:.92em}
         <div id="placetab" hidden style="display:grid;gap:10px">
           <div class="chips" id="pchips"></div>
           <div class="form">
-            <label for="p-name">이름(원문)</label><input type="text" id="p-name" maxlength="10" placeholder="장소 이름">
+            <label for="p-name">이름(원문)</label><input type="text" id="p-name" placeholder="장소 이름">
             <label for="p-x">위치 (배경 px)</label><div class="pair"><input type="number" id="p-x" min="0" step="1" aria-label="X"><input type="number" id="p-y" min="0" step="1" aria-label="Y"></div>
             <label for="p-mode">이 연출에서</label><select id="p-mode"></select>
           </div>
@@ -370,7 +370,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 'use strict';
 /* ---------- 설정 (map_config, map_speed_preset). 값은 기획서 「설정 키」와 같다 ---------- */
 var CFG={FADE:400,OUTRO:1000,TAP:300,PREV_ALPHA:40, /* 설정 키 (부록 B) */
-  SPEED_BASE_W:2048,DUR_STEP:100,DUR_MIN:100,CURVE_SAMPLES:16,OVERLAP:0.9,GAP_RATIO:1.15,LABEL_PAD:6,CHAIN_MAX:20, /* 앞줄 일부는 계산 상수 (부록 C) */
+  DUR_STEP:100,DUR_MIN:100,CURVE_SAMPLES:16,OVERLAP:0.9,GAP_RATIO:1.15,LABEL_PAD:6,CHAIN_MAX:20, /* 앞줄 일부는 계산 상수 (부록 C) */
   SPEED_WARN:1600,RECOMMEND_MAX:8000,RECOMMEND_MOVING:3,RECOMMEND_PLACES:8,DIALOG_AREA:22,PREV_DEPTH:1,SNAP_PX:40,FAST:2,AUTO_WAIT:1600};
 var CFG_UI=[['MAP_FADE_MS','FADE'],['MAP_OUTRO_MS','OUTRO'],['MAP_TAP_FINISH_MS','TAP'],['MAP_PREV_TRAIL_ALPHA (%)','PREV_ALPHA'],['배속 배율 (가정)','FAST']];
 var PRESETS=[[1,'걷기',500],[2,'달리기',800],[3,'고속',1200]];
@@ -461,7 +461,7 @@ function moves(sc,p){return rpath(sc,p).length>1&&build(sc,p).total>0;}
 function durOf(sc,p){
   if(!moves(sc,p))return 0;
   if(p.fixed)return p.dur_ms;
-  var v=preset(p.preset)[2]*BG.w/CFG.SPEED_BASE_W;
+  var v=preset(p.preset)[2]; /* 배경은 2048×1152 고정 (R-18) */
   return Math.max(CFG.DUR_MIN,Math.round(build(sc,p).total/v*1000/CFG.DUR_STEP)*CFG.DUR_STEP);
 }
 function schedule(sc){
@@ -964,6 +964,19 @@ function syncPlaceXY(){ /* 장소 위치 입력칸 (툴 M-06) */
 function syncAll(){syncScenes();syncForm();hint();setPlay();}
 
 /* ---------- 저장 전 검사 (툴 T-07, CK-01~CK-20) ---------- */
+function labelOverlap(sc,pst){ /* 연출 끝 상태에서 이름표와 보이는 장소 글자가 겹치는지 (툴 CK-17) */
+  if(!W)return [];
+  var boxes=[],out=[],R=pinR(),f=fs(),pf=pfs();
+  sc.pins.forEach(function(p){var r=rpath(sc,p);if(!r.length||!p.show_label)return;var e=r[r.length-1],w=tagWidth(labelOf(p));
+    boxes.push({n:labelOf(p),k:'pin',x:e[0],y:e[1],l:e[0]*W-w/2,r:e[0]*W+w/2,t:e[1]*H+R+5,b:e[1]*H+R+5+f*1.7});});
+  ctx.font='700 '+pf+'px "Noto Sans KR",sans-serif';
+  state.places.forEach(function(pl){var m=pst[pl.id];if(!m||m==='HIDE')return;var x=pl.x/BG.w*W,y=pl.y/BG.h*H,w=ctx.measureText(pl.name).width/2;
+    boxes.push({n:pl.name,k:'place',x:pl.x/BG.w,y:pl.y/BG.h,l:x-w,r:x+w,t:y-R-6-pf,b:y-R-6});});
+  for(var i=0;i<boxes.length;i++)for(var j=i+1;j<boxes.length;j++){var a=boxes[i],c=boxes[j];
+    if(a.k==='pin'&&c.k==='pin'&&Math.hypot((a.x-c.x)*W,(a.y-c.y)*H)<R*2*CFG.OVERLAP)continue; /* 같은 자리 핀은 나란히 벌려 놓는다 */
+    if(a.l<c.r&&c.l<a.r&&a.t<c.b&&c.t<a.b){if(out.indexOf(a.n)<0)out.push(a.n);}}
+  return out;
+}
 function checks(sc){
   var out=[],sch=schedule(sc),seen={};
   function add(lv,id,msg,pi){out.push({lv:lv,id:id,msg:msg,pi:pi});}
@@ -996,6 +1009,7 @@ function checks(sc){
   state.places.forEach(function(pl){var m=pst[pl.id];if(!m||m==='HIDE')return;vis++;if(pl.y/BG.h>lim)add('warn','CK-19',pl.name+'이(가) 대사창에 가려집니다.');});
   sc.pins.forEach(function(p,pi){var r=rpath(sc,p),e=p.pts[p.pts.length-1];if(r.length<2||r[r.length-1][1]<=lim)return; /* 보이는 장소에 도착하면 위에서 이미 알렸다 */
     var m2=e&&e.place?pst[e.place]:null;if(m2&&m2!=='HIDE')return;add('warn','CK-19','핀 '+p.no+'의 도착 지점이 대사창에 가려집니다.',pi);});
+  labelOverlap(sc,pst).forEach(function(n){add('warn','CK-17',n+'이(가) 다른 글자와 겹칩니다.');}); /* CK-17: 글자 수 대신 실제 겹침 */
   if(vis>CFG.RECOMMEND_PLACES)add('warn','CK-20','보이는 장소가 '+vis+'개입니다. 이야기에 나오는 장소만 남기세요.');
   return out;
 }
@@ -1046,7 +1060,7 @@ function ptr(e){var r=cv.getBoundingClientRect();return {x:clamp((e.clientX-r.le
 function nearN(ax,ay,q,lim){return Math.hypot((ax-q.x)*W,(ay-q.y)*H)<lim;}
 function snapTo(q,noSnap){ /* 장소 근처면 장소 id, 아니면 배경 px 정수 (R-05, R-40) */
   if($('snap').checked&&!noSnap){
-    for(var i=0;i<state.places.length;i++){var pl=state.places[i];if(nearN(pl.x/BG.w,pl.y/BG.h,q,CFG.SNAP_PX/CFG.SPEED_BASE_W*W))return {place:pl.id};}
+    for(var i=0;i<state.places.length;i++){var pl=state.places[i];if(nearN(pl.x/BG.w,pl.y/BG.h,q,CFG.SNAP_PX/BG.w*W))return {place:pl.id};}
   }
   return {x:Math.round(q.x*BG.w),y:Math.round(q.y*BG.h)};
 }
@@ -1304,8 +1318,8 @@ function tsvText(sc){ /* 엑셀에 붙여 넣는 탭 구분 행 (툴 D-03, D-08)
   row([sc.id,BG.id,sc.prev,'Map/Scene/map_scene_'+sc.id,'C03_MOVE',state.scenes.indexOf(sc)+1,sc.memo]);
   L.push('','# map_place');row(['id','link_map_background_id','name_key','x','y','memo']);
   state.places.forEach(function(pl){row([pl.id,BG.id,'MAP_PLACE_'+pl.id,pl.x,pl.y,pl.name]);});
-  L.push('','# map_background');row(['id','bg_resource','width','height','memo']);
-  row([BG.id,BG.res,BG.w,BG.h,BG.memo]);
+  L.push('','# map_background (2048×1152 고정)');row(['id','bg_resource','memo']);
+  row([BG.id,BG.res,BG.memo]);
   L.push('','# 스토리 테이블에 더하는 열 (예시)');row(['id','link_map_scene_id','map_close']);
   buildRows().forEach(function(r){if(r.scene!==undefined||r.close)row([r.id,r.scene!==undefined?state.scenes[r.scene].id:'',r.close?'TRUE':'']);});
   return L.join('\n');
