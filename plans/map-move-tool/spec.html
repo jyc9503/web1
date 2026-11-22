@@ -167,7 +167,7 @@ th{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기, 데이터 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.25 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.26 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
         <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">21건</span></dd></div>
@@ -179,7 +179,7 @@ th{white-space:nowrap}
 <li><strong>사용자</strong>: 스토리 연출을 만드는 기획자 여러 명. 같은 배경과 장소를 여러 사람이 나눠 쓰며, 회사에서는 파일 잠금(락)과 기존 협업 규칙(id, 이름)으로 충돌을 막는다.</li>
 <li><strong>대상 기기</strong>: PC(마우스와 키보드). 프로토타입이 폰 터치로도 조작되는 것은 기획 검토를 폰에서 하기 위한 것이고, 툴 요구가 아니다. 터치 기기 지원이 필요해지면 더블탭과 길게 누르기를 같은 규칙으로 쓴다. <code>검증필요</code></li>
 <li><strong>원칙</strong>: 툴에서 보는 미리보기와 게임 화면이 같아야 한다. 같은 계산식(연출 기획서 「부록 C 계산 규칙」)을 쓴다.</li>
-<li><strong>결과물</strong>: 연출 1건당 JSON 1개와 엑셀 테이블 행(<code>map_scene</code>, <code>map_place</code>). 배경은 기존 <code>story_resource_list</code>에서 고른다. 형식은 연출 기획서 「부록 A 데이터 설계」에 있다.</li>
+<li><strong>결과물</strong>: 연출마다 연출 JSON 1개, 배경마다 장소 JSON 1개, 엑셀 <code>map_scene</code> 행. 배경은 기존 <code>story_resource_list</code>에서 고른다. 형식은 연출 기획서 「부록 A 데이터 설계」에 있다.</li>
 <li><strong>단위</strong>: 툴 화면의 좌표·길이는 배경 px, 시간은 ms, 속도는 px/초로 표시한다.</li>
 <li>동작 프로토타입(<code>plans/story-map-pin-move/proto/</code>)의 「편집 툴」 탭이 이 문서의 주요 기능을, 「데이터」 탭이 저장 형식을 구현해 두었다.</li>
 <li>기능 전체를 짧게 보려면 연출의 핵심 기획서(<code>plans/story-map-pin-move/core.md</code>)를 먼저 읽는다. 이 문서는 툴 세부를 담은 참고 자료다.</li>
@@ -385,7 +385,7 @@ th{white-space:nowrap}
 <tbody>
 <tr data-s="warn">
 <td class="id">S-01</td>
-<td><strong>새 연출</strong>: 배경을 고르면 빈 연출을 만든다. id는 D-05 규칙으로 채우고 사용자가 고칠 수 있다. 묶음(<code>tool_folder</code>)은 지금 보고 있는 묶음을 따른다.</td>
+<td><strong>새 연출</strong>: 배경을 고르면 빈 연출을 만든다. 그 배경의 장소 JSON이 없으면 새로 만든다. id는 D-05 규칙으로 채우고 사용자가 고칠 수 있다. 묶음(<code>tool_folder</code>)은 지금 보고 있는 묶음을 따른다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -636,17 +636,17 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">M-03</td>
-<td>장소 마크는 배경마다 한 세트이고, 같은 배경을 쓰는 모든 연출이 함께 쓴다. 장소 속성 패널에 이 배경을 쓰는 연출 수를 적어 두고, 옮길 때마다 알리지는 않는다.</td>
+<td>장소 마크는 배경마다 한 세트(장소 JSON 1개)이고, 같은 배경을 쓰는 모든 연출이 함께 쓴다. 장소 속성 패널에 이 배경을 쓰는 연출 수를 적어 두고, 옮길 때마다 알리지는 않는다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">M-04</td>
-<td>연출마다 마크의 보임/숨김을 체크로 고른다. 이어가기 연출은 앞 연출 끝에 보이던 마크를 이어받고 바뀐 것만 저장한다. 숨긴 마크는 편집 보기에서 흐리게 보인다.</td>
+<td>연출마다 이름 있는 마크의 보임/숨김을 체크로 고른다. 이어가기 연출은 앞 연출 끝에 보이던 마크를 이어받고 바뀐 것만 저장한다. 숨긴 마크는 편집 보기에서 흐리게 보인다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">M-05</td>
-<td>마크 이름이 비면 저장을 막는다. 글자 수 제한은 두지 않는다.</td>
+<td>마크 이름은 비워 둘 수 있다. 이름 없는 장소는 게임에 안 보이는 기준점이고(연출 R-58), 편집 보기에서만 속이 빈 점으로 보인다. 글자 수 제한은 두지 않는다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
@@ -728,12 +728,12 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">D-02</td>
-<td><strong>연출 JSON 쓰기</strong>: 저장하면 연출 JSON 파일을 툴이 직접 쓴다. 기본값인 필드는 생략하고, 필드 순서와 들여쓰기(2칸)를 고정해 버전 관리에서 바뀐 줄만 보이게 한다.</td>
+<td><strong>JSON 쓰기</strong>: 저장하면 연출 JSON과 장소 JSON 파일을 툴이 직접 쓴다. 기본값인 필드는 생략하고, 필드 순서와 들여쓰기(2칸)를 고정해 버전 관리에서 바뀐 줄만 보이게 한다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="tbd">
 <td class="id">D-03</td>
-<td><strong>엑셀 행 쓰기</strong>: 바뀐 배경·장소·연출 머리 행을 (가) 툴이 엑셀 파일에 직접 쓰거나, (나) 붙여넣기용 탭 구분 행으로 내보낸다. 둘 중 하나로 정한다.</td>
+<td><strong>엑셀 행 쓰기</strong>: 바뀐 연출 머리(<code>map_scene</code>) 행을 (가) 툴이 엑셀 파일에 직접 쓰거나, (나) 붙여넣기용 탭 구분 행으로 내보낸다. 둘 중 하나로 정한다.</td>
 <td><span class="badge b-tbd">미정</span></td>
 </tr>
 <tr data-s="warn">
@@ -775,7 +775,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">T-06</td>
-<td>연출 기획서 「부록 A 데이터 설계」 형식(연출 JSON + 엑셀 행)으로 저장하고 불러온다. 「데이터 보기」는 현재 연출의 엑셀 행과 JSON을 보여주어 그대로 복사할 수 있다.</td>
+<td>연출 기획서 「부록 A 데이터 설계」 형식(연출 JSON, 장소 JSON, 엑셀 행)으로 저장하고 불러온다. 「데이터 보기」는 현재 연출의 엑셀 행과 두 JSON을 보여주어 그대로 복사할 수 있다.</td>
 
 </tr>
 <tr data-s="ok">
@@ -873,13 +873,13 @@ th{white-space:nowrap}
 <tr>
 <td>장소 이름</td>
 <td>글자(원문)</td>
-<td>엑셀 <code>map_place.name_key</code> + 문자열 추가 목록</td>
-<td>필수</td>
+<td>장소 JSON <code>places[].name_key</code> + 문자열 추가 목록</td>
+<td>이름 없는 장소(게임에 안 보임)</td>
 </tr>
 <tr>
 <td>장소 위치 X, Y</td>
 <td>숫자 또는 끌기</td>
-<td>엑셀 <code>map_place.x</code>, <code>y</code></td>
+<td>장소 JSON <code>places[].x</code>, <code>y</code></td>
 <td>필수</td>
 </tr>
 <tr>
@@ -903,7 +903,7 @@ th{white-space:nowrap}
 <tr>
 <td>배경</td>
 <td>배경 목록에서 선택</td>
-<td>엑셀 <code>map_scene.link_story_resource_list_id</code></td>
+<td>엑셀 <code>map_scene.place_json</code> (그 배경의 장소 JSON)</td>
 <td>필수. 이어가기 연출은 바꿀 수 없음</td>
 </tr>
 <tr>
@@ -946,20 +946,14 @@ th{white-space:nowrap}
 <td></td>
 </tr>
 <tr data-s="ok">
-<td class="id">CK-03</td>
-<td>이름이 빈 장소 마크</td>
-<td>이름이 없는 장소가 있습니다.</td>
-<td></td>
-</tr>
-<tr data-s="ok">
 <td class="id">CK-04</td>
-<td>점이나 장소 보임이 다른 배경의 장소를 가리킴</td>
-<td>핀 {번호}의 점 {순서}이(가) 다른 배경의 장소를 가리킵니다.</td>
+<td>점이나 장소 보임이 연출의 장소 JSON에 없는 장소를 가리킴</td>
+<td>핀 {번호}의 점 {순서}이(가) 없는 장소를 가리킵니다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">CK-06</td>
-<td>이어가기 연출의 배경이 앞 연출과 다름</td>
+<td>이어가기 연출의 장소 JSON(배경)이 앞 연출과 다름</td>
 <td>배경이 앞 연출과 다릅니다.</td>
 <td></td>
 </tr>
@@ -1141,6 +1135,11 @@ th{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
+<td>v0.26</td>
+<td>2026-11-22</td>
+<td>장소를 배경별 장소 JSON으로(D-02, 속성 패널 저장 위치), 장소 이름 선택(M-05, CK-03 삭제), CK-04·CK-06 문구 수정</td>
+</tr>
+<tr>
 <td>v0.25</td>
 <td>2026-11-22</td>
 <td>설정 테이블 삭제에 맞춰 D-01, CK-11, 속성 패널 기본값 표기 수정</td>
@@ -1149,11 +1148,6 @@ th{white-space:nowrap}
 <td>v0.24</td>
 <td>2026-11-22</td>
 <td>배경은 기존 <code>story_resource_list</code>에서 고른다. 배경 등록(S-06, D-06) 삭제, D-01·CK-16·속성 패널 저장 위치 수정</td>
-</tr>
-<tr>
-<td>v0.23</td>
-<td>2026-11-22</td>
-<td>속도 프리셋 테이블 삭제에 맞춰 D-01과 속성 패널 저장 위치(<code>pins[].speed</code>) 수정</td>
 </tr>
 </tbody>
 </table></div></section>

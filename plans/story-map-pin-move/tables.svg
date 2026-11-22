@@ -1,4 +1,4 @@
-<svg viewBox="0 0 880 372" role="img" aria-label="데이터 구조: 스토리 테이블 행이 map_scene을 가리키고, map_scene은 story_resource_list(배경)와 앞 연출, 연출 JSON을 가리킨다. 연출 JSON 안의 핀과 웨이포인트는 Actor 테이블과 map_place를 id로 참조한다. map_place는 story_resource_list의 배경에 속한다">
+<svg viewBox="0 0 880 372" role="img" aria-label="데이터 구조: 스토리 테이블 행이 map_scene을 가리키고, map_scene은 장소 JSON, 앞 연출, 연출 JSON을 가리킨다. 장소 JSON은 배경 리소스(story_resource_list)를 가리킨다. 연출 JSON 안의 핀과 웨이포인트는 Actor 테이블과 장소 JSON의 장소를 id로 참조한다">
   <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
 
   <rect class="n" x="20" y="40" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="64" text-anchor="middle">스토리 테이블</text><text class="sm" x="105" y="82" text-anchor="middle">기존 (회사) · 열 2개 추가</text>
@@ -11,16 +11,16 @@
   <rect class="n" x="334" y="234" width="172" height="40" rx="6"/><text x="346" y="259">waypoints[]</text><text class="sm" x="432" y="259">경로 점</text>
   <rect class="n" x="334" y="282" width="172" height="40" rx="6"/><text x="346" y="307">places[]</text><text class="sm" x="408" y="307">장소 보임</text>
 
-  <rect class="n" x="690" y="170" width="170" height="56" rx="8"/><text x="775" y="194" text-anchor="middle">map_place</text><text class="sm" x="775" y="212" text-anchor="middle">엑셀 · 장소 마크 · id</text>
+  <rect class="n good" x="690" y="170" width="170" height="56" rx="8"/><text x="775" y="194" text-anchor="middle">장소 JSON</text><text class="sm" x="775" y="212" text-anchor="middle">배경 1개 = 파일 1개</text>
   <rect class="n" x="20" y="180" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="204" text-anchor="middle">Actor 테이블</text><text class="sm" x="105" y="222" text-anchor="middle">기존 (회사) · 이름 · 리소스</text>
 
   <path class="e" d="M190 68H318" marker-end="url(#ar2)"/><text class="sm" x="254" y="58" text-anchor="middle">link_map_scene_id</text>
-  <path class="e" d="M520 68H688" marker-end="url(#ar2)"/><text class="sm" x="604" y="58" text-anchor="middle">link_story_resource_list_id</text>
+  <path class="e" d="M520 80C610 80 640 150 700 168" marker-end="url(#ar2)"/><text class="sm" x="612" y="104" text-anchor="middle">place_json</text>
   <path class="e" d="M392 40C392 10 448 10 448 38" marker-end="url(#ar2)"/><text class="sm" x="462" y="22">link_prev_map_scene_id (이어가기)</text>
   <path class="e" d="M420 96V148" marker-end="url(#ar2)"/><text class="sm" x="428" y="126">scene_json</text>
-  <path class="e" d="M775 170V98" marker-end="url(#ar2)"/><text class="sm" x="767" y="138" text-anchor="end">link_story_resource_list_id</text>
+  <path class="e" d="M775 170V98" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="767" y="124" text-anchor="end">story_resource_list_id</text>
   <path class="e" d="M520 198H688" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="604" y="190" text-anchor="middle">place_id</text>
   <path class="e" d="M320 208H192" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="256" y="200" text-anchor="middle">actor_id</text>
 
-  <text class="sm" x="20" y="360">실선: 엑셀의 link 열 · 점선: JSON 안의 id 참조 · 점선 상자: 회사 기존 테이블</text>
+  <text class="sm" x="20" y="360">실선: 엑셀 열의 참조 · 점선: JSON 안의 id 참조 · 점선 상자: 회사 기존 테이블</text>
 </svg>

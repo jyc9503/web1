@@ -162,7 +162,7 @@ th{white-space:nowrap}
       <h1>스토리 맵 핀 이동 연출</h1>
       <p class="sub">스토리 진행 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 이동하며 "누가 어디서 어디로 갔는지"를 보여주는 연출 기능.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.25 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.26 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>클라이언트 · 편집 툴 · 데이터</dd></div>
         <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">11건</span></dd></div>
@@ -236,6 +236,11 @@ th{white-space:nowrap}
 <tr data-s="ok">
 <td class="id">R-20</td>
 <td>배경 이미지 위 각 장소에 이름 마크(장소 마크)를 새길 수 있다.</td>
+
+</tr>
+<tr data-s="ok">
+<td class="id">R-58</td>
+<td>장소 마크의 이름은 비워 둘 수 있다. 이름 없는 장소는 게임 화면에 보이지 않고, 경로가 지나는 기준점으로만 쓴다.</td>
 
 </tr>
 <tr data-s="ok">
@@ -469,15 +474,15 @@ th{white-space:nowrap}
 <section id="s5"><h2><span class="sec">§5</span>부록 A. 데이터 설계</h2>
 <div class="note dev"><p><strong>설계 원칙</strong></p>
 <ul>
-<li><strong>엑셀과 JSON을 나눈다</strong>: 사람이 손으로 고치거나 다른 테이블과 이어지는 것(장소, 연출 머리)은 엑셀 테이블에 둔다. 배경은 기존 <code>story_resource_list</code>의 id로 가리킨다. 툴이 만드는 것(핀, 경로 점, 장소 보임)은 연출 1건당 JSON 1개에 둔다.</li>
+<li><strong>엑셀과 JSON을 나눈다</strong>: 스토리 테이블이 id로 가리켜야 하는 연출 머리만 엑셀(<code>map_scene</code>)에 둔다. 툴이 화면에서 만드는 것은 JSON에 둔다. 장소는 배경마다 장소 JSON 1개, 핀·경로 점·장소 보임은 연출마다 연출 JSON 1개다. 배경은 기존 <code>story_resource_list</code>의 id로 가리킨다.</li>
 <li><strong>회사 테이블 규칙</strong>: 행마다 <code>id</code>, 다른 테이블 참조는 <code>link_*_id</code>, 열 이름은 소문자 + 밑줄, 그룹 id는 쓰지 않는다.</li>
 <li><strong>사람이 읽는 값</strong>: 좌표는 배경 픽셀 정수, 시간은 ms 정수, 글자는 문자열 키, 선택지는 영문 대문자 열거값.</li>
 <li><strong>비워 두면 기본값</strong>: 엑셀은 칸을 비우고, JSON은 필드를 생략하면 기본값을 쓴다.</li>
-<li><strong>복사본 없음</strong>: 같은 값을 두 곳에 두지 않는다. 장소 좌표는 장소 테이블에만, 이어가기 시작 위치는 앞 연출에만 있다.</li>
+<li><strong>복사본 없음</strong>: 같은 값을 두 곳에 두지 않는다. 장소 좌표는 장소 JSON에만, 이어가기 시작 위치는 앞 연출에만 있다.</li>
 <li>테이블·열·필드 이름과 id 숫자는 모두 자리표시다. <code>검증필요</code></li>
 </ul></div>
 <h3>구조</h3>
-<div class="flow"><svg viewBox="0 0 880 372" role="img" aria-label="데이터 구조: 스토리 테이블 행이 map_scene을 가리키고, map_scene은 story_resource_list(배경)와 앞 연출, 연출 JSON을 가리킨다. 연출 JSON 안의 핀과 웨이포인트는 Actor 테이블과 map_place를 id로 참조한다. map_place는 story_resource_list의 배경에 속한다">
+<div class="flow"><svg viewBox="0 0 880 372" role="img" aria-label="데이터 구조: 스토리 테이블 행이 map_scene을 가리키고, map_scene은 장소 JSON, 앞 연출, 연출 JSON을 가리킨다. 장소 JSON은 배경 리소스(story_resource_list)를 가리킨다. 연출 JSON 안의 핀과 웨이포인트는 Actor 테이블과 장소 JSON의 장소를 id로 참조한다">
   <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
 
   <rect class="n" x="20" y="40" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="64" text-anchor="middle">스토리 테이블</text><text class="sm" x="105" y="82" text-anchor="middle">기존 (회사) · 열 2개 추가</text>
@@ -490,18 +495,18 @@ th{white-space:nowrap}
   <rect class="n" x="334" y="234" width="172" height="40" rx="6"/><text x="346" y="259">waypoints[]</text><text class="sm" x="432" y="259">경로 점</text>
   <rect class="n" x="334" y="282" width="172" height="40" rx="6"/><text x="346" y="307">places[]</text><text class="sm" x="408" y="307">장소 보임</text>
 
-  <rect class="n" x="690" y="170" width="170" height="56" rx="8"/><text x="775" y="194" text-anchor="middle">map_place</text><text class="sm" x="775" y="212" text-anchor="middle">엑셀 · 장소 마크 · id</text>
+  <rect class="n good" x="690" y="170" width="170" height="56" rx="8"/><text x="775" y="194" text-anchor="middle">장소 JSON</text><text class="sm" x="775" y="212" text-anchor="middle">배경 1개 = 파일 1개</text>
   <rect class="n" x="20" y="180" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="204" text-anchor="middle">Actor 테이블</text><text class="sm" x="105" y="222" text-anchor="middle">기존 (회사) · 이름 · 리소스</text>
 
   <path class="e" d="M190 68H318" marker-end="url(#ar2)"/><text class="sm" x="254" y="58" text-anchor="middle">link_map_scene_id</text>
-  <path class="e" d="M520 68H688" marker-end="url(#ar2)"/><text class="sm" x="604" y="58" text-anchor="middle">link_story_resource_list_id</text>
+  <path class="e" d="M520 80C610 80 640 150 700 168" marker-end="url(#ar2)"/><text class="sm" x="612" y="104" text-anchor="middle">place_json</text>
   <path class="e" d="M392 40C392 10 448 10 448 38" marker-end="url(#ar2)"/><text class="sm" x="462" y="22">link_prev_map_scene_id (이어가기)</text>
   <path class="e" d="M420 96V148" marker-end="url(#ar2)"/><text class="sm" x="428" y="126">scene_json</text>
-  <path class="e" d="M775 170V98" marker-end="url(#ar2)"/><text class="sm" x="767" y="138" text-anchor="end">link_story_resource_list_id</text>
+  <path class="e" d="M775 170V98" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="767" y="124" text-anchor="end">story_resource_list_id</text>
   <path class="e" d="M520 198H688" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="604" y="190" text-anchor="middle">place_id</text>
   <path class="e" d="M320 208H192" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="256" y="200" text-anchor="middle">actor_id</text>
 
-  <text class="sm" x="20" y="360">실선: 엑셀의 link 열 · 점선: JSON 안의 id 참조 · 점선 상자: 회사 기존 테이블</text>
+  <text class="sm" x="20" y="360">실선: 엑셀 열의 참조 · 점선: JSON 안의 id 참조 · 점선 상자: 회사 기존 테이블</text>
 </svg>
 </div>
 <div class="tablewrap"><table>
@@ -516,11 +521,11 @@ th{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
-<td><code>map_place</code></td>
-<td>엑셀</td>
-<td>장소 마크 하나</td>
-<td><code>id</code></td>
-<td>기획 (툴)</td>
+<td>장소 JSON</td>
+<td>JSON</td>
+<td>배경 하나의 장소 마크 목록</td>
+<td>파일 = 배경 하나</td>
+<td>툴이 생성</td>
 </tr>
 <tr>
 <td><code>map_scene</code></td>
@@ -552,58 +557,62 @@ th{white-space:nowrap}
 </tr>
 </tbody>
 </table></div>
-<h3>map_place (장소 마크)</h3>
+<h3>장소 JSON (배경마다 1개)</h3>
+<p>배경 하나의 장소 마크를 모은 파일이다. 같은 배경을 쓰는 모든 연출이 이 파일 하나를 함께 쓴다. 툴이 화면에서 배치한 결과를 그대로 쓴다.</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
-<th>열</th>
+<th>필드</th>
 <th>형식</th>
-<th>예</th>
+<th>기본값</th>
 <th>설명</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>id</code></td>
+<td><code>version</code></td>
 <td>int</td>
-<td>1002</td>
+<td>(필수)</td>
+<td>형식 버전. 지금은 1</td>
+</tr>
+<tr>
+<td><code>story_resource_list_id</code></td>
+<td>int</td>
+<td>(필수)</td>
+<td>배경 리소스. 기존 <code>story_resource_list</code>의 id</td>
+</tr>
+<tr>
+<td><code>places</code></td>
+<td>목록</td>
+<td>빈 목록</td>
+<td>장소 마크 목록</td>
+</tr>
+<tr>
+<td><code>places[].id</code></td>
+<td>int</td>
+<td>(필수)</td>
 <td>장소 id. 전체에서 유일</td>
 </tr>
 <tr>
-<td><code>link_story_resource_list_id</code></td>
-<td>int</td>
-<td>10</td>
-<td>어느 배경의 장소인지</td>
-</tr>
-<tr>
-<td><code>name_key</code></td>
+<td><code>places[].name_key</code></td>
 <td>string</td>
-<td><code>MAP_PLACE_1002</code></td>
-<td>장소 이름 문자열 키</td>
+<td>(없음)</td>
+<td>장소 이름 문자열 키. 없으면 이름 없는 장소다(R-58)</td>
 </tr>
 <tr>
-<td><code>x</code></td>
+<td><code>places[].x</code>, <code>y</code></td>
 <td>int</td>
-<td>1597</td>
-<td>배경 px (0~2048). 툴에서 끌거나 숫자로 입력</td>
+<td>(필수)</td>
+<td>배경 px (0~2048, 0~1152)</td>
 </tr>
 <tr>
-<td><code>y</code></td>
-<td>int</td>
-<td>346</td>
-<td>배경 px (0~1152)</td>
-</tr>
-<tr>
-<td><code>memo</code></td>
+<td><code>places[].memo</code></td>
 <td>string</td>
-<td>관측소</td>
-<td>기획 메모</td>
+<td>(없음)</td>
+<td>기획 메모 (게임에서 안 씀)</td>
 </tr>
 </tbody>
 </table></div>
-<ul>
-<li>배경 리소스 하나에 장소 여러 개가 붙는 관계다. 기존 테이블(<code>story_resource_list</code>)을 고치지 않도록 장소 행이 배경 리소스 id를 본다.</li>
-</ul>
 <h3>map_scene (연출 머리)</h3>
 <div class="tablewrap"><table>
 <thead>
@@ -622,10 +631,10 @@ th{white-space:nowrap}
 <td>연출 id. 스토리 행의 <code>link_map_scene_id</code>가 이 값을 가리킨다</td>
 </tr>
 <tr>
-<td><code>link_story_resource_list_id</code></td>
-<td>int</td>
-<td>10</td>
-<td>배경. 이어가기면 앞 연출과 같아야 한다(R-43)</td>
+<td><code>place_json</code></td>
+<td>string</td>
+<td><code>Map/Place/map_place_10</code></td>
+<td>장소 JSON 리소스 경로. 배경도 여기서 정해진다. 이어가기면 앞 연출과 같아야 한다(R-43)</td>
 </tr>
 <tr>
 <td><code>link_prev_map_scene_id</code></td>
@@ -705,7 +714,7 @@ th{white-space:nowrap}
 <td><code>places[].place_id</code></td>
 <td>int</td>
 <td>(필수)</td>
-<td><code>map_place.id</code>. 연출의 배경에 속한 장소여야 한다</td>
+<td>이 연출의 장소 JSON에 있는 장소 id. 이름 없는 장소는 적지 않는다</td>
 </tr>
 <tr>
 <td><code>places[].visible</code></td>
@@ -859,12 +868,12 @@ th{white-space:nowrap}
 <td>회사 테이블은 그룹 id를 쓰지 않고 행마다 id가 필요하다. 점 하나마다 id를 붙여 엑셀에 늘어놓으면 손으로 관리할 수 없다. 툴이 통째로 쓰고 읽는 데이터라 JSON이 맞다</td>
 </tr>
 <tr>
-<td>배경·장소는 엑셀로</td>
-<td>장소 이름은 문자열 키로 번역되고, 여러 연출이 같은 장소 id를 가리킨다. 사람이 표로 보고 고칠 일이 있다</td>
+<td>장소는 배경마다 JSON으로</td>
+<td>장소는 툴 화면에서 배치한다. 툴이 파일을 바로 쓰므로 엑셀에 옮겨 붙이는 단계가 없다. 여러 연출이 같은 장소 id를 가리키므로 배경마다 한 파일에 모은다</td>
 </tr>
 <tr>
 <td>연출 머리(<code>map_scene</code>)를 엑셀에</td>
-<td>스토리 행이 <code>link_map_scene_id</code>로 가리킬 id가 테이블에 있어야 한다. 배경과 앞 연출도 다른 행을 가리키는 연결이라 <code>link_*_id</code>로 둔다</td>
+<td>스토리 행이 <code>link_map_scene_id</code>로 가리킬 id가 테이블에 있어야 한다. 앞 연출도 다른 행을 가리키는 연결이라 <code>link_prev_map_scene_id</code>로 둔다</td>
 </tr>
 <tr>
 <td>장소 보임을 연출 JSON에</td>
@@ -1141,83 +1150,27 @@ th{white-space:nowrap}
 </table></div>
 <h3>예시 데이터</h3>
 <p>장면 1·2를 실제 형식으로 적은 것이다. 프로토타입의 「데이터」 탭에서 같은 내용을 볼 수 있다.</p>
-<p><code>map_place</code>:</p>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>id</th>
-<th>link_story_resource_list_id</th>
-<th>name_key</th>
-<th class="num">x</th>
-<th class="num">y</th>
-<th>memo</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1001</td>
-<td>10</td>
-<td>MAP_PLACE_1001</td>
-<td class="num">205</td>
-<td class="num">852</td>
-<td>정거장</td>
-</tr>
-<tr>
-<td>1002</td>
-<td>10</td>
-<td>MAP_PLACE_1002</td>
-<td class="num">1597</td>
-<td class="num">346</td>
-<td>관측소</td>
-</tr>
-<tr>
-<td>1003</td>
-<td>10</td>
-<td>MAP_PLACE_1003</td>
-<td class="num">287</td>
-<td class="num">346</td>
-<td>북문</td>
-</tr>
-<tr>
-<td>1004</td>
-<td>10</td>
-<td>MAP_PLACE_1004</td>
-<td class="num">1270</td>
-<td class="num">576</td>
-<td>광장</td>
-</tr>
-<tr>
-<td>1005</td>
-<td>10</td>
-<td>MAP_PLACE_1005</td>
-<td class="num">1802</td>
-<td class="num">880</td>
-<td>숲</td>
-</tr>
-<tr>
-<td>1006</td>
-<td>10</td>
-<td>MAP_PLACE_1006</td>
-<td class="num">1720</td>
-<td class="num">599</td>
-<td>항구</td>
-</tr>
-<tr>
-<td>1007</td>
-<td>10</td>
-<td>MAP_PLACE_1007</td>
-<td class="num">922</td>
-<td class="num">184</td>
-<td>탑</td>
-</tr>
-</tbody>
-</table></div>
+<p><code>map_place_10.json</code> (장소 JSON):</p>
+<pre><code class="language-json">{
+  &quot;version&quot;: 1,
+  &quot;story_resource_list_id&quot;: 10,
+  &quot;places&quot;: [
+    { &quot;id&quot;: 1001, &quot;name_key&quot;: &quot;MAP_PLACE_1001&quot;, &quot;x&quot;: 205, &quot;y&quot;: 852, &quot;memo&quot;: &quot;정거장&quot; },
+    { &quot;id&quot;: 1002, &quot;name_key&quot;: &quot;MAP_PLACE_1002&quot;, &quot;x&quot;: 1597, &quot;y&quot;: 346, &quot;memo&quot;: &quot;관측소&quot; },
+    { &quot;id&quot;: 1003, &quot;name_key&quot;: &quot;MAP_PLACE_1003&quot;, &quot;x&quot;: 287, &quot;y&quot;: 346, &quot;memo&quot;: &quot;북문&quot; },
+    { &quot;id&quot;: 1004, &quot;name_key&quot;: &quot;MAP_PLACE_1004&quot;, &quot;x&quot;: 1270, &quot;y&quot;: 576, &quot;memo&quot;: &quot;광장&quot; },
+    { &quot;id&quot;: 1005, &quot;name_key&quot;: &quot;MAP_PLACE_1005&quot;, &quot;x&quot;: 1802, &quot;y&quot;: 880, &quot;memo&quot;: &quot;숲&quot; },
+    { &quot;id&quot;: 1006, &quot;name_key&quot;: &quot;MAP_PLACE_1006&quot;, &quot;x&quot;: 1720, &quot;y&quot;: 599, &quot;memo&quot;: &quot;항구&quot; },
+    { &quot;id&quot;: 1007, &quot;name_key&quot;: &quot;MAP_PLACE_1007&quot;, &quot;x&quot;: 922, &quot;y&quot;: 184, &quot;memo&quot;: &quot;탑&quot; }
+  ]
+}
+</code></pre>
 <p><code>map_scene</code>:</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
 <th>id</th>
-<th>link_story_resource_list_id</th>
+<th>place_json</th>
 <th>link_prev_map_scene_id</th>
 <th>scene_json</th>
 <th>tool_folder</th>
@@ -1228,7 +1181,7 @@ th{white-space:nowrap}
 <tbody>
 <tr>
 <td>30001</td>
-<td>10</td>
+<td>Map/Place/map_place_10</td>
 <td></td>
 <td>Map/Scene/map_scene_30001</td>
 <td>C03_MOVE</td>
@@ -1237,7 +1190,7 @@ th{white-space:nowrap}
 </tr>
 <tr>
 <td>30002</td>
-<td>10</td>
+<td>Map/Place/map_place_10</td>
 <td>30001</td>
 <td>Map/Scene/map_scene_30002</td>
 <td>C03_MOVE</td>
@@ -1370,7 +1323,7 @@ th{white-space:nowrap}
 <td></td>
 </tr>
 <tr data-s="ok">
-<td>웨이포인트·장소 보임이 다른 배경의 장소를 가리킴</td>
+<td>웨이포인트·장소 보임이 연출의 장소 JSON에 없는 장소를 가리킴</td>
 <td>툴이 저장 전에 막는다. 게임에서는 그 점·마크를 무시하고 로그를 남긴다.</td>
 <td></td>
 </tr>
@@ -1469,7 +1422,7 @@ th{white-space:nowrap}
 </tr>
 <tr>
 <td>테이블 규칙</td>
-<td>새 테이블 2개</td>
+<td>새 테이블 1개 (<code>map_scene</code>)</td>
 <td>행마다 <code>id</code>, 참조는 <code>link_*_id</code>, 소문자 + 밑줄, 그룹 없음</td>
 <td>테이블 이름 규칙, id 숫자 범위, bool·열거값 표기(TRUE/FALSE인지 1/0인지), 빈 칸 처리</td>
 <td>「부록 A 데이터 설계」 전체</td>
@@ -1477,13 +1430,13 @@ th{white-space:nowrap}
 <tr>
 <td>부모-자식 연결</td>
 <td>배경 리소스 1 : 장소 N</td>
-<td>장소 행이 <code>link_story_resource_list_id</code>로 배경 리소스를 본다. 기존 테이블은 고치지 않는다</td>
-<td>자식이 부모 id를 보는 이 방식이 회사 규칙에 맞는지</td>
-<td><code>map_place</code></td>
+<td>장소 JSON이 <code>story_resource_list_id</code>로 배경 리소스를 본다. 기존 테이블은 고치지 않는다</td>
+<td>이 방식이 회사 규칙에 맞는지</td>
+<td>장소 JSON</td>
 </tr>
 <tr>
-<td>연출 JSON</td>
-<td>연출 1건 = 파일 1개</td>
+<td>연출 JSON, 장소 JSON</td>
+<td>연출 1건 = 파일 1개, 배경 1개 = 장소 파일 1개</td>
 <td>리소스 경로로 불러온다</td>
 <td>기존 연출 JSON의 저장 위치, 이름 규칙, 불러오는 방법. 엑셀 행에서 JSON을 가리키는 기존 방식</td>
 <td><code>map_scene.scene_json</code></td>
@@ -1493,7 +1446,7 @@ th{white-space:nowrap}
 <td>맵 배경 이미지(2048×1152)</td>
 <td>기존 <code>story_resource_list</code>에 등록하고 그 id로 가리킨다</td>
 <td>테이블 열 구성, 맵 배경을 다른 스토리 배경과 구분하는 방법</td>
-<td><code>link_story_resource_list_id</code> (<code>map_place</code>, <code>map_scene</code>)</td>
+<td>장소 JSON <code>story_resource_list_id</code></td>
 </tr>
 <tr>
 <td>사운드</td>
@@ -1544,8 +1497,8 @@ th{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
-<td><code>map_place</code></td>
-<td>테이블</td>
+<td><code>place_json</code>, 장소 JSON 경로</td>
+<td>열, 리소스 경로</td>
 <td></td>
 </tr>
 <tr>
@@ -1554,8 +1507,8 @@ th{white-space:nowrap}
 <td></td>
 </tr>
 <tr>
-<td><code>story_resource_list</code>, <code>link_story_resource_list_id</code></td>
-<td>기존 테이블, 열</td>
+<td><code>story_resource_list</code>, <code>story_resource_list_id</code></td>
+<td>기존 테이블, JSON 필드</td>
 <td></td>
 </tr>
 <tr>
@@ -2021,7 +1974,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">T-12</td>
-<td>결과를 「부록 A 데이터 설계」 형식(연출 JSON + 엑셀 행)으로 저장·내보내기 한다.</td>
+<td>결과를 「부록 A 데이터 설계」 형식(연출 JSON, 장소 JSON, 엑셀 행)으로 저장·내보내기 한다.</td>
 
 </tr>
 </tbody>
@@ -2039,6 +1992,11 @@ th{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
+<td>v0.26</td>
+<td>2026-11-22</td>
+<td>장소를 엑셀(<code>map_place</code>)에서 배경별 장소 JSON으로 옮김. <code>map_scene</code>은 <code>place_json</code>으로 장소 JSON을 가리키고 배경도 거기서 정해진다. 장소 이름은 선택(R-58, 이름 없으면 게임에 안 보이는 기준점). 새 엑셀 1개</td>
+</tr>
+<tr>
 <td>v0.25</td>
 <td>2026-11-22</td>
 <td>설정 테이블(<code>map_config</code>)과 설정 키 삭제. UI 크기 값과 그 규칙(R-55, R-57, F-13)은 UI 팀 몫이라 삭제, 툴 값은 툴 기획서 본문 숫자로. 남은 시간 값(400·1000·300ms, 20단)은 규칙에 숫자로. 부록 B는 문자열·리소스 키만</td>
@@ -2047,11 +2005,6 @@ th{white-space:nowrap}
 <td>v0.24</td>
 <td>2026-11-22</td>
 <td>배경 테이블(<code>map_background</code>) 삭제. 배경은 기존 <code>story_resource_list</code> id로 가리킨다(<code>link_story_resource_list_id</code>). 새 엑셀 4개 → 3개</td>
-</tr>
-<tr>
-<td>v0.23</td>
-<td>2026-11-22</td>
-<td>속도 프리셋 테이블(<code>map_speed_preset</code>) 삭제. 프리셋은 코드 상수(F-05), 연출 JSON은 <code>speed</code> 열거값(<code>WALK</code>/<code>RUN</code>/<code>FAST</code>). 엑셀 5개 → 4개</td>
 </tr>
 </tbody>
 </table></div></section>

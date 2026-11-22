@@ -155,7 +155,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.25</span>
+    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.26</span>
     <h1>맵 핀 이동 연출</h1>
     <p>세 탭이 같은 데이터를 봅니다. <b>스토리 시연</b>은 스토리 행을 따라 맵이 열리고 이어지고 닫히는 과정을, <b>편집 툴</b>은 기획자가 연출을 만드는 조작을, <b>데이터</b>는 저장되는 엑셀 행과 연출 JSON을 보여줍니다. 배경, 핀, 장소 이름, 대사는 모두 자리표시입니다.</p>
   </header>
@@ -301,7 +301,7 @@ code{font-family:var(--f-mono);font-size:.92em}
         <div id="placetab" hidden style="display:grid;gap:10px">
           <div class="chips" id="pchips"></div>
           <div class="form">
-            <label for="p-name">이름(원문)</label><input type="text" id="p-name" placeholder="장소 이름">
+            <label for="p-name">이름(원문)</label><input type="text" id="p-name" placeholder="비우면 기준점 (게임에 안 보임)">
             <label for="p-x">위치 (배경 px)</label><div class="pair"><input type="number" id="p-x" min="0" step="1" aria-label="X"><input type="number" id="p-y" min="0" step="1" aria-label="Y"></div>
             <label for="p-mode">이 연출에서</label><select id="p-mode"></select>
           </div>
@@ -329,7 +329,7 @@ code{font-family:var(--f-mono);font-size:.92em}
       <h2>연출 고르기</h2>
       <div class="chips" id="dscenes"></div>
     </div>
-    <p class="note">저장 형식은 기획서 「데이터 설계」와 같습니다. 툴이 만드는 값(핀, 경로 점, 장소 보임)은 연출 1건당 JSON 1개, 다른 테이블과 이어지는 값은 엑셀 행입니다. 이름은 모두 자리표시이고 회사 규칙에 맞춰 바꿉니다. <span class="badge">검증필요</span> <span class="badge ok" id="d-badge">저장 가능</span></p>
+    <p class="note">저장 형식은 기획서 「데이터 설계」와 같습니다. 장소는 배경마다 장소 JSON 1개, 핀·경로 점·장소 보임은 연출마다 연출 JSON 1개, 스토리 테이블이 가리키는 연출 머리만 엑셀 행입니다. 이름은 모두 자리표시이고 회사 규칙에 맞춰 바꿉니다. <span class="badge">검증필요</span> <span class="badge ok" id="d-badge">저장 가능</span></p>
     <div class="datagrid">
       <div>
         <h3>연출 JSON <code id="d-jname"></code> <button class="btn sm" data-copy="d-json" type="button">복사</button></h3>
@@ -340,6 +340,10 @@ code{font-family:var(--f-mono);font-size:.92em}
         </div>
       </div>
       <div style="display:grid;gap:16px;align-content:start">
+        <div>
+          <h3>장소 JSON <code id="d-pjname"></code> <button class="btn sm" data-copy="d-pjson" type="button">복사</button></h3>
+          <textarea class="code" id="d-pjson" spellcheck="false" readonly aria-label="장소 JSON" style="min-height:220px"></textarea>
+        </div>
         <div>
           <h3>엑셀 행 (탭 구분) <button class="btn sm" data-copy="d-tsv" type="button">복사</button></h3>
           <textarea class="code" id="d-tsv" spellcheck="false" readonly aria-label="엑셀 행" style="min-height:250px"></textarea>
@@ -496,6 +500,7 @@ function placeState(sc,depth){
 }
 function endVisible(sc,depth){var st=placeState(sc,depth),o={};Object.keys(st).forEach(function(id){if(st[id]!=='HIDE')o[id]=1;});return o;}
 function placeAlpha(sc,pl,mt,bgA){
+  if(!pl.name.trim())return 0; /* 이름 없는 장소는 게임에 안 보임 (R-58) */
   var m=placeState(sc)[pl.id];if(!m||m==='HIDE')return 0;
   if(m==='NEW')return seamless()?clamp(mt/CFG.FADE,0,1):bgA;
   return bgA;
@@ -564,10 +569,10 @@ function drawStoryBg(){ /* 원래 스토리 배경 (자리표시). 화면 전체
 }
 function drawPlace(pl,a,hl){
   if(a<=0)return;
-  var f=pfs(),x=pl.x/BG.w*W,y=pl.y/BG.h*H;
+  var f=pfs(),x=pl.x/BG.w*W,y=pl.y/BG.h*H,named=!!pl.name.trim();
   ctx.save();ctx.globalAlpha=a;
-  ctx.fillStyle='#f4f1e8';ctx.strokeStyle='rgba(8,10,16,.9)';ctx.lineWidth=2;
-  ctx.beginPath();ctx.arc(x,y,Math.max(3.5,U*0.004),0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.fillStyle='#f4f1e8';ctx.strokeStyle=named?'rgba(8,10,16,.9)':'#f4f1e8';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(x,y,Math.max(3.5,U*0.004),0,Math.PI*2);if(named)ctx.fill();ctx.stroke(); /* 이름 없는 장소: 툴에서만 속이 빈 점 */
   ctx.font='700 '+f+'px "Noto Sans KR",sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';
   var ty=y-pinR()-6;
   ctx.lineJoin='round';ctx.lineWidth=Math.max(3,f*0.28);ctx.strokeStyle='rgba(8,10,16,.85)';ctx.strokeText(pl.name,x,ty);
@@ -938,7 +943,7 @@ function syncForm(){
     inf.className='info';
   }
   var pst=placeState(sc),pb=$('pchips');pb.innerHTML='';
-  state.places.forEach(function(pl,i){var m=pst[pl.id];pb.appendChild(chipBtn(pl.name+(!m||m==='HIDE'?' · 안 보임':(m==='NEW'?' · 새로 보임':'')),null,i===psel,function(){psel=i;syncForm();}));});
+  state.places.forEach(function(pl,i){var m=pst[pl.id];pb.appendChild(chipBtn((pl.name.trim()?pl.name:'(이름 없음) '+pl.id)+(!pl.name.trim()?' · 기준점':(!m||m==='HIDE'?' · 안 보임':(m==='NEW'?' · 새로 보임':''))),null,i===psel,function(){psel=i;syncForm();}));});
   var pl=state.places[psel],own=pl&&sc.places[pl.id];
   $('p-name').value=pl?pl.name:'';
   syncPlaceXY();
@@ -977,8 +982,7 @@ function checks(sc){
   });
   if(sch.cycle)add('err','CK-08','출발 조건이 서로를 기다리는 핀이 있습니다.');
   state.places.forEach(function(pl){
-    if(!pl.name.trim())add('err','CK-03','이름이 없는 장소가 있습니다.');
-    if(pl.x<0||pl.y<0||pl.x>BG.w||pl.y>BG.h)add('err','CK-01','장소 '+pl.name+'이(가) 배경 밖에 있습니다.');});
+    if(pl.x<0||pl.y<0||pl.x>BG.w||pl.y>BG.h)add('err','CK-01','장소 '+(pl.name||pl.id)+'이(가) 배경 밖에 있습니다.');});
   return out;
 }
 function syncChecks(){
@@ -1287,17 +1291,20 @@ function fromJson(text){ /* 연출 JSON 불러오기. 생략한 필드는 기본
 function tsvText(sc){ /* 엑셀에 붙여 넣는 탭 구분 행 (툴 D-03, D-08) */
   var L=[],T='\t';
   function row(a){L.push(a.map(function(v){return v===null||v===undefined?'':v;}).join(T));}
-  L.push('# map_scene');row(['id','link_story_resource_list_id','link_prev_map_scene_id','scene_json','tool_folder','sort_order','memo']);
-  row([sc.id,BG.id,sc.prev,'Map/Scene/map_scene_'+sc.id,'C03_MOVE',state.scenes.indexOf(sc)+1,sc.memo]);
-  L.push('','# map_place');row(['id','link_story_resource_list_id','name_key','x','y','memo']);
-  state.places.forEach(function(pl){row([pl.id,BG.id,'MAP_PLACE_'+pl.id,pl.x,pl.y,pl.name]);});
+  L.push('# map_scene');row(['id','place_json','link_prev_map_scene_id','scene_json','tool_folder','sort_order','memo']);
+  row([sc.id,'Map/Place/map_place_'+BG.id,sc.prev,'Map/Scene/map_scene_'+sc.id,'C03_MOVE',state.scenes.indexOf(sc)+1,sc.memo]);
   L.push('','# 스토리 테이블에 더하는 열 (예시)');row(['id','link_map_scene_id','map_close']);
   buildRows().forEach(function(r){if(r.scene!==undefined||r.close)row([r.id,r.scene!==undefined?state.scenes[r.scene].id:'',r.close?'TRUE':'']);});
   return L.join('\n');
 }
+function placeJsonText(){ /* 배경마다 장소 JSON 1개 (툴 D-02). 이름 없는 장소는 name_key를 적지 않는다 */
+  var L=['{','  "version": 1,','  "story_resource_list_id": '+BG.id+',','  "places": ['];
+  state.places.forEach(function(pl,i){var o={id:pl.id};if(pl.name.trim())o.name_key='MAP_PLACE_'+pl.id;o.x=pl.x;o.y=pl.y;if(pl.name.trim())o.memo=pl.name;L.push('    '+inl(o)+(i<state.places.length-1?',':''));});
+  L.push('  ]','}');return L.join('\n');
+}
 function strText(sc){ /* 문자열 추가 목록 (툴 D-04) */
   var L=['key\t원문'];
-  state.places.forEach(function(pl){L.push('MAP_PLACE_'+pl.id+'\t'+pl.name);});
+  state.places.forEach(function(pl){if(pl.name.trim())L.push('MAP_PLACE_'+pl.id+'\t'+pl.name);});
   sc.pins.forEach(function(p){if(p.label)L.push(labelKey(sc,p)+'\t'+p.label);});
   L.push('MAP_LOG_TAG\t위치 정보 확인');
   return L.join('\n');
@@ -1306,7 +1313,7 @@ function dsay(text,err){var m=$('dmsg');m.textContent=text;m.className='msg'+(er
 function syncData(){
   syncScenes();var sc=S();
   $('d-jname').textContent='map_scene_'+sc.id+'.json';
-  $('d-json').value=jsonText(sc);$('d-tsv').value=tsvText(sc);$('d-str').value=strText(sc);
+  $('d-json').value=jsonText(sc);$('d-pjson').value=placeJsonText();$('d-pjname').textContent='map_place_'+BG.id+'.json';$('d-tsv').value=tsvText(sc);$('d-str').value=strText(sc);
   var c=checks(sc),ne=c.filter(function(x){return x.lv==='err';}).length,bd=$('d-badge');
   bd.textContent=ne?'오류 '+ne+'건 · 저장 막힘':'검사 통과 · 저장 가능';bd.className='badge '+(ne?'crit':'ok');
 }
