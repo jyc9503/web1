@@ -155,7 +155,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.23</span>
+    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.24</span>
     <h1>맵 핀 이동 연출</h1>
     <p>세 탭이 같은 데이터를 봅니다. <b>스토리 시연</b>은 스토리 행을 따라 맵이 열리고 이어지고 닫히는 과정을, <b>편집 툴</b>은 기획자가 연출을 만드는 조작을, <b>데이터</b>는 저장되는 엑셀 행과 연출 JSON을 보여줍니다. 배경, 핀, 장소 이름, 대사는 모두 자리표시입니다.</p>
   </header>
@@ -1287,12 +1287,10 @@ function fromJson(text){ /* 연출 JSON 불러오기. 생략한 필드는 기본
 function tsvText(sc){ /* 엑셀에 붙여 넣는 탭 구분 행 (툴 D-03, D-08) */
   var L=[],T='\t';
   function row(a){L.push(a.map(function(v){return v===null||v===undefined?'':v;}).join(T));}
-  L.push('# map_scene');row(['id','link_map_background_id','link_prev_map_scene_id','scene_json','tool_folder','sort_order','memo']);
+  L.push('# map_scene');row(['id','link_story_resource_list_id','link_prev_map_scene_id','scene_json','tool_folder','sort_order','memo']);
   row([sc.id,BG.id,sc.prev,'Map/Scene/map_scene_'+sc.id,'C03_MOVE',state.scenes.indexOf(sc)+1,sc.memo]);
-  L.push('','# map_place');row(['id','link_map_background_id','name_key','x','y','memo']);
+  L.push('','# map_place');row(['id','link_story_resource_list_id','name_key','x','y','memo']);
   state.places.forEach(function(pl){row([pl.id,BG.id,'MAP_PLACE_'+pl.id,pl.x,pl.y,pl.name]);});
-  L.push('','# map_background (2048×1152 고정)');row(['id','bg_resource','memo']);
-  row([BG.id,BG.res,BG.memo]);
   L.push('','# 스토리 테이블에 더하는 열 (예시)');row(['id','link_map_scene_id','map_close']);
   buildRows().forEach(function(r){if(r.scene!==undefined||r.close)row([r.id,r.scene!==undefined?state.scenes[r.scene].id:'',r.close?'TRUE':'']);});
   return L.join('\n');

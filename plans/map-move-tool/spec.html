@@ -167,10 +167,10 @@ th{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기, 데이터 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.23 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.24 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">23건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">21건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -179,7 +179,7 @@ th{white-space:nowrap}
 <li><strong>사용자</strong>: 스토리 연출을 만드는 기획자 여러 명. 같은 배경과 장소를 여러 사람이 나눠 쓰며, 회사에서는 파일 잠금(락)과 기존 협업 규칙(id, 이름)으로 충돌을 막는다.</li>
 <li><strong>대상 기기</strong>: PC(마우스와 키보드). 프로토타입이 폰 터치로도 조작되는 것은 기획 검토를 폰에서 하기 위한 것이고, 툴 요구가 아니다. 터치 기기 지원이 필요해지면 더블탭과 길게 누르기를 같은 규칙으로 쓴다. <code>검증필요</code></li>
 <li><strong>원칙</strong>: 툴에서 보는 미리보기와 게임 화면이 같아야 한다. 같은 계산식(연출 기획서 「부록 C 계산 규칙」)을 쓴다.</li>
-<li><strong>결과물</strong>: 연출 1건당 JSON 1개와 엑셀 테이블 행(<code>map_scene</code>, <code>map_place</code>, <code>map_background</code>). 형식은 연출 기획서 「부록 A 데이터 설계」에 있다.</li>
+<li><strong>결과물</strong>: 연출 1건당 JSON 1개와 엑셀 테이블 행(<code>map_scene</code>, <code>map_place</code>). 배경은 기존 <code>story_resource_list</code>에서 고른다. 형식은 연출 기획서 「부록 A 데이터 설계」에 있다.</li>
 <li><strong>단위</strong>: 툴 화면의 좌표·길이는 배경 px, 시간은 ms, 속도는 px/초로 표시한다.</li>
 <li>동작 프로토타입(<code>plans/story-map-pin-move/proto/</code>)의 「편집 툴」 탭이 이 문서의 주요 기능을, 「데이터」 탭이 저장 형식을 구현해 두었다.</li>
 <li>기능 전체를 짧게 보려면 연출의 핵심 기획서(<code>plans/story-map-pin-move/core.md</code>)를 먼저 읽는다. 이 문서는 툴 세부를 담은 참고 자료다.</li>
@@ -406,11 +406,6 @@ th{white-space:nowrap}
 <tr data-s="warn">
 <td class="id">S-05</td>
 <td><strong>메모</strong>: 연출마다 한 줄 메모(<code>memo</code>)를 적는다. 목록에 함께 보인다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td class="id">S-06</td>
-<td><strong>배경 등록</strong>: 배경 이미지를 고르면 <code>map_background</code> 행을 만든다. 2048×1152가 아니면 등록하지 않고 알린다(CK-16).</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -728,7 +723,7 @@ th{white-space:nowrap}
 <tbody>
 <tr data-s="warn">
 <td class="id">D-01</td>
-<td><strong>읽기</strong>: 회사 데이터에서 Actor, 문자열, 맵 테이블 4개(연출 기획서 「부록 A 데이터 설계」)와 연출 JSON을 읽는다. Actor, 문자열, 설정은 읽기만 한다.</td>
+<td><strong>읽기</strong>: 회사 데이터에서 Actor, 문자열, <code>story_resource_list</code>(배경), 맵 테이블 3개(연출 기획서 「부록 A 데이터 설계」)와 연출 JSON을 읽는다. Actor, 문자열, 배경, 설정은 읽기만 한다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -750,11 +745,6 @@ th{white-space:nowrap}
 <td class="id">D-05</td>
 <td><strong>id 채번</strong>: 새 연출·장소·배경의 id는 회사 채번 규칙을 따른다. 툴은 이미 있는 id를 막는다.</td>
 <td></td>
-</tr>
-<tr data-s="warn">
-<td class="id">D-06</td>
-<td><strong>배경 등록</strong>: 2048×1152가 아닌 이미지는 등록하지 않는다(CK-16).</td>
-<td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">D-07</td>
@@ -913,7 +903,7 @@ th{white-space:nowrap}
 <tr>
 <td>배경</td>
 <td>배경 목록에서 선택</td>
-<td>엑셀 <code>map_scene.link_map_background_id</code></td>
+<td>엑셀 <code>map_scene.link_story_resource_list_id</code></td>
 <td>필수. 이어가기 연출은 바꿀 수 없음</td>
 </tr>
 <tr>
@@ -1011,7 +1001,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">CK-16</td>
-<td>배경이 2048×1152가 아님</td>
+<td>고른 배경 리소스가 2048×1152가 아님</td>
 <td>배경은 2048×1152여야 합니다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
@@ -1136,7 +1126,7 @@ th{white-space:nowrap}
 </ul>
 <h3>기획자가 정할 것</h3>
 <ul class="check">
-<li><span class="mono">□</span><span>v0.12에서 추가한 제안(V-06, V-07, S-01~S-06, K-07, M-08, D-01~D-07, CK-11, CK-12, CK-16)</span></li>
+<li><span class="mono">□</span><span>v0.12에서 추가한 제안(V-06, V-07, S-01~S-05, K-07, M-08, D-01~D-05, D-07, CK-11, CK-12, CK-16)</span></li>
 </ul>
 </section>
 <section id="s17"><h2><span class="sec">§17</span>변경 이력</h2>
@@ -1151,6 +1141,11 @@ th{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
+<td>v0.24</td>
+<td>2026-11-22</td>
+<td>배경은 기존 <code>story_resource_list</code>에서 고른다. 배경 등록(S-06, D-06) 삭제, D-01·CK-16·속성 패널 저장 위치 수정</td>
+</tr>
+<tr>
 <td>v0.23</td>
 <td>2026-11-22</td>
 <td>속도 프리셋 테이블 삭제에 맞춰 D-01과 속성 패널 저장 위치(<code>pins[].speed</code>) 수정</td>
@@ -1159,11 +1154,6 @@ th{white-space:nowrap}
 <td>v0.22</td>
 <td>2026-11-22</td>
 <td>5차 단순화: 경고 검사 전부 삭제(CK-13~15, CK-17~20, 검사는 오류만), 대사창 영역 가이드(V-05), 조작 안내 관련 규칙(E-06, E-08), 작업 목록, 개요의 목표·품질 문장 삭제. 부록 D~F를 C~E로</td>
-</tr>
-<tr>
-<td>v0.21</td>
-<td>2026-11-21</td>
-<td>핵심 기획서 분리에 맞춰 개요에 안내 한 줄. 내용은 그대로</td>
 </tr>
 </tbody>
 </table></div></section>
