@@ -150,10 +150,9 @@ th{white-space:nowrap}
 <a href="#s11">저장과 검증</a>
 <a href="#s12">부록 A. 속성 패널과 저장 위치</a>
 <a href="#s13">부록 B. 검사 항목</a>
-<a href="#s14">부록 C. PC 단축키</a>
-<a href="#s15">부록 D. 편집 조작 세부</a>
-<a href="#s16">부록 E. 검증·미결 목록</a>
-<a href="#s17">변경 이력</a>
+<a href="#s14">부록 C. 편집 조작 세부</a>
+<a href="#s15">부록 D. 검증·미결 목록</a>
+<a href="#s16">변경 이력</a>
     <div class="legend">
       <span>배지 없음 = 확정, 그대로 구현</span>
       <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
@@ -167,10 +166,10 @@ th{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기, 데이터 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.27 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.28 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">21건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">20건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -178,12 +177,12 @@ th{white-space:nowrap}
 <ul>
 <li><strong>사용자</strong>: 스토리 연출을 만드는 기획자 여러 명. 같은 배경과 장소를 여러 사람이 나눠 쓰며, 회사에서는 파일 잠금(락)과 기존 협업 규칙(id, 이름)으로 충돌을 막는다.</li>
 <li><strong>대상 기기</strong>: PC(마우스와 키보드). 프로토타입이 폰 터치로도 조작되는 것은 기획 검토를 폰에서 하기 위한 것이고, 툴 요구가 아니다. 터치 기기 지원이 필요해지면 더블탭과 길게 누르기를 같은 규칙으로 쓴다. <code>검증필요</code></li>
-<li><strong>원칙</strong>: 툴에서 보는 미리보기와 게임 화면이 같아야 한다. 같은 계산식(연출 기획서 「부록 C 계산 규칙」)을 쓴다.</li>
-<li><strong>결과물</strong>: 연출마다 연출 JSON 1개, 장소 세트마다 장소 JSON 1개, 엑셀 <code>map_scene</code> 행. 배경은 기존 <code>story_resource_list</code>에서 고른다. 형식은 연출 기획서 「부록 A 데이터 설계」에 있다.</li>
+<li><strong>원칙</strong>: 툴에서 보는 미리보기와 게임 화면이 같아야 한다. 같은 결과(연출 기획서 「부록 C 계산 규칙」)를 낸다.</li>
+<li><strong>결과물</strong>: 연출마다 연출 JSON 1개, 장소 세트마다 장소 JSON 1개. 두 JSON은 <code>story_resource_list</code>에 등록한다. 배경도 거기서 고른다. 새 엑셀 테이블은 없다.</li>
 <li><strong>단위</strong>: 툴 화면의 좌표·길이는 배경 px, 시간은 ms, 속도는 px/초로 표시한다.</li>
 <li>동작 프로토타입(<code>plans/story-map-pin-move/proto/</code>)의 「편집 툴」 탭이 이 문서의 주요 기능을, 「데이터」 탭이 저장 형식을 구현해 두었다.</li>
 <li>기능 전체를 짧게 보려면 연출의 핵심 기획서(<code>plans/story-map-pin-move/core.md</code>)를 먼저 읽는다. 이 문서는 툴 세부를 담은 참고 자료다.</li>
-<li>회사 확인, 프로그램실 회의 안건 같은 남은 일은 「부록 E 검증·미결 목록」에 있다.</li>
+<li>회사 확인, 프로그램실 회의 안건 같은 남은 일은 「부록 D 검증·미결 목록」에 있다.</li>
 <li>이 문서는 회사 밖에서 회사 데이터 없이 썼다. 테이블·열·필드 이름은 자리표시다.</li>
 </ul>
 <h3>번호 체계</h3>
@@ -291,7 +290,7 @@ th{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td>연출 목록</td>
-<td>묶음(<code>tool_folder</code>)별 연출 목록, <code>sort_order</code> 순서. 이어가기로 연결된 연출은 들여쓰기로 표시</td>
+<td>연출 목록. 이어가기로 연결된 연출은 들여쓰기로 묶고, 메모(<code>memo</code>)를 함께 보여준다</td>
 <td></td>
 </tr>
 <tr data-s="ok">
@@ -354,12 +353,12 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">V-04</td>
-<td>선택하지 않은 핀의 경로는 흐리게(불투명도 45%) 보여 주어 선택한 핀이 눈에 띄게 한다.</td>
+<td>선택하지 않은 핀의 경로는 흐리게 보여 주어 선택한 핀이 눈에 띄게 한다.</td>
 <td></td>
 </tr>
 <tr data-s="warn">
 <td class="id">V-06</td>
-<td><strong>확대·이동</strong>: 마우스 휠로 25~400% 확대하고, <code>Space</code>+끌기나 가운데 버튼으로 화면을 옮긴다. 「맞춤」은 배경 전체를 보여준다. 확대해도 점·핸들·핀 크기는 그대로다.</td>
+<td><strong>확대·이동</strong>: 마우스 휠로 확대하고, 끌어서 화면을 옮긴다. 「맞춤」은 배경 전체를 보여준다. 확대해도 점·핸들·핀 크기는 그대로다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -371,7 +370,7 @@ th{white-space:nowrap}
 </table></div>
 </section>
 <section id="s4"><h2><span class="sec">§4</span>편집 조작</h2>
-<p><strong>한 번 누르기는 고르기, 더블클릭은 만들기</strong>다. 점과 장소 마크는 더블클릭으로만 생기고, 6px 이상 끌어야 움직인다. 재생 중에 누르면 멈추기만 한다. 누르기 우선순위, 겹칠 때 무엇이 잡히는지 같은 세부 규칙(E-01~E-11)은 「부록 D 편집 조작 세부」에 있다.</p>
+<p><strong>한 번 누르기는 고르기, 더블클릭은 만들기</strong>다. 점과 장소 마크는 더블클릭으로만 생기고, 조금 끌어서는 움직이지 않는다. 재생 중에 누르면 멈추기만 한다. 누르기 우선순위, 겹칠 때 무엇이 잡히는지 같은 세부 규칙(E-01~E-11)은 「부록 C 편집 조작 세부」에 있다.</p>
 </section>
 <section id="s5"><h2><span class="sec">§5</span>연출 관리</h2>
 <div class="tablewrap"><table>
@@ -385,12 +384,12 @@ th{white-space:nowrap}
 <tbody>
 <tr data-s="warn">
 <td class="id">S-01</td>
-<td><strong>새 연출</strong>: 배경을 고르고, 그 배경의 장소 JSON 중 하나를 고르거나 새로 만들면 빈 연출을 만든다. id는 D-05 규칙으로 채우고 사용자가 고칠 수 있다. 묶음(<code>tool_folder</code>)은 지금 보고 있는 묶음을 따른다.</td>
+<td><strong>새 연출</strong>: 배경을 고르고, 그 배경의 장소 JSON 중 하나를 고르거나 새로 만들면 빈 연출을 만든다. 새 JSON은 <code>story_resource_list</code>에 등록한다(D-03).</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">S-02</td>
-<td><strong>연출 복제</strong>: 선택한 연출을 새 id로 복사한다. 이어가기 연결(<code>link_prev_map_scene_id</code>)도 그대로 복사한다.</td>
+<td><strong>연출 복제</strong>: 선택한 연출을 새 id로 복사한다. 이어가기 연결(<code>prev_scene_resource_id</code>)도 그대로 복사한다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -399,13 +398,8 @@ th{white-space:nowrap}
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
-<td class="id">S-04</td>
-<td><strong>목록 순서와 묶음</strong>: 연출을 끌어서 순서를 바꾸면 <code>sort_order</code>를 다시 매긴다. 묶음 이름을 바꾸거나 다른 묶음으로 옮길 수 있다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
 <td class="id">S-05</td>
-<td><strong>메모</strong>: 연출마다 한 줄 메모(<code>memo</code>)를 적는다. 목록에 함께 보인다.</td>
+<td><strong>메모</strong>: 연출마다 한 줄 메모를 적는다. 연출 JSON <code>memo</code>에 저장하고 목록에 함께 보인다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -504,7 +498,7 @@ th{white-space:nowrap}
 <tr data-s="ok">
 <td class="id">P-03</td>
 <td>곡선 (기본)</td>
-<td>점만 찍으면 모든 점을 지나는 부드러운 곡선(Catmull-Rom)이 자동으로 나온다. 모양을 더 잡고 싶은 점에서만 베지어 핸들을 꺼낸다.</td>
+<td>점만 찍으면 모든 점을 지나는 부드러운 곡선이 자동으로 나온다. 모양을 더 잡고 싶은 점에서만 베지어 핸들을 꺼낸다.</td>
 
 </tr>
 <tr data-s="ok">
@@ -522,7 +516,7 @@ th{white-space:nowrap}
 </tbody>
 </table></div>
 <div class="note dev"><p><strong>곡선 방식: 자동 곡선 + 필요한 점만 베지어 핸들</strong></p>
-<p>모든 점에 베지어 핸들을 두면 모양은 정확하지만 점마다 손이 간다. 자동 곡선(Catmull-Rom)은 점만 찍으면 되지만 모양을 세밀하게 잡기 어렵다. 그래서 기본은 자동 곡선으로 빠르게 만들고, 모양이 마음에 들지 않는 점에서만 핸들을 꺼내 다듬는다. 자동 곡선은 내부적으로 핸들을 자동 계산한 베지어와 같으므로(연출 F-02), 핸들을 꺼내는 순간 모양이 바뀌지 않고 그 자리에서 조절이 시작된다.</p></div>
+<p>모든 점에 베지어 핸들을 두면 모양은 정확하지만 점마다 손이 간다. 자동 곡선은 점만 찍으면 되지만 모양을 세밀하게 잡기 어렵다. 그래서 기본은 자동 곡선으로 빠르게 만들고, 모양이 마음에 들지 않는 점에서만 핸들을 꺼내 다듬는다. 자동 곡선은 내부적으로 핸들을 자동 계산한 베지어와 같으므로(연출 F-02), 핸들을 꺼내는 순간 모양이 바뀌지 않고 그 자리에서 조절이 시작된다.</p></div>
 <h3>점 편집</h3>
 <div class="tablewrap"><table>
 <thead>
@@ -543,19 +537,19 @@ th{white-space:nowrap}
 <tr data-s="ok">
 <td class="id">P-07</td>
 <td>점 이동 / 삭제</td>
-<td>점을 끌어서 옮긴다(E-03 문턱). 점을 선택하고 「선택한 점 삭제」 또는 <code>Delete</code>로 지운다.</td>
+<td>점을 끌어서 옮긴다(E-03). 점을 선택하고 「선택한 점 삭제」로 지운다.</td>
 <td></td>
 </tr>
 <tr data-s="tbd">
 <td class="id">P-08</td>
 <td>자유 그리기 단순화</td>
-<td>자유 그리기를 넣을 때만 필요하다. 넣는다면 Douglas-Peucker 방식, 허용 오차 16px.</td>
+<td>자유 그리기를 넣을 때만 필요하다. 넣는다면 그린 선을 점 몇 개로 줄인다.</td>
 <td><span class="badge b-tbd">미정</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">P-09</td>
 <td>장소 마크 스냅</td>
-<td>점을 장소 마크 근처(40px 이내)에 놓으면 마크에 붙는다. 붙은 점은 좌표 대신 장소 id로 저장되어, 장소를 옮기면 경로도 따라간다. 붙은 점은 다이아몬드 모양으로 표시한다. 켜고 끌 수 있다(기본 켬).</td>
+<td>점을 장소 마크 근처에 놓으면 마크에 붙는다. 붙은 점은 좌표 대신 장소 id로 저장되어, 장소를 옮기면 경로도 따라간다. 붙은 점은 다이아몬드 모양으로 표시한다. 켜고 끌 수 있다(기본 켬).</td>
 <td></td>
 </tr>
 <tr data-s="ok">
@@ -612,7 +606,6 @@ th{white-space:nowrap}
 </tr>
 </tbody>
 </table></div>
-<p>PC 단축키(<code>Space</code>, <code>Ctrl+Z</code>, <code>Delete</code>, <code>G</code> 등)는 「부록 C PC 단축키」에 있다. 범위는 프로그램실과 논의해 확정한다.</p>
 </section>
 <section id="s8"><h2><span class="sec">§8</span>장소 마크 편집</h2>
 <div class="tablewrap"><table>
@@ -631,7 +624,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">M-02</td>
-<td>마크를 한 번 눌러 고르고 끌어서 옮긴다(E-03 문턱). 이름을 바꾸고 지운다.</td>
+<td>마크를 한 번 눌러 고르고 끌어서 옮긴다(E-03). 이름을 바꾸고 지운다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
@@ -674,7 +667,7 @@ th{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td class="id">C-01</td>
-<td>「앞 연출에서 이어가기」 버튼. 같은 묶음에서 바로 앞 순번의 연출을 기본으로 추천하고, 목록에서 다른 연출도 고를 수 있다.</td>
+<td>「앞 연출에서 이어가기」 버튼. 목록에서 앞 연출을 고른다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
@@ -684,7 +677,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">C-03</td>
-<td>저장하는 이어가기 정보는 <code>map_scene.link_prev_map_scene_id</code> 하나다.</td>
+<td>저장하는 이어가기 정보는 연출 JSON의 <code>prev_scene_resource_id</code> 하나다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
@@ -699,7 +692,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">C-07</td>
-<td>툴은 스토리 순서를 모르므로, 연출 목록 순서는 묶음 이름과 순번으로 관리한다(예: C03_MOVE의 1, 2). 게임은 순서 정보 없이 "열린 맵"으로 이어가기를 판단한다.</td>
+<td>툴은 스토리 순서를 모르므로, 연출 목록은 이어가기 연결로 묶어 보여준다. 게임은 순서 정보 없이 "열린 맵"으로 이어가기를 판단한다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
@@ -723,7 +716,7 @@ th{white-space:nowrap}
 <tbody>
 <tr data-s="warn">
 <td class="id">D-01</td>
-<td><strong>읽기</strong>: 회사 데이터에서 Actor, 문자열, <code>story_resource_list</code>(배경), 맵 테이블 2개(연출 기획서 「부록 A 데이터 설계」)와 연출 JSON을 읽는다. Actor, 문자열, 배경은 읽기만 한다.</td>
+<td><strong>읽기</strong>: 회사 데이터에서 Actor, 문자열, <code>story_resource_list</code>(배경과 등록된 JSON)와 연출 JSON, 장소 JSON을 읽는다. Actor, 문자열, 배경은 읽기만 한다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -733,7 +726,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="tbd">
 <td class="id">D-03</td>
-<td><strong>엑셀 행 쓰기</strong>: 바뀐 연출 머리(<code>map_scene</code>) 행을 (가) 툴이 엑셀 파일에 직접 쓰거나, (나) 붙여넣기용 탭 구분 행으로 내보낸다. 둘 중 하나로 정한다.</td>
+<td><strong>리소스 등록</strong>: 새로 만든 연출 JSON과 장소 JSON을 <code>story_resource_list</code>에 등록한다. (가) 툴이 직접 쓰거나, (나) 등록할 행을 내보내 사람이 넣는다. 둘 중 하나로 정한다.</td>
 <td><span class="badge b-tbd">미정</span></td>
 </tr>
 <tr data-s="warn">
@@ -743,7 +736,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">D-05</td>
-<td><strong>id 채번</strong>: 새 연출·장소·장소 JSON의 id는 회사 채번 규칙을 따른다. 툴은 이미 있는 id를 막는다.</td>
+<td><strong>id 채번</strong>: 새 연출 JSON·장소 JSON의 등록 id는 회사 채번 규칙을 따른다. 장소 id는 장소 JSON 안에서 가장 큰 번호 + 1이다. 툴은 이미 있는 id를 막는다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
@@ -753,7 +746,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">D-08</td>
-<td><strong>데이터 보기</strong>: 현재 연출의 엑셀 행(탭 구분)과 연출 JSON을 화면에서 보고 복사할 수 있다.</td>
+<td><strong>데이터 보기</strong>: 현재 연출의 연출 JSON, 장소 JSON, 등록할 리소스 행을 화면에서 보고 복사할 수 있다.</td>
 <td></td>
 </tr>
 </tbody>
@@ -775,7 +768,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">T-06</td>
-<td>연출 기획서 「부록 A 데이터 설계」 형식(연출 JSON, 장소 JSON, 엑셀 행)으로 저장하고 불러온다. 「데이터 보기」는 현재 연출의 엑셀 행과 두 JSON을 보여주어 그대로 복사할 수 있다.</td>
+<td>연출 기획서 「부록 A 데이터 설계」 형식(연출 JSON, 장소 JSON)으로 저장하고 불러온다. 「데이터 보기」로 그대로 복사할 수 있다.</td>
 
 </tr>
 <tr data-s="ok">
@@ -903,26 +896,26 @@ th{white-space:nowrap}
 <tr>
 <td>장소 JSON</td>
 <td>배경을 고른 뒤 그 배경의 장소 JSON 목록에서 고르기 / 새로 만들기</td>
-<td>엑셀 <code>map_scene.place_json</code></td>
+<td>JSON <code>place_resource_id</code></td>
 <td>필수. 이어가기 연출은 바꿀 수 없음</td>
 </tr>
 <tr>
 <td>앞 연출</td>
 <td>「앞 연출에서 이어가기」</td>
-<td>엑셀 <code>map_scene.link_prev_map_scene_id</code></td>
+<td>JSON <code>prev_scene_resource_id</code></td>
 <td>일반 연출</td>
 </tr>
 <tr>
-<td>묶음, 순서, 메모</td>
-<td>목록에서 편집</td>
-<td>엑셀 <code>map_scene.tool_folder</code>, <code>sort_order</code>, <code>memo</code></td>
+<td>메모</td>
+<td>글자</td>
+<td>JSON <code>memo</code></td>
 <td>-</td>
 </tr>
 </tbody>
 </table></div>
 </section>
 <section id="s13"><h2><span class="sec">§13</span>부록 B. 검사 항목</h2>
-<p>문구는 예시이고 <code>{ }</code> 안은 실제 값으로 바뀐다. 모두 데이터가 깨지는 경우라 저장을 막는다. 같은 규칙으로 빌드 때 한 번 더 검사한다(「구현·아트·사운드 전달사항」).</p>
+<p>문구는 예시이고 <code>{ }</code> 안은 실제 값으로 바뀐다. 모두 데이터가 깨지는 경우라 저장을 막는다.</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -1002,60 +995,7 @@ th{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s14"><h2><span class="sec">§14</span>부록 C. PC 단축키</h2>
-<p>넣기로 했고, 범위는 프로그램실과 논의해 확정한다. <code>검증필요</code></p>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>키</th>
-<th>동작</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>Space</code></td>
-<td>재생 / 일시정지</td>
-</tr>
-<tr>
-<td><code>Space</code> + 끌기</td>
-<td>캔버스 이동</td>
-</tr>
-<tr>
-<td><code>Alt</code> + 끌기</td>
-<td>점: 장소 마크 스냅을 잠시 끔. 핸들: 한쪽만 움직임</td>
-</tr>
-<tr>
-<td><code>Ctrl+Z</code> / <code>Ctrl+Shift+Z</code></td>
-<td>실행 취소 / 다시 실행</td>
-</tr>
-<tr>
-<td><code>Esc</code></td>
-<td>선택 해제</td>
-</tr>
-<tr>
-<td><code>Delete</code></td>
-<td>선택한 점 삭제</td>
-</tr>
-<tr>
-<td><code>Shift</code> + 더블클릭</td>
-<td>직전 점에서 수평·수직·45° 방향으로 맞춰 찍기</td>
-</tr>
-<tr>
-<td><code>Tab</code></td>
-<td>다음 핀 선택</td>
-</tr>
-<tr>
-<td><code>G</code></td>
-<td>편집 보기 / 게임 보기 전환</td>
-</tr>
-<tr>
-<td><code>Ctrl+S</code></td>
-<td>저장</td>
-</tr>
-</tbody>
-</table></div>
-</section>
-<section id="s15"><h2><span class="sec">§15</span>부록 D. 편집 조작 세부</h2>
+<section id="s14"><h2><span class="sec">§14</span>부록 C. 편집 조작 세부</h2>
 <p>편집 화면에서 "고르려고 눌렀는데 점이 찍히는" 실수를 막는 규칙이다. <strong>한 번 누르기는 선택, 더블클릭은 생성</strong>으로 나눈다. 도구를 바꿀 필요가 없다. 모든 규칙은 프로토타입 「편집 툴」 탭에 구현되어 있다.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -1067,7 +1007,7 @@ th{white-space:nowrap}
 <tbody>
 <tr data-s="ok">
 <td class="id">E-01</td>
-<td><strong>생성은 더블클릭</strong>: 점과 장소 마크는 더블클릭(같은 자리 10px 안에서 350ms 안)으로만 생긴다. 한 번 누르기는 선택만 한다.</td>
+<td><strong>생성은 더블클릭</strong>: 점과 장소 마크는 더블클릭으로만 생긴다. 한 번 누르기는 선택만 한다.</td>
 
 </tr>
 <tr data-s="ok">
@@ -1077,7 +1017,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">E-03</td>
-<td><strong>끌기 문턱</strong>: 6px 이상 움직여야 끌기로 본다. 그보다 작게 움직인 누르기는 선택만 하고, 실행 취소 기록에도 남지 않는다.</td>
+<td><strong>끌기 문턱</strong>: 조금 움직인 것은 끌기로 보지 않는다. 그런 누르기는 선택만 하고, 실행 취소 기록에도 남지 않는다.</td>
 
 </tr>
 <tr data-s="ok">
@@ -1092,7 +1032,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">E-10</td>
-<td><strong>누른 대상으로 편집 전환</strong>: 핀·경로 편집 중 장소를 한 번 누르면 장소 편집으로, 장소 편집 중 핀이나 점을 누르면 핀·경로 편집으로 바뀐다. 장소 위 더블클릭(점 추가)과 구분하려고 350ms 뒤에 바꾼다.</td>
+<td><strong>누른 대상으로 편집 전환</strong>: 핀·경로 편집 중 장소를 한 번 누르면 장소 편집으로, 장소 편집 중 핀이나 점을 누르면 핀·경로 편집으로 바뀐다. 장소 위 더블클릭(점 추가)과 구분되게 바꾼다.</td>
 
 </tr>
 <tr data-s="ok">
@@ -1103,27 +1043,27 @@ th{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s16"><h2><span class="sec">§16</span>부록 E. 검증·미결 목록</h2>
+<section id="s15"><h2><span class="sec">§15</span>부록 D. 검증·미결 목록</h2>
 <h3>회사에서 확인할 것</h3>
 <ul class="check">
 <li><span class="mono">□</span><span>툴 플랫폼(엔진 에디터 확장 / 웹 툴): 회사에서 판단 (T-08)</span></li>
-<li><span class="mono">□</span><span>툴이 읽을 회사 데이터의 위치와 형식: Actor, 문자열, 엑셀 테이블을 내보낸 데이터 (D-01)</span></li>
-<li><span class="mono">□</span><span>연출 JSON을 두는 위치와 이름 규칙 (D-02)</span></li>
+<li><span class="mono">□</span><span>툴이 읽을 회사 데이터의 위치와 형식: Actor, 문자열, <code>story_resource_list</code> (D-01)</span></li>
+<li><span class="mono">□</span><span>연출 JSON과 장소 JSON을 두는 위치 (D-02)</span></li>
 <li><span class="mono">□</span><span>문자열 테이블에 새 키를 넣는 절차 (D-04)</span></li>
 </ul>
 <h3>프로그램실 회의 안건</h3>
 <ul class="check">
-<li><span class="mono">□</span><span>엑셀 행 반영 방식: 직접 쓰기 / 붙여넣기용 행 내보내기 (D-03)</span></li>
-<li><span class="mono">□</span><span>편의 기능 범위: 경로 복사(P-12), 경로 뒤집기(P-13), 이어서 미리보기(C-05), PC 단축키. 넣기로 했고 범위는 프로그램실과 논의</span></li>
+<li><span class="mono">□</span><span>리소스 등록 방식: 툴이 직접 쓰기 / 사람이 등록 (D-03)</span></li>
+<li><span class="mono">□</span><span>편의 기능 범위: 경로 복사(P-12), 경로 뒤집기(P-13), 이어서 미리보기(C-05). 넣기로 했고 범위는 프로그램실과 논의</span></li>
 <li><span class="mono">□</span><span>자유 그리기(P-02): 이번 버전 제외, 회의에서 프로그램실 의견 확인</span></li>
 <li><span class="mono">□</span><span>확대·이동(V-06)의 조작 방식을 회사의 다른 툴과 맞출지</span></li>
 </ul>
 <h3>기획자가 정할 것</h3>
 <ul class="check">
-<li><span class="mono">□</span><span>v0.12에서 추가한 제안(V-06, V-07, S-01~S-05, K-07, M-08, D-01~D-05, D-07, CK-11, CK-12, CK-16)</span></li>
+<li><span class="mono">□</span><span>v0.12에서 추가한 제안(V-06, V-07, S-01~S-03, S-05, K-07, M-08, D-01~D-05, D-07, CK-11, CK-12, CK-16)</span></li>
 </ul>
 </section>
-<section id="s17"><h2><span class="sec">§17</span>변경 이력</h2>
+<section id="s16"><h2><span class="sec">§16</span>변경 이력</h2>
 <p>최근 3개만 적는다. 이전 이력은 <code>decisions.md</code>에 있다.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -1135,6 +1075,11 @@ th{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
+<td>v0.28</td>
+<td>2026-11-22</td>
+<td><code>map_scene</code> 엑셀 삭제에 맞춰 연출 정보를 연출 JSON으로(S-01·S-02·S-05·C-03·C-07·D-01·D-03·D-08·T-06, 속성 패널), S-04 삭제. 조작 세부 수치와 PC 단축키 부록 삭제, 부록 D·E를 C·D로</td>
+</tr>
+<tr>
 <td>v0.27</td>
 <td>2026-11-22</td>
 <td>장소 JSON을 배경별 하나에서 장소 세트별로(S-01, M-03, 속성 패널, CK-06), id 채번 대상에 장소 JSON 추가(D-05)</td>
@@ -1143,11 +1088,6 @@ th{white-space:nowrap}
 <td>v0.26</td>
 <td>2026-11-22</td>
 <td>장소를 배경별 장소 JSON으로(D-02, 속성 패널 저장 위치), 장소 이름 선택(M-05, CK-03 삭제), CK-04·CK-06 문구 수정</td>
-</tr>
-<tr>
-<td>v0.25</td>
-<td>2026-11-22</td>
-<td>설정 테이블 삭제에 맞춰 D-01, CK-11, 속성 패널 기본값 표기 수정</td>
 </tr>
 </tbody>
 </table></div></section>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>맵 핀 이동 연출 · 구현·아트·사운드 전달사항</title>
+<title>맵 핀 이동 연출 · 아트·사운드 전달사항</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
 body{margin:0}
@@ -137,8 +137,7 @@ th{white-space:nowrap}
 <div class="shell">
   <nav class="toc" aria-label="목차">
     <p class="label">목차</p>
-    <a href="#s1">구현 전달사항</a>
-<a href="#s2">아트·사운드 전달사항</a>
+    
     <div class="legend">
       <span>배지 없음 = 확정, 그대로 구현</span>
       <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
@@ -149,101 +148,16 @@ th{white-space:nowrap}
   <main>
     <header class="doc">
       <span class="sample-tag">카오스 제로 나이트메어 · 초안</span>
-      <h1>맵 핀 이동 연출 · 구현·아트·사운드 전달사항</h1>
-      <p class="sub">「스토리 맵 핀 이동 연출」을 만들 때 프로그래머와 아트·사운드 담당에게 전하는 내용. 기획서에서 따로 떼어 냈다.</p>
+      <h1>맵 핀 이동 연출 · 아트·사운드 전달사항</h1>
+      <p class="sub">「스토리 맵 핀 이동 연출」에 필요한 아트·사운드 리소스. 기획서에서 따로 떼어 냈다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.27 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.28 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
-        <div><dt>구현 대상</dt><dd>클라이언트 · UI 아트 · 배경 · 사운드</dd></div>
+        <div><dt>구현 대상</dt><dd>UI 아트 · 배경 · 사운드</dd></div>
         <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">0건</span></dd></div>
       </dl>
     </header>
-    <section id="s1"><h2><span class="sec">§1</span>구현 전달사항</h2>
-<p>프로그래머에게 전하는 제안이다. 더 나은 방법이 있으면 바꿔도 되고, 화면 결과만 연출 기획서 「부록 C 계산 규칙」과 같으면 된다.</p>
-<ul>
-<li><strong>시각 하나로 화면을 계산한다</strong>: "연출 데이터 + 연출 시각 t → 배경 불투명도, 장소별 불투명도, 핀별 위치·불투명도·방향, 궤적 길이"를 돌려주는 함수 하나로 만든다. 탭 완료(연출 R-53), 배속(연출 R-54), 툴의 시간 이동, 로그 다시 재생(연출 R-45), 세이브 복원이 모두 t만 바꾸면 해결된다. 겹침 정렬도 t 하나로 계산하므로 프레임 사이 상태가 없다.</li>
-<li><strong>미리 계산</strong>: 연출을 불러올 때 경로 샘플 점, 구간 길이, 핀별 출발·도착 시각을 한 번 계산해 둔다. 이어가기는 앞 연출을 따라가 시작 상태를 계산한다(연출 F-10).</li>
-<li><strong>궤적은 코드로 그린다</strong>: 리소스 없이 핀 색의 둥근 점선을 그린다.</li>
-<li><strong>미리 불러오기</strong>: 스토리에 들어갈 때 그 스토리 행들이 가리키는 연출의 배경과 핀 아이콘을 미리 불러온다. 재생 순간에 멈칫하지 않게 한다. <code>검증필요</code></li>
-<li><strong>데이터 검사</strong>: 연출 JSON 안의 <code>actor_id</code>, <code>place_id</code>는 엑셀 검사가 닿지 않는다. 툴의 저장 전 검사(편집 툴 기획서 T-07)와 같은 규칙으로 빌드 때 한 번 더 검사하는 스크립트를 둔다. 손으로 고친 JSON도 걸러진다.</li>
-<li><strong>세이브</strong>: 스토리 중간 저장이 있다면 "지금 열린 연출 id" 하나만 저장한다. 복원할 때 그 연출의 최종 상태를 계산해 바로 유지 상태로 띄운다.</li>
-<li><strong>확인용 기능</strong>: 연출 id를 넣으면 스토리 없이 바로 재생하는 개발용 명령이 있으면 기획·QA 확인이 빨라진다.</li>
-<li><strong>로그</strong>: 연출 기획서 「부록 E 예외 처리」의 모든 줄은 연출 id와 핀 번호를 담은 로그를 남긴다.</li>
-</ul>
-</section>
-<section id="s2"><h2><span class="sec">§2</span>아트·사운드 전달사항</h2>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>항목</th>
-<th>내용</th>
-<th>담당</th>
-<th>상태</th>
-</tr>
-</thead>
-<tbody>
-<tr data-s="ok">
-<td>배경 리소스</td>
-<td>2048×1152 고정. 더 큰 원본은 같은 비율로 줄여 넣는다. 장소 이름은 배경에 그리지 않는다(장소 마크가 글자를 올린다)</td>
-<td>배경</td>
-<td></td>
-</tr>
-<tr data-s="warn">
-<td>핀 아이콘</td>
-<td>원형 핀 아이콘. Actor 테이블의 리소스 경로를 쓴다. 함대 등 대상 Actor에도 핀용 아이콘이 있는지 확인</td>
-<td>아트</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td>로그 아이콘</td>
-<td>대사 로그의 맵 연출 줄에 쓰는 전용 아이콘 1종</td>
-<td>UI 아트</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="ok">
-<td>핀 프레임</td>
-<td>원형 흰 링, 이동 중 진행 방향 삼각형</td>
-<td>UI 아트</td>
-<td></td>
-</tr>
-<tr data-s="ok">
-<td>이름표</td>
-<td>핀 아래 알약 모양. 반투명 어두운 바탕</td>
-<td>UI 아트</td>
-<td></td>
-</tr>
-<tr data-s="ok">
-<td>궤적 점선</td>
-<td>핀 색과 같은 색의 둥근 점선. 코드로 그린다</td>
-<td>클라이언트</td>
-<td></td>
-</tr>
-<tr data-s="ok">
-<td>장소 마크</td>
-<td>작은 점 + 장소 이름. 배경 위에서 읽히도록 글자에 어두운 외곽선. 이름표와 모양을 다르게 한다</td>
-<td>UI 아트</td>
-<td></td>
-</tr>
-<tr data-s="warn">
-<td>기본 실루엣 핀</td>
-<td>Actor나 아이콘이 없을 때 쓰는 대체 핀 1종</td>
-<td>UI 아트</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td>핀 색 팔레트</td>
-<td>핀 번호별 기본 색 8개 이상. 이웃한 번호끼리 배경 위에서 확실히 구분되어야 한다(기획자는 색을 고르지 않는다)</td>
-<td>UI 아트</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="warn">
-<td>이동 효과음</td>
-<td>짧은 이동 시작음 1종(1초 이내)</td>
-<td>사운드</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-</tbody>
-</table></div></section>
+    
   </main>
 </div>
 <script>(function(){
