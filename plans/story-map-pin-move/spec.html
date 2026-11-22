@@ -162,7 +162,7 @@ th{white-space:nowrap}
       <h1>스토리 맵 핀 이동 연출</h1>
       <p class="sub">스토리 진행 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 이동하며 "누가 어디서 어디로 갔는지"를 보여주는 연출 기능.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.22 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.23 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>클라이언트 · 편집 툴 · 데이터</dd></div>
         <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">13건</span></dd></div>
@@ -474,7 +474,7 @@ th{white-space:nowrap}
 <section id="s5"><h2><span class="sec">§5</span>부록 A. 데이터 설계</h2>
 <div class="note dev"><p><strong>설계 원칙</strong></p>
 <ul>
-<li><strong>엑셀과 JSON을 나눈다</strong>: 사람이 손으로 고치거나 다른 테이블과 이어지는 것(배경, 장소, 연출 머리, 속도 프리셋, 설정)은 엑셀 테이블에 둔다. 툴이 만드는 것(핀, 경로 점, 장소 보임)은 연출 1건당 JSON 1개에 둔다.</li>
+<li><strong>엑셀과 JSON을 나눈다</strong>: 사람이 손으로 고치거나 다른 테이블과 이어지는 것(배경, 장소, 연출 머리, 설정)은 엑셀 테이블에 둔다. 툴이 만드는 것(핀, 경로 점, 장소 보임)은 연출 1건당 JSON 1개에 둔다.</li>
 <li><strong>회사 테이블 규칙</strong>: 행마다 <code>id</code>, 다른 테이블 참조는 <code>link_*_id</code>, 열 이름은 소문자 + 밑줄, 그룹 id는 쓰지 않는다.</li>
 <li><strong>사람이 읽는 값</strong>: 좌표는 배경 픽셀 정수, 시간은 ms 정수, 글자는 문자열 키, 선택지는 영문 대문자 열거값.</li>
 <li><strong>비워 두면 기본값</strong>: 엑셀은 칸을 비우고, JSON은 필드를 생략하면 기본값을 쓴다.</li>
@@ -482,7 +482,7 @@ th{white-space:nowrap}
 <li>테이블·열·필드 이름과 id 숫자는 모두 자리표시다. <code>검증필요</code></li>
 </ul></div>
 <h3>구조</h3>
-<div class="flow"><svg viewBox="0 0 880 372" role="img" aria-label="데이터 구조: 스토리 테이블 행이 map_scene을 가리키고, map_scene은 map_background와 앞 연출, 연출 JSON을 가리킨다. 연출 JSON 안의 핀과 웨이포인트는 Actor 테이블, map_place, map_speed_preset을 id로 참조한다. map_place는 map_background에 속한다">
+<div class="flow"><svg viewBox="0 0 880 372" role="img" aria-label="데이터 구조: 스토리 테이블 행이 map_scene을 가리키고, map_scene은 map_background와 앞 연출, 연출 JSON을 가리킨다. 연출 JSON 안의 핀과 웨이포인트는 Actor 테이블과 map_place를 id로 참조한다. map_place는 map_background에 속한다">
   <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
 
   <rect class="n" x="20" y="40" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="64" text-anchor="middle">스토리 테이블</text><text class="sm" x="105" y="82" text-anchor="middle">기존 (회사) · 열 2개 추가</text>
@@ -496,7 +496,6 @@ th{white-space:nowrap}
   <rect class="n" x="334" y="282" width="172" height="40" rx="6"/><text x="346" y="307">places[]</text><text class="sm" x="408" y="307">장소 보임</text>
 
   <rect class="n" x="690" y="170" width="170" height="56" rx="8"/><text x="775" y="194" text-anchor="middle">map_place</text><text class="sm" x="775" y="212" text-anchor="middle">엑셀 · 장소 마크 · id</text>
-  <rect class="n mid" x="690" y="270" width="170" height="56" rx="8"/><text x="775" y="294" text-anchor="middle">map_speed_preset</text><text class="sm" x="775" y="312" text-anchor="middle">엑셀 · 속도 프리셋 · id</text>
   <rect class="n" x="20" y="180" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="204" text-anchor="middle">Actor 테이블</text><text class="sm" x="105" y="222" text-anchor="middle">기존 (회사) · 이름 · 리소스</text>
   <rect class="n mid" x="20" y="270" width="170" height="56" rx="8"/><text x="105" y="294" text-anchor="middle">map_config</text><text class="sm" x="105" y="312" text-anchor="middle">엑셀 · 튜닝 값 · key</text>
 
@@ -506,7 +505,6 @@ th{white-space:nowrap}
   <path class="e" d="M420 96V148" marker-end="url(#ar2)"/><text class="sm" x="428" y="126">scene_json</text>
   <path class="e" d="M775 170V98" marker-end="url(#ar2)"/><text class="sm" x="767" y="138" text-anchor="end">link_map_background_id</text>
   <path class="e" d="M520 198H688" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="604" y="190" text-anchor="middle">place_id</text>
-  <path class="e" d="M520 298H688" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="604" y="290" text-anchor="middle">speed_preset_id</text>
   <path class="e" d="M320 208H192" marker-end="url(#ar2)" stroke-dasharray="5 4"/><text class="sm" x="256" y="200" text-anchor="middle">actor_id</text>
 
   <text class="sm" x="20" y="360">실선: 엑셀의 link 열 · 점선: JSON 안의 id 참조 · 점선 상자: 회사 기존 테이블</text>
@@ -543,13 +541,6 @@ th{white-space:nowrap}
 <td>연출 하나의 머리 정보</td>
 <td><code>id</code></td>
 <td>기획 (툴)</td>
-</tr>
-<tr>
-<td><code>map_speed_preset</code></td>
-<td>엑셀</td>
-<td>속도 프리셋 하나</td>
-<td><code>id</code></td>
-<td>시스템 기획</td>
 </tr>
 <tr>
 <td><code>map_config</code></td>
@@ -816,10 +807,10 @@ th{white-space:nowrap}
 <td>이름표 표시</td>
 </tr>
 <tr>
-<td><code>speed_preset_id</code></td>
-<td>int</td>
-<td>1</td>
-<td><code>map_speed_preset.id</code>. <code>duration_ms</code>가 있으면 무시</td>
+<td><code>speed</code></td>
+<td>enum</td>
+<td><code>WALK</code></td>
+<td>속도 프리셋 <code>WALK</code>(걷기) / <code>RUN</code>(달리기) / <code>FAST</code>(고속). 값은 F-05. <code>duration_ms</code>가 있으면 무시</td>
 </tr>
 <tr>
 <td><code>duration_ms</code></td>
@@ -898,41 +889,6 @@ th{white-space:nowrap}
 <li>핸들은 점 기준 상대값이라 장소를 옮겨도 곡선 모양이 유지된다. 핸들 한쪽만 적으면 반대쪽은 자동이다. <code>curve</code>가 <code>LINE</code>이면 핸들은 무시한다.</li>
 <li>장소 보임(<code>places</code>): 일반 연출은 <code>visible</code>이 true인 마크만 보인다. 이어가기 연출은 앞 연출 끝에 보이던 마크는 적지 않아도 보이고, 새로 보일 마크(true)와 숨길 마크(false)만 적는다.</li>
 </ul>
-<h3>map_speed_preset (속도 프리셋)</h3>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th><code>id</code></th>
-<th><code>name</code></th>
-<th><code>speed_px</code></th>
-<th><code>memo</code></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>걷기</td>
-<td>500</td>
-<td>인물 기본</td>
-</tr>
-<tr>
-<td>2</td>
-<td>달리기</td>
-<td>800</td>
-<td>급한 이동</td>
-</tr>
-<tr>
-<td>3</td>
-<td>고속</td>
-<td>1200</td>
-<td>함선·비행</td>
-</tr>
-</tbody>
-</table></div>
-<ul>
-<li><code>name</code>은 툴에만 보이는 이름이라 문자열 키를 쓰지 않는다.</li>
-<li>속도 단위는 <strong>배경 px/초</strong>다(배경은 2048×1152 고정). 값은 시작값이고 실제 연출을 만들며 조정한다.</li>
-</ul>
 <h3>왜 이렇게 나눴나</h3>
 <div class="tablewrap"><table>
 <thead>
@@ -968,7 +924,7 @@ th{white-space:nowrap}
 </tr>
 <tr>
 <td>속도를 프리셋으로</td>
-<td>"걷기가 느리다"는 피드백을 프리셋 값 하나로 모든 연출에 반영한다. 특별한 장면만 <code>duration_ms</code>로 고정한다</td>
+<td>"걷기가 느리다"는 피드백을 프리셋 값 하나로 모든 연출에 반영한다. 프리셋 세 가지는 코드에 둔다. 특별한 장면만 <code>duration_ms</code>로 고정한다</td>
 </tr>
 <tr>
 <td>필드 하나에 뜻 하나</td>
@@ -976,7 +932,7 @@ th{white-space:nowrap}
 </tr>
 <tr>
 <td>JSON 안의 id 참조</td>
-<td><code>actor_id</code>, <code>place_id</code>, <code>speed_preset_id</code>는 엑셀 검사가 닿지 않는다. 툴 저장 전 검사와 빌드 검사로 막는다(「구현·아트·사운드 전달사항」)</td>
+<td><code>actor_id</code>, <code>place_id</code>는 엑셀 검사가 닿지 않는다. 툴 저장 전 검사와 빌드 검사로 막는다(「구현·아트·사운드 전달사항」)</td>
 </tr>
 </tbody>
 </table></div>
@@ -1174,7 +1130,7 @@ th{white-space:nowrap}
 <tr data-s="warn">
 <td class="id">F-05</td>
 <td>이동 시간</td>
-<td>이동 시간 = 길이 ÷ 프리셋 <code>speed_px</code> × 1000을 100ms 단위로 반올림하고, 최소 100ms. <code>duration_ms</code>가 있으면 그 값을 쓴다. 점이 하나뿐이거나 길이가 0이면 이동 없음.</td>
+<td>이동 시간 = 길이 ÷ 프리셋 속도(걷기 500, 달리기 800, 고속 1200 배경 px/초. 코드 상수) × 1000을 100ms 단위로 반올림하고, 최소 100ms. <code>duration_ms</code>가 있으면 그 값을 쓴다. 점이 하나뿐이거나 길이가 0이면 이동 없음.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
@@ -1489,7 +1445,7 @@ th{white-space:nowrap}
     {
       &quot;pin_no&quot;: 1,
       &quot;actor_id&quot;: 50101,
-      &quot;speed_preset_id&quot;: 2,
+      &quot;speed&quot;: &quot;RUN&quot;,
       &quot;waypoints&quot;: [
         { &quot;place_id&quot;: 1001 },
         { &quot;x&quot;: 573, &quot;y&quot;: 645, &quot;out_x&quot;: 140, &quot;out_y&quot;: -10 },
@@ -1696,7 +1652,7 @@ th{white-space:nowrap}
 </tr>
 <tr>
 <td>테이블 규칙</td>
-<td>새 테이블 5개</td>
+<td>새 테이블 4개</td>
 <td>행마다 <code>id</code>, 참조는 <code>link_*_id</code>, 소문자 + 밑줄, 그룹 없음</td>
 <td>테이블 이름 규칙, id 숫자 범위, bool·열거값 표기(TRUE/FALSE인지 1/0인지), 빈 칸 처리</td>
 <td>「부록 A 데이터 설계」 전체</td>
@@ -1796,11 +1752,6 @@ th{white-space:nowrap}
 </tr>
 <tr>
 <td><code>map_scene</code></td>
-<td>테이블</td>
-<td></td>
-</tr>
-<tr>
-<td><code>map_speed_preset</code></td>
 <td>테이블</td>
 <td></td>
 </tr>
@@ -2305,6 +2256,11 @@ th{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
+<td>v0.23</td>
+<td>2026-11-22</td>
+<td>속도 프리셋 테이블(<code>map_speed_preset</code>) 삭제. 프리셋은 코드 상수(F-05), 연출 JSON은 <code>speed</code> 열거값(<code>WALK</code>/<code>RUN</code>/<code>FAST</code>). 엑셀 5개 → 4개</td>
+</tr>
+<tr>
 <td>v0.22</td>
 <td>2026-11-22</td>
 <td>5차 단순화: 연출 작성 기준과 툴 경고용 설정 키 5개 삭제, 검수 항목·작업 목록·읽는 법과 용어 부록 삭제, 구현·아트·사운드 전달사항은 별도 문서로, 부록 J를 G로</td>
@@ -2313,11 +2269,6 @@ th{white-space:nowrap}
 <td>v0.21</td>
 <td>2026-11-21</td>
 <td>핵심 기획서 <code>core.md</code> 분리(이 문서는 참고 자료로). 규칙 내용은 그대로</td>
-</tr>
-<tr>
-<td>v0.20</td>
-<td>2026-11-21</td>
-<td>과한 경고 정리: 정해진 동작(자동 닫기)에 붙은 경고 삭제, 이름표 겹침은 툴 CK-17로 한 곳만, 스토리 테이블이 없는 연출 id를 가리킬 때 동작 추가(부록 E)</td>
 </tr>
 </tbody>
 </table></div></section>

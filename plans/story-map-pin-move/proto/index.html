@@ -155,7 +155,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.22</span>
+    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.23</span>
     <h1>맵 핀 이동 연출</h1>
     <p>세 탭이 같은 데이터를 봅니다. <b>스토리 시연</b>은 스토리 행을 따라 맵이 열리고 이어지고 닫히는 과정을, <b>편집 툴</b>은 기획자가 연출을 만드는 조작을, <b>데이터</b>는 저장되는 엑셀 행과 연출 JSON을 보여줍니다. 배경, 핀, 장소 이름, 대사는 모두 자리표시입니다.</p>
   </header>
@@ -368,26 +368,26 @@ code{font-family:var(--f-mono);font-size:.92em}
 <script>
 (function(){
 'use strict';
-/* ---------- 설정 (map_config, map_speed_preset). 값은 기획서 「설정 키」와 같다 ---------- */
+/* ---------- 설정 (map_config) 값은 기획서 「설정 키」와 같다. 속도 프리셋은 코드 상수 (F-05) ---------- */
 var CFG={FADE:400,OUTRO:1000,TAP:300,PREV_ALPHA:40, /* 설정 키 (부록 B) */
   DUR_STEP:100,DUR_MIN:100,CURVE_SAMPLES:16,OVERLAP:0.9,GAP_RATIO:1.15,LABEL_PAD:6,CHAIN_MAX:20, /* 앞줄 일부는 계산 상수 (부록 C) */
   PREV_DEPTH:1,SNAP_PX:40,FAST:2,AUTO_WAIT:1600};
 var CFG_UI=[['MAP_FADE_MS','FADE'],['MAP_OUTRO_MS','OUTRO'],['MAP_TAP_FINISH_MS','TAP'],['MAP_PREV_TRAIL_ALPHA (%)','PREV_ALPHA'],['배속 배율 (가정)','FAST']];
-var PRESETS=[[1,'걷기',500],[2,'달리기',800],[3,'고속',1200]];
+var PRESETS=[['WALK','걷기',500],['RUN','달리기',800],['FAST','고속',1200]];
 var BG={id:10,res:'Map/bg_chapter03',w:2048,h:1152,memo:'3장 행성 지도'};
 /* Actor 테이블 (자리표시). 이름·아이콘 경로를 여기서 가져온다 (R-33) */
 var RES=[[50101,'전투원 A','#e2576b'],[50102,'전투원 B','#3d8bfd'],[50103,'전투원 C','#35b37e'],[50104,'전투원 D','#e0a030'],[50105,'전투원 E','#a06be0'],[50106,'전투원 F','#24b6c9'],
   [60201,'적 함대','#8a94a8'],[60202,'수송선','#c9a227']];
 
 /* ---------- 데이터 ---------- */
-function pin(no,res,pts,o){o=o||{};return {no:no,res:res,label:'',show_label:true,show_from:o.show_from||'START',preset:o.preset||1,fixed:false,dur_ms:2000,
+function pin(no,res,pts,o){o=o||{};return {no:no,res:res,label:'',show_label:true,show_from:o.show_from||'START',preset:o.preset||'WALK',fixed:false,dur_ms:2000,
   start:o.start||{type:'TIME',ref:null,delay:0},curve:o.curve||'SMOOTH',from_prev:!!o.from_prev,pts:pts};}
 function sampleState(){
   var places=[{id:1001,name:'정거장',x:205,y:852},{id:1002,name:'관측소',x:1597,y:346},{id:1003,name:'북문',x:287,y:346},{id:1004,name:'광장',x:1270,y:576},
     {id:1005,name:'숲',x:1802,y:880},{id:1006,name:'항구',x:1720,y:599},{id:1007,name:'탑',x:922,y:184}];
   var s1={id:30001,name:'장면 1',memo:'A 관측소로, B 광장으로, C 항구로',prev:null,show_prev:true,outro:null,
     places:{1001:{visible:true},1002:{visible:true},1003:{visible:true},1004:{visible:true},1005:{visible:true},1006:{visible:true}},
-    pins:[pin(1,50101,[{place:1001},{x:573,y:645,hout:{x:140,y:-10}},{x:1024,y:714},{place:1002}],{preset:2}),
+    pins:[pin(1,50101,[{place:1001},{x:573,y:645,hout:{x:140,y:-10}},{x:1024,y:714},{place:1002}],{preset:'RUN'}),
           pin(2,50102,[{place:1003},{x:819,y:415},{place:1004}],{start:{type:'TIME',ref:null,delay:600}}),
           pin(3,50103,[{place:1005},{x:1352,y:852},{place:1006}],{curve:'LINE',start:{type:'TIME',ref:null,delay:1400}})]};
   var s2={id:30002,name:'장면 2',memo:'A 탑으로, B 숲으로',prev:30001,show_prev:true,outro:null,places:{1007:{visible:true}},
@@ -1001,7 +1001,7 @@ bind('f-res','change',function(p,el){p.res=+el.value;});
 bind('f-label','change',function(p,el){p.label=el.value.trim();});
 bind('f-showlabel','change',function(p,el){p.show_label=el.checked;});
 bind('f-show','change',function(p,el){p.show_from=el.value;});
-bind('f-preset','change',function(p,el){if(el.value==='fixed'){p.dur_ms=schedule(S())[p.no].dur||2000;p.fixed=true;}else{p.fixed=false;p.preset=+el.value;}});
+bind('f-preset','change',function(p,el){if(el.value==='fixed'){p.dur_ms=schedule(S())[p.no].dur||2000;p.fixed=true;}else{p.fixed=false;p.preset=el.value;}});
 bind('f-dur','change',function(p,el){p.dur_ms=clamp(Math.round((+el.value||2000)/100)*100,500,10000);});
 bind('f-stype','change',function(p,el){p.start.type=el.value;if(el.value==='TIME')p.start.ref=null;else if(!p.start.ref){var o=S().pins.filter(function(q){return q!==p;})[0];p.start.ref=o?o.no:null;}});
 bind('f-sref','change',function(p,el){p.start.ref=+el.value;});
@@ -1229,7 +1229,7 @@ function toJson(sc){
     if(p.label)q.label_key=labelKey(sc,p);
     if(!p.show_label)q.show_label=false;
     if(mv){
-      if(p.fixed)q.duration_ms=p.dur_ms;else if(p.preset!==1)q.speed_preset_id=p.preset;
+      if(p.fixed)q.duration_ms=p.dur_ms;else if(p.preset!=='WALK')q.speed=p.preset;
       if(p.start.type!=='TIME'){q.start_type=p.start.type;q.start_pin_no=p.start.ref;}
       if(p.start.delay)q.start_offset_ms=p.start.delay;
       if(p.curve!=='SMOOTH')q.curve=p.curve;
@@ -1240,7 +1240,7 @@ function toJson(sc){
       if(e.hin&&p.curve==='SMOOTH'){w.in_x=e.hin.x;w.in_y=e.hin.y;}
       if(e.hout&&p.curve==='SMOOTH'){w.out_x=e.hout.x;w.out_y=e.hout.y;}
       return w;});
-    return order(q,['pin_no','actor_id','show_from','label_key','show_label','speed_preset_id','duration_ms','start_type','start_pin_no','start_offset_ms','curve','waypoints']);
+    return order(q,['pin_no','actor_id','show_from','label_key','show_label','speed','duration_ms','start_type','start_pin_no','start_offset_ms','curve','waypoints']);
   });
   return o;
 }
@@ -1278,7 +1278,7 @@ function fromJson(text){ /* 연출 JSON 불러오기. 생략한 필드는 기본
       return e;}),{from_prev:!!(prevOf(sc)&&findPin(prevOf(sc),q.pin_no)),show_from:q.show_from}); /* 앞 연출에 같은 번호가 있으면 이어진 핀 (R-23) */
     if(q.label_key)p.label=(old[q.pin_no]&&old[q.pin_no].label)||q.label_key;
     if(q.show_label===false)p.show_label=false;
-    if(q.duration_ms!==undefined){p.fixed=true;p.dur_ms=q.duration_ms;}else p.preset=q.speed_preset_id||1;
+    if(q.duration_ms!==undefined){p.fixed=true;p.dur_ms=q.duration_ms;}else p.preset=preset(q.speed||'WALK')[0];
     p.start={type:q.start_type||'TIME',ref:q.start_pin_no!==undefined?q.start_pin_no:null,delay:q.start_offset_ms||0};
     if(q.curve)p.curve=q.curve;
     return p;});

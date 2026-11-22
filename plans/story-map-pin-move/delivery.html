@@ -152,7 +152,7 @@ th{white-space:nowrap}
       <h1>맵 핀 이동 연출 · 구현·아트·사운드 전달사항</h1>
       <p class="sub">「스토리 맵 핀 이동 연출」을 만들 때 프로그래머와 아트·사운드 담당에게 전하는 내용. 기획서에서 따로 떼어 냈다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.22 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.23 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>클라이언트 · UI 아트 · 배경 · 사운드</dd></div>
         <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">0건</span></dd></div>
@@ -167,7 +167,7 @@ th{white-space:nowrap}
 <li><strong>폰 최소 크기</strong>: 핀·이름표·장소 글자는 연출 F-13의 최솟값 아래로 줄이지 않는다. 폰 가로 화면에서 가장 먼저 깨지는 곳이다.</li>
 <li><strong>궤적은 코드로 그린다</strong>: 리소스 없이 핀 색의 둥근 점선을 그린다. 두께와 간격은 UI px 설정 값이다.</li>
 <li><strong>미리 불러오기</strong>: 스토리에 들어갈 때 그 스토리 행들이 가리키는 연출의 배경과 핀 아이콘을 미리 불러온다. 재생 순간에 멈칫하지 않게 한다. <code>검증필요</code></li>
-<li><strong>데이터 검사</strong>: 연출 JSON 안의 <code>actor_id</code>, <code>place_id</code>, <code>speed_preset_id</code>는 엑셀 검사가 닿지 않는다. 툴의 저장 전 검사(편집 툴 기획서 T-07)와 같은 규칙으로 빌드 때 한 번 더 검사하는 스크립트를 둔다. 손으로 고친 JSON도 걸러진다.</li>
+<li><strong>데이터 검사</strong>: 연출 JSON 안의 <code>actor_id</code>, <code>place_id</code>는 엑셀 검사가 닿지 않는다. 툴의 저장 전 검사(편집 툴 기획서 T-07)와 같은 규칙으로 빌드 때 한 번 더 검사하는 스크립트를 둔다. 손으로 고친 JSON도 걸러진다.</li>
 <li><strong>JSON 형식 버전</strong>: <code>version</code>이 아는 값이 아니면 연출을 건너뛰고 로그를 남긴다. 형식을 바꿀 때 버전을 올린다.</li>
 <li><strong>세이브</strong>: 스토리 중간 저장이 있다면 "지금 열린 연출 id" 하나만 저장한다. 복원할 때 그 연출의 최종 상태를 계산해 바로 유지 상태로 띄운다.</li>
 <li><strong>확인용 기능</strong>: 연출 id를 넣으면 스토리 없이 바로 재생하는 개발용 명령이 있으면 기획·QA 확인이 빨라진다.</li>
