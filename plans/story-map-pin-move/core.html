@@ -157,7 +157,7 @@ th{white-space:nowrap}
       <h1>스토리 맵 핀 이동 연출 · 핵심 기획서</h1>
       <p class="sub">스토리 중에 지도가 열리고, 핀이 경로를 따라 움직여 "누가 어디서 어디로 갔는지"를 보여준다. 회사에 내는 짧은 본 문서다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.26 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.27 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>기획 · 클라이언트 · 아트</dd></div>
         <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">5건</span></dd></div>
@@ -209,7 +209,7 @@ th{white-space:nowrap}
 </ul>
 </section>
 <section id="s5"><h2><span class="sec">§5</span>데이터</h2>
-<p>연출 목록은 새 엑셀 테이블 1개(<code>map_scene</code>)에 둔다. 장소는 배경마다 장소 JSON 1개, 핀과 경로는 연출마다 연출 JSON 1개다. 툴이 화면에서 배치한 결과를 두 JSON에 바로 쓴다. 스토리 테이블에는 열 2개(<code>link_map_scene_id</code> 맵 열기, <code>map_close</code> 맵 닫기)를 더한다. 배경 지도는 기존 <code>story_resource_list</code>에 등록하고, 장소 JSON이 그 id를 가리킨다. 크기는 2048×1152 한 가지다. 장소 이름은 비워 둘 수 있고, 이름 없는 장소는 게임에 보이지 않는 경로 기준점이다. 테이블과 열 이름은 자리표시이고, 회사 규칙에 맞춰 바꾼다.</p>
+<p>연출 목록은 새 엑셀 테이블 1개(<code>map_scene</code>)에 둔다. 장소는 장소 JSON에 두고, 핀과 경로는 연출마다 연출 JSON 1개다. 장소 JSON은 파일 이름이 id이고, 같은 배경에 장소 표기를 달리한 장소 JSON을 여러 개 둘 수 있다. 툴이 화면에서 배치한 결과를 두 JSON에 바로 쓴다. 스토리 테이블에는 열 2개(<code>link_map_scene_id</code> 맵 열기, <code>map_close</code> 맵 닫기)를 더한다. 배경 지도는 기존 <code>story_resource_list</code>에 등록하고, 장소 JSON이 그 id를 가리킨다. 크기는 2048×1152 한 가지다. 장소 이름은 비워 둘 수 있고, 이름 없는 장소는 게임에 보이지 않는 경로 기준점이다. 테이블과 열 이름은 자리표시이고, 회사 규칙에 맞춰 바꾼다.</p>
 </section>
 <section id="s6"><h2><span class="sec">§6</span>회사에서 확인·결정할 것</h2>
 <div class="tablewrap"><table>

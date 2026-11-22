@@ -155,7 +155,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.26</span>
+    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.27</span>
     <h1>맵 핀 이동 연출</h1>
     <p>세 탭이 같은 데이터를 봅니다. <b>스토리 시연</b>은 스토리 행을 따라 맵이 열리고 이어지고 닫히는 과정을, <b>편집 툴</b>은 기획자가 연출을 만드는 조작을, <b>데이터</b>는 저장되는 엑셀 행과 연출 JSON을 보여줍니다. 배경, 핀, 장소 이름, 대사는 모두 자리표시입니다.</p>
   </header>
@@ -329,7 +329,7 @@ code{font-family:var(--f-mono);font-size:.92em}
       <h2>연출 고르기</h2>
       <div class="chips" id="dscenes"></div>
     </div>
-    <p class="note">저장 형식은 기획서 「데이터 설계」와 같습니다. 장소는 배경마다 장소 JSON 1개, 핀·경로 점·장소 보임은 연출마다 연출 JSON 1개, 스토리 테이블이 가리키는 연출 머리만 엑셀 행입니다. 이름은 모두 자리표시이고 회사 규칙에 맞춰 바꿉니다. <span class="badge">검증필요</span> <span class="badge ok" id="d-badge">저장 가능</span></p>
+    <p class="note">저장 형식은 기획서 「데이터 설계」와 같습니다. 장소는 장소 JSON(같은 배경에 여러 개 가능), 핀·경로 점·장소 보임은 연출마다 연출 JSON 1개, 스토리 테이블이 가리키는 연출 머리만 엑셀 행입니다. 이름은 모두 자리표시이고 회사 규칙에 맞춰 바꿉니다. <span class="badge">검증필요</span> <span class="badge ok" id="d-badge">저장 가능</span></p>
     <div class="datagrid">
       <div>
         <h3>연출 JSON <code id="d-jname"></code> <button class="btn sm" data-copy="d-json" type="button">복사</button></h3>
@@ -379,6 +379,7 @@ var CFG={FADE:400,OUTRO:1000,TAP:300,PREV_ALPHA:40, /* R-21·R-26·R-12·R-25 */
 var CFG_UI=[['나타나고 사라지는 시간 (ms)','FADE'],['마무리 대기 (ms)','OUTRO'],['탭 완료 (ms)','TAP'],['앞 궤적 불투명도 (%)','PREV_ALPHA'],['배속 배율 (가정)','FAST']];
 var PRESETS=[['WALK','걷기',500],['RUN','달리기',800],['FAST','고속',1200]];
 var BG={id:10,res:'Map/bg_chapter03',w:2048,h:1152,memo:'3장 행성 지도'};
+var PLACESET={id:2001,memo:'3장 행성 지도 · 기본 표기'}; /* 장소 JSON 하나. id는 파일 이름에만 (map_place_2001) */
 /* Actor 테이블 (자리표시). 이름·아이콘 경로를 여기서 가져온다 (R-33) */
 var RES=[[50101,'전투원 A','#e2576b'],[50102,'전투원 B','#3d8bfd'],[50103,'전투원 C','#35b37e'],[50104,'전투원 D','#e0a030'],[50105,'전투원 E','#a06be0'],[50106,'전투원 F','#24b6c9'],
   [60201,'적 함대','#8a94a8'],[60202,'수송선','#c9a227']];
@@ -1222,7 +1223,7 @@ $('b-reset').addEventListener('click',function(){commit();state=sampleState();cu
 /* ---------- 데이터: 연출 JSON + 엑셀 행 (기획서 「데이터 설계」) ---------- */
 function labelKey(sc,p){return 'MAP_LABEL_'+sc.id+'_'+p.no;}
 function toJson(sc){
-  var o={version:1,id:sc.id};
+  var o={};
   if(sc.prev&&!sc.show_prev)o.show_prev_trail=false;
   if(sc.outro!=null)o.outro_ms=sc.outro;
   var pk=Object.keys(sc.places);
@@ -1251,7 +1252,7 @@ function toJson(sc){
 function order(o,keys){var r={};keys.forEach(function(k){if(o[k]!==undefined)r[k]=o[k];});return r;}
 function inl(o){return '{ '+Object.keys(o).map(function(k){return JSON.stringify(k)+': '+JSON.stringify(o[k]);}).join(', ')+' }';}
 function jsonText(sc){ /* 필드 순서와 들여쓰기를 고정한다 (툴 D-02) */
-  var o=toJson(sc),L=['{','  "version": 1,','  "id": '+o.id+','];
+  var o=toJson(sc),L=['{'];
   if(o.show_prev_trail===false)L.push('  "show_prev_trail": false,');
   if(o.outro_ms!==undefined)L.push('  "outro_ms": '+o.outro_ms+',');
   if(o.places){L.push('  "places": [');o.places.forEach(function(p,i){L.push('    '+inl(p)+(i<o.places.length-1?',':''));});L.push('  ],');}
@@ -1268,8 +1269,6 @@ function jsonText(sc){ /* 필드 순서와 들여쓰기를 고정한다 (툴 D-0
 }
 function fromJson(text){ /* 연출 JSON 불러오기. 생략한 필드는 기본값 */
   var o=JSON.parse(text),sc=S();
-  if(o.version!==1)throw new Error('version이 1이 아닙니다.');
-  if(o.id!==sc.id)throw new Error('id가 지금 연출('+sc.id+')과 다릅니다.');
   if(!Array.isArray(o.pins))throw new Error('pins가 없습니다.');
   var old={};sc.pins.forEach(function(p){old[p.no]=p;});
   var places={};(o.places||[]).forEach(function(p){places[p.place_id]={visible:!!p.visible};});
@@ -1292,13 +1291,13 @@ function tsvText(sc){ /* 엑셀에 붙여 넣는 탭 구분 행 (툴 D-03, D-08)
   var L=[],T='\t';
   function row(a){L.push(a.map(function(v){return v===null||v===undefined?'':v;}).join(T));}
   L.push('# map_scene');row(['id','place_json','link_prev_map_scene_id','scene_json','tool_folder','sort_order','memo']);
-  row([sc.id,'Map/Place/map_place_'+BG.id,sc.prev,'Map/Scene/map_scene_'+sc.id,'C03_MOVE',state.scenes.indexOf(sc)+1,sc.memo]);
+  row([sc.id,'Map/Place/map_place_'+PLACESET.id,sc.prev,'Map/Scene/map_scene_'+sc.id,'C03_MOVE',state.scenes.indexOf(sc)+1,sc.memo]);
   L.push('','# 스토리 테이블에 더하는 열 (예시)');row(['id','link_map_scene_id','map_close']);
   buildRows().forEach(function(r){if(r.scene!==undefined||r.close)row([r.id,r.scene!==undefined?state.scenes[r.scene].id:'',r.close?'TRUE':'']);});
   return L.join('\n');
 }
-function placeJsonText(){ /* 배경마다 장소 JSON 1개 (툴 D-02). 이름 없는 장소는 name_key를 적지 않는다 */
-  var L=['{','  "version": 1,','  "story_resource_list_id": '+BG.id+',','  "places": ['];
+function placeJsonText(){ /* 장소 JSON 하나 (툴 D-02, id는 파일 이름). 이름 없는 장소는 name_key를 적지 않는다 */
+  var L=['{','  "story_resource_list_id": '+BG.id+',','  "memo": '+JSON.stringify(PLACESET.memo)+',','  "places": ['];
   state.places.forEach(function(pl,i){var o={id:pl.id};if(pl.name.trim())o.name_key='MAP_PLACE_'+pl.id;o.x=pl.x;o.y=pl.y;if(pl.name.trim())o.memo=pl.name;L.push('    '+inl(o)+(i<state.places.length-1?',':''));});
   L.push('  ]','}');return L.join('\n');
 }
@@ -1313,7 +1312,7 @@ function dsay(text,err){var m=$('dmsg');m.textContent=text;m.className='msg'+(er
 function syncData(){
   syncScenes();var sc=S();
   $('d-jname').textContent='map_scene_'+sc.id+'.json';
-  $('d-json').value=jsonText(sc);$('d-pjson').value=placeJsonText();$('d-pjname').textContent='map_place_'+BG.id+'.json';$('d-tsv').value=tsvText(sc);$('d-str').value=strText(sc);
+  $('d-json').value=jsonText(sc);$('d-pjson').value=placeJsonText();$('d-pjname').textContent='map_place_'+PLACESET.id+'.json';$('d-tsv').value=tsvText(sc);$('d-str').value=strText(sc);
   var c=checks(sc),ne=c.filter(function(x){return x.lv==='err';}).length,bd=$('d-badge');
   bd.textContent=ne?'오류 '+ne+'건 · 저장 막힘':'검사 통과 · 저장 가능';bd.className='badge '+(ne?'crit':'ok');
 }
