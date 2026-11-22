@@ -142,7 +142,7 @@ th{white-space:nowrap}
 <a href="#s3">핵심 규칙</a>
 <a href="#s4">검증·미결 목록</a>
 <a href="#s5">부록 A. 데이터 설계</a>
-<a href="#s6">부록 B. 설정 키</a>
+<a href="#s6">부록 B. 문자열·리소스 키</a>
 <a href="#s7">부록 C. 계산 규칙</a>
 <a href="#s8">부록 D. 예시 연출과 데이터</a>
 <a href="#s9">부록 E. 예외 처리</a>
@@ -162,10 +162,10 @@ th{white-space:nowrap}
       <h1>스토리 맵 핀 이동 연출</h1>
       <p class="sub">스토리 진행 중 배경 지도 위에서 핀(캐릭터·대상)이 경로를 따라 이동하며 "누가 어디서 어디로 갔는지"를 보여주는 연출 기능.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.24 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.25 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>클라이언트 · 편집 툴 · 데이터</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">13건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">11건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
@@ -261,11 +261,6 @@ th{white-space:nowrap}
 <tr data-s="ok">
 <td class="id">R-19</td>
 <td>스토리 화면은 가로다. 화면 비율이 배경과 다르면 배경 전체가 보이게 맞추고 남는 곳은 여백으로 둔다.</td>
-
-</tr>
-<tr data-s="ok">
-<td class="id">R-57</td>
-<td>폰에서도 읽히도록 핀·이름표·장소 글자에는 최소 크기가 있다. 값은 회사 UI의 최소 글자 규칙을 따르고, 그때까지는 핀 36, 이름표 12, 장소 글자 13을 쓴다.</td>
 
 </tr>
 </tbody>
@@ -474,7 +469,7 @@ th{white-space:nowrap}
 <section id="s5"><h2><span class="sec">§5</span>부록 A. 데이터 설계</h2>
 <div class="note dev"><p><strong>설계 원칙</strong></p>
 <ul>
-<li><strong>엑셀과 JSON을 나눈다</strong>: 사람이 손으로 고치거나 다른 테이블과 이어지는 것(장소, 연출 머리, 설정)은 엑셀 테이블에 둔다. 배경은 기존 <code>story_resource_list</code>의 id로 가리킨다. 툴이 만드는 것(핀, 경로 점, 장소 보임)은 연출 1건당 JSON 1개에 둔다.</li>
+<li><strong>엑셀과 JSON을 나눈다</strong>: 사람이 손으로 고치거나 다른 테이블과 이어지는 것(장소, 연출 머리)은 엑셀 테이블에 둔다. 배경은 기존 <code>story_resource_list</code>의 id로 가리킨다. 툴이 만드는 것(핀, 경로 점, 장소 보임)은 연출 1건당 JSON 1개에 둔다.</li>
 <li><strong>회사 테이블 규칙</strong>: 행마다 <code>id</code>, 다른 테이블 참조는 <code>link_*_id</code>, 열 이름은 소문자 + 밑줄, 그룹 id는 쓰지 않는다.</li>
 <li><strong>사람이 읽는 값</strong>: 좌표는 배경 픽셀 정수, 시간은 ms 정수, 글자는 문자열 키, 선택지는 영문 대문자 열거값.</li>
 <li><strong>비워 두면 기본값</strong>: 엑셀은 칸을 비우고, JSON은 필드를 생략하면 기본값을 쓴다.</li>
@@ -497,7 +492,6 @@ th{white-space:nowrap}
 
   <rect class="n" x="690" y="170" width="170" height="56" rx="8"/><text x="775" y="194" text-anchor="middle">map_place</text><text class="sm" x="775" y="212" text-anchor="middle">엑셀 · 장소 마크 · id</text>
   <rect class="n" x="20" y="180" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="204" text-anchor="middle">Actor 테이블</text><text class="sm" x="105" y="222" text-anchor="middle">기존 (회사) · 이름 · 리소스</text>
-  <rect class="n mid" x="20" y="270" width="170" height="56" rx="8"/><text x="105" y="294" text-anchor="middle">map_config</text><text class="sm" x="105" y="312" text-anchor="middle">엑셀 · 튜닝 값 · key</text>
 
   <path class="e" d="M190 68H318" marker-end="url(#ar2)"/><text class="sm" x="254" y="58" text-anchor="middle">link_map_scene_id</text>
   <path class="e" d="M520 68H688" marker-end="url(#ar2)"/><text class="sm" x="604" y="58" text-anchor="middle">link_story_resource_list_id</text>
@@ -534,13 +528,6 @@ th{white-space:nowrap}
 <td>연출 하나의 머리 정보</td>
 <td><code>id</code></td>
 <td>기획 (툴)</td>
-</tr>
-<tr>
-<td><code>map_config</code></td>
-<td>엑셀</td>
-<td>튜닝 값 하나</td>
-<td><code>key</code></td>
-<td>시스템 기획</td>
 </tr>
 <tr>
 <td>연출 JSON</td>
@@ -705,8 +692,8 @@ th{white-space:nowrap}
 <tr>
 <td><code>outro_ms</code></td>
 <td>int</td>
-<td><code>MAP_OUTRO_MS</code></td>
-<td>마무리 대기</td>
+<td>1000</td>
+<td>마무리 대기(ms)</td>
 </tr>
 <tr>
 <td><code>places</code></td>
@@ -906,123 +893,7 @@ th{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s6"><h2><span class="sec">§6</span>부록 B. 설정 키</h2>
-<p>튜닝 값은 모두 <code>map_config</code>에 둔다. 회사에 공용 설정 테이블이 있으면 그 테이블에 같은 키로 넣는다. 곡선 등분(16), 이동 시간 반올림(100ms), 겹침 비율처럼 기획자가 조정할 일이 없는 계산 상수는 설정 키로 두지 않고 부록 C 계산식에 적었다. 확정된 값은 <code>MAP_PREV_TRAIL_DEPTH</code>이고, <code>MAP_TOOL_SIMPLIFY_PX</code>는 자유 그리기를 넣을 때만 쓴다(미정). 나머지 수치는 시작값이다. <code>MAP_TOOL_</code> 키는 툴만 읽는다.</p>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th><code>key</code></th>
-<th>값</th>
-<th>단위</th>
-<th>내용</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>MAP_FADE_MS</td>
-<td>400</td>
-<td>ms</td>
-<td>나타나고 사라지는 시간 하나: 배경·장소 마크·핀 등장, 핀 사라짐, 맵 닫기</td>
-</tr>
-<tr>
-<td>MAP_OUTRO_MS</td>
-<td>1000</td>
-<td>ms</td>
-<td>마지막 도착 뒤 대기</td>
-</tr>
-<tr>
-<td>MAP_TAP_FINISH_MS</td>
-<td>300</td>
-<td>ms</td>
-<td>탭 즉시 완료</td>
-</tr>
-<tr>
-<td>MAP_PREV_TRAIL_ALPHA</td>
-<td>40</td>
-<td>%</td>
-<td>앞 궤적 불투명도</td>
-</tr>
-<tr>
-<td>MAP_PREV_TRAIL_DEPTH</td>
-<td>1</td>
-<td>단</td>
-<td>흐리게 남길 앞 연출 수. 1은 바로 앞 연출만 (R-56)</td>
-</tr>
-<tr>
-<td>MAP_CHAIN_MAX</td>
-<td>20</td>
-<td>단</td>
-<td>이어가기 연결 최대 길이</td>
-</tr>
-<tr>
-<td>MAP_UI_BASE_HEIGHT</td>
-<td>1080</td>
-<td>px</td>
-<td>UI px의 기준 화면 높이</td>
-</tr>
-<tr>
-<td>MAP_PIN_SIZE_PX</td>
-<td>86</td>
-<td>UI px</td>
-<td>핀 지름</td>
-</tr>
-<tr>
-<td>MAP_TRAIL_WIDTH_PX</td>
-<td>6</td>
-<td>UI px</td>
-<td>궤적 점선 두께</td>
-</tr>
-<tr>
-<td>MAP_TRAIL_GAP_PX</td>
-<td>14</td>
-<td>UI px</td>
-<td>궤적 점 간격</td>
-</tr>
-<tr>
-<td>MAP_PLACE_FONT_PX</td>
-<td>28</td>
-<td>UI px</td>
-<td>장소 마크 글자</td>
-</tr>
-<tr>
-<td>MAP_LABEL_FONT_PX</td>
-<td>24</td>
-<td>UI px</td>
-<td>이름표 글자</td>
-</tr>
-<tr>
-<td>MAP_PIN_SIZE_MIN</td>
-<td>36</td>
-<td>기기 독립 px</td>
-<td>핀 지름 최솟값 (R-57, 회사 UI 규칙 값으로 교체)</td>
-</tr>
-<tr>
-<td>MAP_LABEL_FONT_MIN</td>
-<td>12</td>
-<td>기기 독립 px</td>
-<td>이름표 글자 최솟값 (R-57, 회사 UI 규칙 값으로 교체)</td>
-</tr>
-<tr>
-<td>MAP_PLACE_FONT_MIN</td>
-<td>13</td>
-<td>기기 독립 px</td>
-<td>장소 글자 최솟값 (R-57, 회사 UI 규칙 값으로 교체)</td>
-</tr>
-<tr>
-<td>MAP_TOOL_SNAP_PX</td>
-<td>40</td>
-<td>배경 px</td>
-<td>툴: 장소 마크에 붙는 반경</td>
-</tr>
-<tr>
-<td>MAP_TOOL_SIMPLIFY_PX</td>
-<td>16</td>
-<td>배경 px</td>
-<td>툴: 자유 그리기 단순화 허용 오차 (자유 그리기를 넣을 때만)</td>
-</tr>
-</tbody>
-</table></div>
-<h3>문자열·리소스 키</h3>
+<section id="s6"><h2><span class="sec">§6</span>부록 B. 문자열·리소스 키</h2>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -1117,7 +988,7 @@ th{white-space:nowrap}
 <tr data-s="ok">
 <td class="id">F-08</td>
 <td>연출 길이</td>
-<td>등장 = 열린 맵에서 이어지면 0, 아니면 <code>MAP_FADE_MS</code> × 2(배경 다음 핀). 이동 끝 = 가장 늦은 도착 시각. 종료 = 이동 끝 + 마무리 대기(연출의 <code>outro_ms</code>, 없으면 <code>MAP_OUTRO_MS</code>).</td>
+<td>등장 = 열린 맵에서 이어지면 0, 아니면 400ms × 2(배경 다음 핀). 이동 끝 = 가장 늦은 도착 시각. 종료 = 이동 끝 + 마무리 대기(연출의 <code>outro_ms</code>, 없으면 1000ms).</td>
 <td></td>
 </tr>
 <tr data-s="warn">
@@ -1135,7 +1006,7 @@ th{white-space:nowrap}
 <tr data-s="ok">
 <td class="id">F-11</td>
 <td>탭 완료</td>
-<td>탭한 순간의 연출 시각을 t0라 하면, 표시 시각 = t0 + (종료 − t0) × (탭 뒤 지난 시간 ÷ <code>MAP_TAP_FINISH_MS</code>).</td>
+<td>탭한 순간의 연출 시각을 t0라 하면, 표시 시각 = t0 + (종료 − t0) × (탭 뒤 지난 시간 ÷ 300ms).</td>
 <td></td>
 </tr>
 <tr data-s="ok">
@@ -1143,12 +1014,6 @@ th{white-space:nowrap}
 <td>방향 표시</td>
 <td>이동 중인 핀의 삼각형은 지금 구간의 진행 방향을 가리킨다. 쉬는 핀에는 삼각형이 없다.</td>
 <td></td>
-</tr>
-<tr data-s="warn">
-<td class="id">F-13</td>
-<td>표시 크기</td>
-<td>화면에 그리는 크기 = max(최솟값, UI px 값 × 화면 높이 ÷ <code>MAP_UI_BASE_HEIGHT</code>). 핀 지름·이름표 글자·장소 글자에만 최솟값이 있다(R-57).</td>
-<td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1178,14 +1043,14 @@ th{white-space:nowrap}
 <td class="num">400</td>
 <td>배경·장소 마크</td>
 <td>페이드인</td>
-<td>MAP_FADE_MS</td>
+<td>R-21</td>
 </tr>
 <tr>
 <td class="num">-400</td>
 <td class="num">400</td>
 <td>핀 1·2·3</td>
 <td>시작 위치에서 페이드인</td>
-<td>MAP_FADE_MS</td>
+<td>R-42</td>
 </tr>
 <tr>
 <td class="num">0</td>
@@ -1213,7 +1078,7 @@ th{white-space:nowrap}
 <td class="num">1000</td>
 <td>전체</td>
 <td>마무리 대기 후 종료. 맵은 대사 뒤에 남음</td>
-<td>MAP_OUTRO_MS</td>
+<td>R-26</td>
 </tr>
 </tbody>
 </table></div>
@@ -1270,7 +1135,7 @@ th{white-space:nowrap}
 <td class="num">1000</td>
 <td>전체</td>
 <td>마무리 대기 후 종료. 이후 대사, 맵 닫기로 닫힘</td>
-<td>MAP_OUTRO_MS</td>
+<td>R-26</td>
 </tr>
 </tbody>
 </table></div>
@@ -1510,7 +1375,7 @@ th{white-space:nowrap}
 <td></td>
 </tr>
 <tr data-s="warn">
-<td>이어가기 연결이 돌아오거나 <code>MAP_CHAIN_MAX</code>단을 넘음</td>
+<td>이어가기 연결이 돌아오거나 20단을 넘음</td>
 <td>툴이 저장 전에 막는다. 게임에서는 거기서 따라가기를 멈추고 로그를 남긴다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
@@ -1526,7 +1391,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td>맵이 열린 채 이어가기가 아닌 다른 맵 연출 재생</td>
-<td>지금 맵을 <code>MAP_FADE_MS</code> 동안 닫고 새 맵을 일반 등장시킨다.</td>
+<td>지금 맵을 400ms 동안 닫고 새 맵을 일반 등장시킨다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
@@ -1604,7 +1469,7 @@ th{white-space:nowrap}
 </tr>
 <tr>
 <td>테이블 규칙</td>
-<td>새 테이블 3개</td>
+<td>새 테이블 2개</td>
 <td>행마다 <code>id</code>, 참조는 <code>link_*_id</code>, 소문자 + 밑줄, 그룹 없음</td>
 <td>테이블 이름 규칙, id 숫자 범위, bool·열거값 표기(TRUE/FALSE인지 1/0인지), 빈 칸 처리</td>
 <td>「부록 A 데이터 설계」 전체</td>
@@ -1622,13 +1487,6 @@ th{white-space:nowrap}
 <td>리소스 경로로 불러온다</td>
 <td>기존 연출 JSON의 저장 위치, 이름 규칙, 불러오는 방법. 엑셀 행에서 JSON을 가리키는 기존 방식</td>
 <td><code>map_scene.scene_json</code></td>
-</tr>
-<tr>
-<td>설정 테이블</td>
-<td>튜닝 값 17개</td>
-<td><code>key</code>와 값</td>
-<td>공용 설정 테이블이 있는지. 있으면 그 테이블에 넣는다</td>
-<td>「부록 B 설정 키」</td>
 </tr>
 <tr>
 <td>배경 리소스</td>
@@ -1656,7 +1514,7 @@ th{white-space:nowrap}
 <td>대사창 숨김, 여백</td>
 <td>가로 화면. 대사창은 아래쪽</td>
 <td>대사창 위치와 크기, 연출 중 남는 버튼(자동·배속·로그), 여백 처리</td>
-<td>R-15, R-19, R-55</td>
+<td>R-15, R-19</td>
 </tr>
 <tr>
 <td>대사 로그 UI</td>
@@ -1671,13 +1529,6 @@ th{white-space:nowrap}
 <td>스토리 중간 저장이 있다면 열린 연출 id 하나만 저장하면 복원된다(상태는 데이터에서 계산)</td>
 <td>스토리 중간 저장이 있는지, 있으면 어떤 값을 저장하는지</td>
 <td>「구현·아트·사운드 전달사항」</td>
-</tr>
-<tr>
-<td>UI 기준 해상도</td>
-<td>UI px 값의 기준, 폰 최소 글자 크기</td>
-<td>1920×1080. 폰에서는 최솟값(R-57)으로 받친다</td>
-<td>회사 UI 기준 해상도, 회사 UI의 최소 글자 크기 규칙</td>
-<td><code>MAP_UI_BASE_HEIGHT</code>, UI px 설정 값, <code>MAP_*_MIN</code></td>
 </tr>
 </tbody>
 </table></div>
@@ -1700,11 +1551,6 @@ th{white-space:nowrap}
 <tr>
 <td><code>map_scene</code></td>
 <td>테이블</td>
-<td></td>
-</tr>
-<tr>
-<td><code>map_config</code></td>
-<td>테이블 (또는 공용 설정)</td>
 <td></td>
 </tr>
 <tr>
@@ -1740,11 +1586,6 @@ th{white-space:nowrap}
 <tr>
 <td><code>actor_id</code></td>
 <td>JSON 필드 (Actor 테이블 id)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>MAP_…</code> 설정 키</td>
-<td>설정 키 접두어</td>
 <td></td>
 </tr>
 </tbody>
@@ -1819,11 +1660,6 @@ th{white-space:nowrap}
 <td class="id">R-41</td>
 <td>위치·길이·속도는 모두 배경 픽셀 기준이다. 핀 지름, 글자, 점선 같은 표시 크기는 UI 기준 해상도의 px로 정한다.</td>
 <td></td>
-</tr>
-<tr data-s="warn">
-<td class="id">R-55</td>
-<td>UI px 값은 화면 높이 ÷ 1080 배율로 키우거나 줄인다. 여백은 검은색으로 채운다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="ok">
 <td class="id">R-28</td>
@@ -2203,6 +2039,11 @@ th{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
+<td>v0.25</td>
+<td>2026-11-22</td>
+<td>설정 테이블(<code>map_config</code>)과 설정 키 삭제. UI 크기 값과 그 규칙(R-55, R-57, F-13)은 UI 팀 몫이라 삭제, 툴 값은 툴 기획서 본문 숫자로. 남은 시간 값(400·1000·300ms, 20단)은 규칙에 숫자로. 부록 B는 문자열·리소스 키만</td>
+</tr>
+<tr>
 <td>v0.24</td>
 <td>2026-11-22</td>
 <td>배경 테이블(<code>map_background</code>) 삭제. 배경은 기존 <code>story_resource_list</code> id로 가리킨다(<code>link_story_resource_list_id</code>). 새 엑셀 4개 → 3개</td>
@@ -2211,11 +2052,6 @@ th{white-space:nowrap}
 <td>v0.23</td>
 <td>2026-11-22</td>
 <td>속도 프리셋 테이블(<code>map_speed_preset</code>) 삭제. 프리셋은 코드 상수(F-05), 연출 JSON은 <code>speed</code> 열거값(<code>WALK</code>/<code>RUN</code>/<code>FAST</code>). 엑셀 5개 → 4개</td>
-</tr>
-<tr>
-<td>v0.22</td>
-<td>2026-11-22</td>
-<td>5차 단순화: 연출 작성 기준과 툴 경고용 설정 키 5개 삭제, 검수 항목·작업 목록·읽는 법과 용어 부록 삭제, 구현·아트·사운드 전달사항은 별도 문서로, 부록 J를 G로</td>
 </tr>
 </tbody>
 </table></div></section>

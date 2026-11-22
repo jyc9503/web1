@@ -13,7 +13,6 @@
 
   <rect class="n" x="690" y="170" width="170" height="56" rx="8"/><text x="775" y="194" text-anchor="middle">map_place</text><text class="sm" x="775" y="212" text-anchor="middle">엑셀 · 장소 마크 · id</text>
   <rect class="n" x="20" y="180" width="170" height="56" rx="8" stroke-dasharray="4 3"/><text x="105" y="204" text-anchor="middle">Actor 테이블</text><text class="sm" x="105" y="222" text-anchor="middle">기존 (회사) · 이름 · 리소스</text>
-  <rect class="n mid" x="20" y="270" width="170" height="56" rx="8"/><text x="105" y="294" text-anchor="middle">map_config</text><text class="sm" x="105" y="312" text-anchor="middle">엑셀 · 튜닝 값 · key</text>
 
   <path class="e" d="M190 68H318" marker-end="url(#ar2)"/><text class="sm" x="254" y="58" text-anchor="middle">link_map_scene_id</text>
   <path class="e" d="M520 68H688" marker-end="url(#ar2)"/><text class="sm" x="604" y="58" text-anchor="middle">link_story_resource_list_id</text>

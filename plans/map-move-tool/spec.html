@@ -167,7 +167,7 @@ th{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기, 데이터 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.24 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.25 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
         <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">21건</span></dd></div>
@@ -723,7 +723,7 @@ th{white-space:nowrap}
 <tbody>
 <tr data-s="warn">
 <td class="id">D-01</td>
-<td><strong>읽기</strong>: 회사 데이터에서 Actor, 문자열, <code>story_resource_list</code>(배경), 맵 테이블 3개(연출 기획서 「부록 A 데이터 설계」)와 연출 JSON을 읽는다. Actor, 문자열, 배경, 설정은 읽기만 한다.</td>
+<td><strong>읽기</strong>: 회사 데이터에서 Actor, 문자열, <code>story_resource_list</code>(배경), 맵 테이블 2개(연출 기획서 「부록 A 데이터 설계」)와 연출 JSON을 읽는다. Actor, 문자열, 배경은 읽기만 한다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
@@ -898,7 +898,7 @@ th{white-space:nowrap}
 <td>마무리 대기(ms)</td>
 <td>숫자</td>
 <td>JSON <code>outro_ms</code></td>
-<td>1000ms (설정 키)</td>
+<td>1000ms</td>
 </tr>
 <tr>
 <td>배경</td>
@@ -989,7 +989,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td class="id">CK-11</td>
-<td>이어가기 연결이 돌아오거나 <code>MAP_CHAIN_MAX</code>(20)단을 넘음</td>
+<td>이어가기 연결이 돌아오거나 20단을 넘음</td>
 <td>이어가기 연결이 너무 길거나 돌아옵니다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
@@ -1141,6 +1141,11 @@ th{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
+<td>v0.25</td>
+<td>2026-11-22</td>
+<td>설정 테이블 삭제에 맞춰 D-01, CK-11, 속성 패널 기본값 표기 수정</td>
+</tr>
+<tr>
 <td>v0.24</td>
 <td>2026-11-22</td>
 <td>배경은 기존 <code>story_resource_list</code>에서 고른다. 배경 등록(S-06, D-06) 삭제, D-01·CK-16·속성 패널 저장 위치 수정</td>
@@ -1149,11 +1154,6 @@ th{white-space:nowrap}
 <td>v0.23</td>
 <td>2026-11-22</td>
 <td>속도 프리셋 테이블 삭제에 맞춰 D-01과 속성 패널 저장 위치(<code>pins[].speed</code>) 수정</td>
-</tr>
-<tr>
-<td>v0.22</td>
-<td>2026-11-22</td>
-<td>5차 단순화: 경고 검사 전부 삭제(CK-13~15, CK-17~20, 검사는 오류만), 대사창 영역 가이드(V-05), 조작 안내 관련 규칙(E-06, E-08), 작업 목록, 개요의 목표·품질 문장 삭제. 부록 D~F를 C~E로</td>
 </tr>
 </tbody>
 </table></div></section>
