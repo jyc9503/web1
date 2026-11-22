@@ -150,11 +150,10 @@ th{white-space:nowrap}
 <a href="#s11">저장과 검증</a>
 <a href="#s12">부록 A. 속성 패널과 저장 위치</a>
 <a href="#s13">부록 B. 검사 항목</a>
-<a href="#s14">부록 C. 작업 목록</a>
-<a href="#s15">부록 D. PC 단축키</a>
-<a href="#s16">부록 E. 편집 조작 세부</a>
-<a href="#s17">부록 F. 검증·미결 목록</a>
-<a href="#s18">변경 이력</a>
+<a href="#s14">부록 C. PC 단축키</a>
+<a href="#s15">부록 D. 편집 조작 세부</a>
+<a href="#s16">부록 E. 검증·미결 목록</a>
+<a href="#s17">변경 이력</a>
     <div class="legend">
       <span>배지 없음 = 확정, 그대로 구현</span>
       <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
@@ -168,25 +167,23 @@ th{white-space:nowrap}
       <h1>맵 이동 연출 편집 툴</h1>
       <p class="sub">기획자가 「스토리 맵 핀 이동 연출」을 만드는 툴. 경로 그리기, 장소 마크, 앞 연출에서 이어가기, 미리보기, 데이터 저장을 다룬다.</p>
       <dl class="meta">
-        <div><dt>버전</dt><dd class="mono">v0.21 회사 검토용</dd></div>
+        <div><dt>버전</dt><dd class="mono">v0.22 회사 검토용</dd></div>
         <div><dt>작성</dt><dd>기획</dd></div>
         <div><dt>구현 대상</dt><dd>툴 프로그래머</dd></div>
-        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">24건</span></dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">23건</span></dd></div>
       </dl>
     </header>
     <section id="s1"><h2><span class="sec">§1</span>개요</h2>
 <p>「스토리 맵 핀 이동 연출」(<code>plans/story-map-pin-move/</code>)의 데이터를 만드는 편집 툴이다. 연출 규칙(R-xx), 계산식(F-xx), 데이터 형식은 그 기획서(이하 "연출 기획서")를 따르고, 이 문서는 <strong>툴에서 어떻게 만드는지</strong>만 다룬다.</p>
 <ul>
-<li><strong>사용자</strong>: 스토리 연출을 만드는 기획자 여러 명. 처음 쓰는 사람도 헷갈리지 않고, 사람마다 만든 연출의 품질이 비슷해야 한다. 같은 배경과 장소를 여러 사람이 나눠 쓰며, 회사에서는 파일 잠금(락)과 기존 협업 규칙(id, 이름)으로 충돌을 막는다.</li>
+<li><strong>사용자</strong>: 스토리 연출을 만드는 기획자 여러 명. 같은 배경과 장소를 여러 사람이 나눠 쓰며, 회사에서는 파일 잠금(락)과 기존 협업 규칙(id, 이름)으로 충돌을 막는다.</li>
 <li><strong>대상 기기</strong>: PC(마우스와 키보드). 프로토타입이 폰 터치로도 조작되는 것은 기획 검토를 폰에서 하기 위한 것이고, 툴 요구가 아니다. 터치 기기 지원이 필요해지면 더블탭과 길게 누르기를 같은 규칙으로 쓴다. <code>검증필요</code></li>
-<li><strong>목표</strong>: 연출 하나를 5분 안에 만든다. 점 몇 개를 찍으면 곡선이 나오고, 앞 연출에서 이어갈 때는 버튼 하나로 시작 상태가 채워진다. <code>검증필요</code></li>
 <li><strong>원칙</strong>: 툴에서 보는 미리보기와 게임 화면이 같아야 한다. 같은 계산식(연출 기획서 「부록 C 계산 규칙」)을 쓴다.</li>
 <li><strong>결과물</strong>: 연출 1건당 JSON 1개와 엑셀 테이블 행(<code>map_scene</code>, <code>map_place</code>, <code>map_background</code>). 형식은 연출 기획서 「부록 A 데이터 설계」에 있다.</li>
 <li><strong>단위</strong>: 툴 화면의 좌표·길이는 배경 px, 시간은 ms, 속도는 px/초로 표시한다.</li>
 <li>동작 프로토타입(<code>plans/story-map-pin-move/proto/</code>)의 「편집 툴」 탭이 이 문서의 주요 기능을, 「데이터」 탭이 저장 형식을 구현해 두었다.</li>
 <li>기능 전체를 짧게 보려면 연출의 핵심 기획서(<code>plans/story-map-pin-move/core.md</code>)를 먼저 읽는다. 이 문서는 툴 세부를 담은 참고 자료다.</li>
-<li>회사 확인, 프로그램실 회의 안건 같은 남은 일은 「부록 F 검증·미결 목록」에 있다.</li>
-<li>기획자용 조작 안내와 「좋은 연출 기준」은 <code>plans/map-move-tool/guide.md</code>에 있다. 기준의 원본은 연출 기획서 「연출 작성 기준」이고, 툴은 그 기준을 경고로 알려준다(CK-13, CK-14, CK-18~CK-20).</li>
+<li>회사 확인, 프로그램실 회의 안건 같은 남은 일은 「부록 E 검증·미결 목록」에 있다.</li>
 <li>이 문서는 회사 밖에서 회사 데이터 없이 썼다. 테이블·열·필드 이름은 자리표시다.</li>
 </ul>
 <h3>번호 체계</h3>
@@ -232,7 +229,6 @@ th{white-space:nowrap}
 </tr>
 </tbody>
 </table></div>
-<p>지운 번호는 다시 쓰지 않는다(E-04, E-09는 v0.9에서, M-09, S-07은 v0.15에서, K-08, C-06, CK-05는 v0.18에서, M-07은 v0.19에서, P-16은 v0.20에서 삭제).</p>
 </section>
 <section id="s2"><h2><span class="sec">§2</span>화면 구성</h2>
 <div class="flow"><svg viewBox="0 0 860 380" role="img" aria-label="편집 툴 화면 구성: 왼쪽 연출 목록, 가운데 캔버스와 재생 바·타임라인 막대, 오른쪽 속성 패널과 검사 결과">
@@ -325,7 +321,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="warn">
 <td>검사 결과</td>
-<td>오류와 경고 목록. 줄을 누르면 해당 핀·점·장소를 선택한다</td>
+<td>오류 목록. 줄을 누르면 해당 핀·점·장소를 선택한다</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 </tbody>
@@ -361,11 +357,6 @@ th{white-space:nowrap}
 <td>선택하지 않은 핀의 경로는 흐리게(불투명도 45%) 보여 주어 선택한 핀이 눈에 띄게 한다.</td>
 <td></td>
 </tr>
-<tr data-s="ok">
-<td class="id">V-05</td>
-<td>대사창 영역 점선 상자를 켜고 끌 수 있다(기본 꺼짐). 맵이 대사 뒤에 남을 때 가려지는 곳을 확인하는 용도다. 영역은 배경 아래 22%이고, 같은 영역으로 CK-19 경고를 낸다.</td>
-<td></td>
-</tr>
 <tr data-s="warn">
 <td class="id">V-06</td>
 <td><strong>확대·이동</strong>: 마우스 휠로 25~400% 확대하고, <code>Space</code>+끌기나 가운데 버튼으로 화면을 옮긴다. 「맞춤」은 배경 전체를 보여준다. 확대해도 점·핸들·핀 크기는 그대로다.</td>
@@ -380,7 +371,7 @@ th{white-space:nowrap}
 </table></div>
 </section>
 <section id="s4"><h2><span class="sec">§4</span>편집 조작</h2>
-<p><strong>한 번 누르기는 고르기, 더블클릭은 만들기</strong>다. 점과 장소 마크는 더블클릭으로만 생기고, 6px 이상 끌어야 움직인다. 재생 중에 누르면 멈추기만 한다. 누르기 우선순위, 겹칠 때 무엇이 잡히는지 같은 세부 규칙(E-01~E-11)은 「부록 E 편집 조작 세부」에 있다.</p>
+<p><strong>한 번 누르기는 고르기, 더블클릭은 만들기</strong>다. 점과 장소 마크는 더블클릭으로만 생기고, 6px 이상 끌어야 움직인다. 재생 중에 누르면 멈추기만 한다. 누르기 우선순위, 겹칠 때 무엇이 잡히는지 같은 세부 규칙(E-01~E-11)은 「부록 D 편집 조작 세부」에 있다.</p>
 </section>
 <section id="s5"><h2><span class="sec">§5</span>연출 관리</h2>
 <div class="tablewrap"><table>
@@ -626,7 +617,7 @@ th{white-space:nowrap}
 </tr>
 </tbody>
 </table></div>
-<p>PC 단축키(<code>Space</code>, <code>Ctrl+Z</code>, <code>Delete</code>, <code>G</code> 등)는 「부록 D PC 단축키」에 있다. 범위는 프로그램실과 논의해 확정한다.</p>
+<p>PC 단축키(<code>Space</code>, <code>Ctrl+Z</code>, <code>Delete</code>, <code>G</code> 등)는 「부록 C PC 단축키」에 있다. 범위는 프로그램실과 논의해 확정한다.</p>
 </section>
 <section id="s8"><h2><span class="sec">§8</span>장소 마크 편집</h2>
 <div class="tablewrap"><table>
@@ -660,7 +651,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">M-05</td>
-<td>마크 이름이 비면 저장을 막고, 같은 배경에서 이름이 겹치면 알린다. 글자 수 제한은 두지 않는다(화면에서 겹치면 CK-17이 알린다).</td>
+<td>마크 이름이 비면 저장을 막는다. 글자 수 제한은 두지 않는다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
@@ -799,7 +790,7 @@ th{white-space:nowrap}
 </tr>
 <tr data-s="ok">
 <td class="id">T-07</td>
-<td>저장 전에 검사 항목(CK, 부록 B)을 확인한다. 오류는 저장을 막고, 경고는 목록만 보여준다.</td>
+<td>저장 전에 검사 항목(CK, 부록 B)을 확인하고, 걸리면 저장을 막는다.</td>
 
 </tr>
 <tr data-s="ok">
@@ -809,7 +800,7 @@ th{white-space:nowrap}
 </tr>
 </tbody>
 </table></div>
-<p>검사 항목(CK-01~CK-20, CK-05 없음)과 문구는 「부록 B 검사 항목」에 있다.</p>
+<p>검사 항목과 문구는 「부록 B 검사 항목」에 있다.</p>
 </section>
 <section id="s12"><h2><span class="sec">§12</span>부록 A. 속성 패널과 저장 위치</h2>
 <p>속성 패널의 각 항목이 어디에 저장되는지다. 툴 프로그래머용이다.</p>
@@ -941,13 +932,12 @@ th{white-space:nowrap}
 </table></div>
 </section>
 <section id="s13"><h2><span class="sec">§13</span>부록 B. 검사 항목</h2>
-<p>문구는 예시이고 <code>{ }</code> 안은 실제 값으로 바뀐다. 같은 규칙으로 빌드 때 한 번 더 검사한다(연출 기획서 「부록 G 구현 전달사항」).</p>
+<p>문구는 예시이고 <code>{ }</code> 안은 실제 값으로 바뀐다. 모두 데이터가 깨지는 경우라 저장을 막는다. 같은 규칙으로 빌드 때 한 번 더 검사한다(「구현·아트·사운드 전달사항」).</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
 <th>ID</th>
 <th>조건</th>
-<th>종류</th>
 <th>문구</th>
 <th>상태</th>
 </tr>
@@ -956,229 +946,79 @@ th{white-space:nowrap}
 <tr data-s="ok">
 <td class="id">CK-01</td>
 <td>점이나 장소의 좌표가 배경 범위 밖</td>
-<td>오류</td>
 <td>핀 {번호}의 점 {순서}이(가) 배경 밖에 있습니다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">CK-02</td>
 <td>시작점이 없는 핀 (앞 연출에서 이어지지 않는데 점이 없음)</td>
-<td>오류</td>
 <td>핀 {번호}에 시작점이 없습니다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">CK-03</td>
 <td>이름이 빈 장소 마크</td>
-<td>오류</td>
 <td>이름이 없는 장소가 있습니다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">CK-04</td>
 <td>점이나 장소 보임이 다른 배경의 장소를 가리킴</td>
-<td>오류</td>
 <td>핀 {번호}의 점 {순서}이(가) 다른 배경의 장소를 가리킵니다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">CK-06</td>
 <td>이어가기 연출의 배경이 앞 연출과 다름</td>
-<td>오류</td>
 <td>배경이 앞 연출과 다릅니다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">CK-07</td>
 <td>출발 조건의 기준 핀이 연출에 없음</td>
-<td>오류</td>
 <td>핀 {번호}의 기준 핀이 없습니다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">CK-08</td>
 <td>출발 조건이 서로를 기다림</td>
-<td>오류</td>
 <td>핀 {번호}과(와) 핀 {번호}이(가) 서로를 기다립니다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">CK-09</td>
 <td>앞 연출이 없는 id를 가리킴</td>
-<td>오류</td>
 <td>앞 연출 {id}을(를) 찾을 수 없습니다.</td>
 <td></td>
 </tr>
 <tr data-s="ok">
 <td class="id">CK-10</td>
 <td>Actor 테이블에 없는 <code>actor_id</code></td>
-<td>오류</td>
 <td>핀 {번호}의 Actor {id}을(를) 찾을 수 없습니다.</td>
 <td></td>
 </tr>
 <tr data-s="warn">
 <td class="id">CK-11</td>
 <td>이어가기 연결이 돌아오거나 <code>MAP_CHAIN_MAX</code>(20)단을 넘음</td>
-<td>오류</td>
 <td>이어가기 연결이 너무 길거나 돌아옵니다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
 <tr data-s="warn">
 <td class="id">CK-12</td>
 <td>한 연출에 같은 핀 번호가 둘</td>
-<td>오류</td>
 <td>핀 번호 {번호}이(가) 겹칩니다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">CK-13</td>
-<td>속도가 <code>MAP_SPEED_WARN_PX</code>(1600)px/초를 넘음. 순간이동처럼 보이고, 시간 고정 핀에서 주로 생긴다</td>
-<td>경고</td>
-<td>핀 {번호}이(가) 너무 빠릅니다({속도}px/초).</td>
-<td></td>
-</tr>
-<tr data-s="ok">
-<td class="id">CK-14</td>
-<td>이동 끝 시각이 <code>MAP_RECOMMEND_MAX_MS</code>(8000)를 넘음 (연출 G-01)</td>
-<td>경고</td>
-<td>연출이 권장 길이보다 깁니다({길이}ms).</td>
-<td></td>
-</tr>
-<tr data-s="ok">
-<td class="id">CK-15</td>
-<td>같은 배경에 이름이 같은 장소 마크 (M-05)</td>
-<td>경고</td>
-<td>장소 이름 "{이름}"이(가) 겹칩니다.</td>
-<td></td>
 </tr>
 <tr data-s="warn">
 <td class="id">CK-16</td>
 <td>배경이 2048×1152가 아님</td>
-<td>오류</td>
 <td>배경은 2048×1152여야 합니다.</td>
 <td><span class="badge b-warn">검증필요</span></td>
 </tr>
-<tr data-s="warn">
-<td class="id">CK-17</td>
-<td>이름표가 옆 핀의 이름표나 보이는 장소 글자와 겹침</td>
-<td>경고</td>
-<td>{이름}이(가) 다른 글자와 겹칩니다.</td>
-<td><span class="badge b-warn">검증필요</span></td>
-</tr>
-<tr data-s="ok">
-<td class="id">CK-18</td>
-<td>동시에 움직이는 핀이 <code>MAP_RECOMMEND_MOVING_PINS</code>(3)개보다 많은 순간이 있음 (연출 G-02)</td>
-<td>경고</td>
-<td>{시각}ms에 핀 {개수}개가 함께 움직입니다. 출발 시차를 두면 따라 보기 쉽습니다.</td>
-<td></td>
-</tr>
-<tr data-s="ok">
-<td class="id">CK-19</td>
-<td>도착 지점이나 보이는 장소 마크가 대사창 영역(배경 아래 <code>MAP_DIALOG_AREA_RATIO</code>(22)%) 안에 있음 (연출 G-04)</td>
-<td>경고</td>
-<td>{이름}이(가) 대사창에 가려집니다.</td>
-<td></td>
-</tr>
-<tr data-s="ok">
-<td class="id">CK-20</td>
-<td>보이는 장소 마크가 <code>MAP_RECOMMEND_PLACES</code>(8)개보다 많음 (연출 G-05)</td>
-<td>경고</td>
-<td>보이는 장소가 {개수}개입니다. 이야기에 나오는 장소만 남기세요.</td>
-<td></td>
-</tr>
 </tbody>
 </table></div>
 </section>
-<section id="s14"><h2><span class="sec">§14</span>부록 C. 작업 목록</h2>
-<p>우선순위 제안이다(전체가 제안이라 배지를 붙이지 않는다). P0은 첫 구현에 꼭 필요한 것, P1은 같은 버전 안에 넣을 것, P2는 여유가 있을 때다. 기간은 회사에서 산정한다.</p>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>작업</th>
-<th>관련 번호</th>
-<th>우선</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>데이터 읽기, 연출 JSON 저장·불러오기</td>
-<td>D-01, D-02, T-06</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>캔버스: 배경 표시, 편집 보기 / 게임 보기</td>
-<td>V-01~V-04</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>핀·경로 편집: 선택·더블클릭 생성, 점 이동·삽입·삭제, 곡선·핸들, 스냅</td>
-<td>E, P-01~P-10, P-17</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>장소 마크 편집과 보임/숨김</td>
-<td>M-01~M-06</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>핀 속성 패널과 속도·출발 조건, 고급 옵션 접기</td>
-<td>K-01~K-06, K-09, P-14, P-15</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>미리보기 재생 (게임과 같은 계산식)</td>
-<td>T-05</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>앞 연출에서 이어가기</td>
-<td>C-01~C-04, C-07, C-08</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>실행 취소·다시 실행</td>
-<td>P-11</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>저장 전 검사와 검사 결과 목록</td>
-<td>T-07, CK-01~CK-17 (CK-05 없음)</td>
-<td>P0</td>
-</tr>
-<tr>
-<td>연출 작성 기준 경고</td>
-<td>CK-18~CK-20</td>
-<td>P1</td>
-</tr>
-<tr>
-<td>연출 관리(새 연출, 복제, 삭제, 목록 순서), id 채번, 배경 등록</td>
-<td>S-01~S-06, D-05, D-06</td>
-<td>P1</td>
-</tr>
-<tr>
-<td>엑셀 행 반영, 문자열 추가 목록, 데이터 보기</td>
-<td>D-03, D-04, D-08</td>
-<td>P1</td>
-</tr>
-<tr>
-<td>타임라인 막대, 확대·이동, 좌표 표시</td>
-<td>K-05, V-06, V-07</td>
-<td>P1</td>
-</tr>
-<tr>
-<td>대사창 가이드, 장소 삭제 영향 안내</td>
-<td>V-05, M-08</td>
-<td>P2</td>
-</tr>
-<tr>
-<td>경로 복사·뒤집기, 이어서 미리보기, PC 단축키</td>
-<td>P-12, P-13, C-05</td>
-<td>P2</td>
-</tr>
-</tbody>
-</table></div>
-</section>
-<section id="s15"><h2><span class="sec">§15</span>부록 D. PC 단축키</h2>
+<section id="s14"><h2><span class="sec">§14</span>부록 C. PC 단축키</h2>
 <p>넣기로 했고, 범위는 프로그램실과 논의해 확정한다. <code>검증필요</code></p>
 <div class="tablewrap"><table>
 <thead>
@@ -1231,7 +1071,7 @@ th{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s16"><h2><span class="sec">§16</span>부록 E. 편집 조작 세부</h2>
+<section id="s15"><h2><span class="sec">§15</span>부록 D. 편집 조작 세부</h2>
 <p>편집 화면에서 "고르려고 눌렀는데 점이 찍히는" 실수를 막는 규칙이다. <strong>한 번 누르기는 선택, 더블클릭은 생성</strong>으로 나눈다. 도구를 바꿀 필요가 없다. 모든 규칙은 프로토타입 「편집 툴」 탭에 구현되어 있다.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -1262,18 +1102,8 @@ th{white-space:nowrap}
 
 </tr>
 <tr data-s="ok">
-<td class="id">E-06</td>
-<td><strong>조작 안내는 문서로</strong>: 툴 안에 조작 안내를 띄우지 않고 사용 안내 문서(<code>guide.md</code>)로 대신한다. 계속 쓰는 툴이라 반복 안내는 방해가 된다. <code>Esc</code>는 선택을 푼다.</td>
-
-</tr>
-<tr data-s="ok">
 <td class="id">E-07</td>
 <td><strong>재생 중 입력</strong>: 편집 보기에서 재생 중에 캔버스를 누르면 일시정지만 하고 편집하지 않는다.</td>
-
-</tr>
-<tr data-s="ok">
-<td class="id">E-08</td>
-<td><strong>되돌리기 안내 없음</strong>: 점 추가·끼워 넣기·삭제 뒤 되돌리기 안내를 띄우지 않는다. 실행 취소 버튼과 <code>Ctrl+Z</code>만 둔다.</td>
 
 </tr>
 <tr data-s="ok">
@@ -1289,7 +1119,7 @@ th{white-space:nowrap}
 </tbody>
 </table></div>
 </section>
-<section id="s17"><h2><span class="sec">§17</span>부록 F. 검증·미결 목록</h2>
+<section id="s16"><h2><span class="sec">§16</span>부록 E. 검증·미결 목록</h2>
 <h3>회사에서 확인할 것</h3>
 <ul class="check">
 <li><span class="mono">□</span><span>툴 플랫폼(엔진 에디터 확장 / 웹 툴): 회사에서 판단 (T-08)</span></li>
@@ -1306,14 +1136,10 @@ th{white-space:nowrap}
 </ul>
 <h3>기획자가 정할 것</h3>
 <ul class="check">
-<li><span class="mono">□</span><span>v0.12에서 추가한 제안(V-06, V-07, S-01~S-06, K-07, M-08, D-01~D-07, CK-11, CK-12, CK-16, CK-17)</span></li>
-</ul>
-<h3>나중에 다시 볼 것</h3>
-<ul class="check">
-<li><span class="mono">□</span><span>속도 프리셋 값은 시작값. 실제 연출을 만들며 튜닝 (P-15)</span></li>
+<li><span class="mono">□</span><span>v0.12에서 추가한 제안(V-06, V-07, S-01~S-06, K-07, M-08, D-01~D-07, CK-11, CK-12, CK-16)</span></li>
 </ul>
 </section>
-<section id="s18"><h2><span class="sec">§18</span>변경 이력</h2>
+<section id="s17"><h2><span class="sec">§17</span>변경 이력</h2>
 <p>최근 3개만 적는다. 이전 이력은 <code>decisions.md</code>에 있다.</p>
 <div class="tablewrap"><table>
 <thead>
@@ -1325,6 +1151,11 @@ th{white-space:nowrap}
 </thead>
 <tbody>
 <tr>
+<td>v0.22</td>
+<td>2026-11-22</td>
+<td>5차 단순화: 경고 검사 전부 삭제(CK-13~15, CK-17~20, 검사는 오류만), 대사창 영역 가이드(V-05), 조작 안내 관련 규칙(E-06, E-08), 작업 목록, 개요의 목표·품질 문장 삭제. 부록 D~F를 C~E로</td>
+</tr>
+<tr>
 <td>v0.21</td>
 <td>2026-11-21</td>
 <td>핵심 기획서 분리에 맞춰 개요에 안내 한 줄. 내용은 그대로</td>
@@ -1333,11 +1164,6 @@ th{white-space:nowrap}
 <td>v0.20</td>
 <td>2026-11-21</td>
 <td>과한 경고·안내 정리: 매번 뜨는 안내를 해당할 때만으로(K-07, M-03, M-08, C-04, S-03), 같은 경고 중복 삭제(P-16을 CK-13에 합침), 이어받을 핀이 없어진 경우는 새 핀으로 처리(C-04)</td>
-</tr>
-<tr>
-<td>v0.19</td>
-<td>2026-11-21</td>
-<td>3차 정리: 배경 2048×1152 고정(M-07 삭제, S-06·D-06·CK-16을 고정 크기 검사로), 장소 이름 글자 수 제한 삭제(M-05), 이름표 겹침 경고 확대(CK-17), 편집 조작 세부를 부록 E로, 검증·미결 목록을 부록 F로</td>
 </tr>
 </tbody>
 </table></div></section>

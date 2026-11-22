@@ -155,7 +155,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 <body>
 <div class="wrap">
   <header class="head">
-    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.21</span>
+    <span class="tag">카제나 · 스토리 연출 · 프로토타입 · 문서 묶음 v0.22</span>
     <h1>맵 핀 이동 연출</h1>
     <p>세 탭이 같은 데이터를 봅니다. <b>스토리 시연</b>은 스토리 행을 따라 맵이 열리고 이어지고 닫히는 과정을, <b>편집 툴</b>은 기획자가 연출을 만드는 조작을, <b>데이터</b>는 저장되는 엑셀 행과 연출 JSON을 보여줍니다. 배경, 핀, 장소 이름, 대사는 모두 자리표시입니다.</p>
   </header>
@@ -264,7 +264,6 @@ code{font-family:var(--f-mono);font-size:.92em}
         <div id="pathtab" style="display:grid;gap:10px">
           <div class="chips" id="chips"></div>
           <label class="check"><input type="checkbox" id="snap" checked> 장소 마크에 붙이기 (장소 id로 저장)</label>
-          <label class="check"><input type="checkbox" id="guide"> 대사창 영역 표시 (V-05)</label>
           <div class="form">
             <label for="f-res">Actor</label><select id="f-res"></select>
             <label for="f-preset">속도</label><select id="f-preset"></select>
@@ -296,7 +295,7 @@ code{font-family:var(--f-mono);font-size:.92em}
             <button class="btn sm" id="b-addpin" type="button">핀 추가</button>
             <button class="btn sm" id="b-delpin" type="button">핀 삭제</button>
           </div>
-          <p class="note"><span class="badge">프로토 검토용 안내</span> 실제 툴은 조작 안내를 띄우지 않고 사용 안내 문서로 대신합니다(툴 E-06). <b>한 번 누르기</b>: 점·핀·경로를 고르고, 끌어서 옮깁니다(6px 이상 끌어야 움직임). 빈 곳은 선택 해제. <b>더블클릭</b>(폰은 더블탭): 빈 곳이면 끝에 점 추가, 선택한 경로 선 위면 그 자리에 끼워 넣기. 장소에 붙은 점은 ◆로 표시되고 장소를 옮기면 따라갑니다. 점을 누르고 「핸들 꺼내기」로 곡선을 다듬습니다(Alt+끌기는 한쪽만). 이어가기 핀의 시작점(자물쇠)은 앞 연출에서 오며 저장하지 않습니다. 장소 마크를 한 번 누르면 장소 편집으로 바뀝니다. 재생 중에 무대를 누르면 일시정지만 합니다. PC에서는 휠로 확대, Space+끌기로 화면 이동.</p>
+          <p class="note"><span class="badge">프로토 검토용 안내</span> <b>한 번 누르기</b>: 점·핀·경로를 고르고, 끌어서 옮깁니다(6px 이상 끌어야 움직임). 빈 곳은 선택 해제. <b>더블클릭</b>(폰은 더블탭): 빈 곳이면 끝에 점 추가, 선택한 경로 선 위면 그 자리에 끼워 넣기. 장소에 붙은 점은 ◆로 표시되고 장소를 옮기면 따라갑니다. 점을 누르고 「핸들 꺼내기」로 곡선을 다듬습니다(Alt+끌기는 한쪽만). 이어가기 핀의 시작점(자물쇠)은 앞 연출에서 오며 저장하지 않습니다. 장소 마크를 한 번 누르면 장소 편집으로 바뀝니다. 재생 중에 무대를 누르면 일시정지만 합니다. PC에서는 휠로 확대, Space+끌기로 화면 이동.</p>
         </div>
 
         <div id="placetab" hidden style="display:grid;gap:10px">
@@ -314,7 +313,7 @@ code{font-family:var(--f-mono);font-size:.92em}
         <hr style="margin:12px 0">
         <label class="check" id="prevwrap"><input type="checkbox" id="showprev" checked> 앞 연출 궤적을 흐리게 남김 (R-25)</label>
         <div style="margin-top:12px">
-          <h2>검사 결과 (T-07) <span class="badge ok" id="ck-badge">오류 0 · 경고 0</span></h2>
+          <h2>검사 결과 (T-07) <span class="badge ok" id="ck-badge">오류 0</span></h2>
           <ul class="checks" id="checks"></ul>
         </div>
         <div class="tools" style="margin-top:10px">
@@ -372,7 +371,7 @@ code{font-family:var(--f-mono);font-size:.92em}
 /* ---------- 설정 (map_config, map_speed_preset). 값은 기획서 「설정 키」와 같다 ---------- */
 var CFG={FADE:400,OUTRO:1000,TAP:300,PREV_ALPHA:40, /* 설정 키 (부록 B) */
   DUR_STEP:100,DUR_MIN:100,CURVE_SAMPLES:16,OVERLAP:0.9,GAP_RATIO:1.15,LABEL_PAD:6,CHAIN_MAX:20, /* 앞줄 일부는 계산 상수 (부록 C) */
-  SPEED_WARN:1600,RECOMMEND_MAX:8000,RECOMMEND_MOVING:3,RECOMMEND_PLACES:8,DIALOG_AREA:22,PREV_DEPTH:1,SNAP_PX:40,FAST:2,AUTO_WAIT:1600};
+  PREV_DEPTH:1,SNAP_PX:40,FAST:2,AUTO_WAIT:1600};
 var CFG_UI=[['MAP_FADE_MS','FADE'],['MAP_OUTRO_MS','OUTRO'],['MAP_TAP_FINISH_MS','TAP'],['MAP_PREV_TRAIL_ALPHA (%)','PREV_ALPHA'],['배속 배율 (가정)','FAST']];
 var PRESETS=[[1,'걷기',500],[2,'달리기',800],[3,'고속',1200]];
 var BG={id:10,res:'Map/bg_chapter03',w:2048,h:1152,memo:'3장 행성 지도'};
@@ -658,11 +657,6 @@ function renderEdit(){ /* 편집 보기. 재생 중이면 게임 화면 위에 �
     line(c.pts,col,on?2.5:2,[9,7],(on?0.95:0.45)*k);
     if(r.length>1){var e=c.pts[c.pts.length-1];ctx.save();ctx.globalAlpha=(on?1:.45)*k;ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(e.x*W,e.y*H,pinR()*.55,0,Math.PI*2);ctx.stroke();ctx.restore();}
   });
-  if($('guide').checked){
-    ctx.save();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.setLineDash([5,5]);ctx.lineWidth=1.5;rr(W*0.03,H*(1-CFG.DIALOG_AREA/100),W*0.94,H*(CFG.DIALOG_AREA/100-0.03),8);ctx.stroke();
-    ctx.fillStyle='rgba(255,255,255,.45)';ctx.font='500 '+Math.max(10,U*0.011)+'px "Noto Sans KR",sans-serif';ctx.textAlign='right';ctx.textBaseline='top';
-    ctx.fillText('대사창 영역 · 맵 유지 중 가려짐',W*0.96,H*(1-CFG.DIALOG_AREA/100)+6);ctx.restore();
-  }
   if(tab==='path')handles(k);
   if(!moving){
     sc.pins.forEach(function(p,i){var r=rpath(sc,p);if(r.length)pinBody(p,r[0][0]*W,r[0][1]*H,((tab==='path'&&i!==sel)?0.75:1)*(p.show_from==='ON_DEPART'&&!p.from_prev?0.5:1),null,tab==='path'&&i===sel);});
@@ -938,10 +932,10 @@ function syncForm(){
     $('f-sdelay').value=p.start.delay||0;
     $('f-curve').value=p.curve;
     $('adv-mark').hidden=!(p.label||!p.show_label||p.show_from!=='START'||p.fixed); /* 고급 값이 기본과 다르면 표시 (툴 K-09) */
-    var c=build(sc,p),s=sch[p.no],v=s.dur?c.total/(s.dur/1000):0,inf=$('speed'),warn=v>CFG.SPEED_WARN;
+    var c=build(sc,p),s=sch[p.no],v=s.dur?c.total/(s.dur/1000):0,inf=$('speed');
     inf.textContent=broken(sc,p)?'앞 연출에 같은 번호 핀이 없어 첫 점에서 출발합니다':
-      (moves(sc,p)?('길이 '+Math.round(c.total)+'px · '+Math.round(v)+'px/초 · '+s.dur+'ms · 출발 '+s.start+'ms'+(warn?' · 너무 빠름':'')):'이동 없음 (위치만 표시)');
-    inf.className='info'+(warn?' warn':'');
+      (moves(sc,p)?('길이 '+Math.round(c.total)+'px · '+Math.round(v)+'px/초 · '+s.dur+'ms · 출발 '+s.start+'ms'):'이동 없음 (위치만 표시)');
+    inf.className='info';
   }
   var pst=placeState(sc),pb=$('pchips');pb.innerHTML='';
   state.places.forEach(function(pl,i){var m=pst[pl.id];pb.appendChild(chipBtn(pl.name+(!m||m==='HIDE'?' · 안 보임':(m==='NEW'?' · 새로 보임':'')),null,i===psel,function(){psel=i;syncForm();}));});
@@ -965,20 +959,7 @@ function syncPlaceXY(){ /* 장소 위치 입력칸 (툴 M-06) */
 }
 function syncAll(){syncScenes();syncForm();hint();setPlay();}
 
-/* ---------- 저장 전 검사 (툴 T-07, CK-01~CK-20) ---------- */
-function labelOverlap(sc,pst){ /* 연출 끝 상태에서 이름표와 보이는 장소 글자가 겹치는지 (툴 CK-17) */
-  if(!W)return [];
-  var boxes=[],out=[],R=pinR(),f=fs(),pf=pfs();
-  sc.pins.forEach(function(p){var r=rpath(sc,p);if(!r.length||!p.show_label)return;var e=r[r.length-1],w=tagWidth(labelOf(p));
-    boxes.push({n:labelOf(p),k:'pin',x:e[0],y:e[1],l:e[0]*W-w/2,r:e[0]*W+w/2,t:e[1]*H+R+5,b:e[1]*H+R+5+f*1.7});});
-  ctx.font='700 '+pf+'px "Noto Sans KR",sans-serif';
-  state.places.forEach(function(pl){var m=pst[pl.id];if(!m||m==='HIDE')return;var x=pl.x/BG.w*W,y=pl.y/BG.h*H,w=ctx.measureText(pl.name).width/2;
-    boxes.push({n:pl.name,k:'place',x:pl.x/BG.w,y:pl.y/BG.h,l:x-w,r:x+w,t:y-R-6-pf,b:y-R-6});});
-  for(var i=0;i<boxes.length;i++)for(var j=i+1;j<boxes.length;j++){var a=boxes[i],c=boxes[j];
-    if(a.k==='pin'&&c.k==='pin'&&Math.hypot((a.x-c.x)*W,(a.y-c.y)*H)<R*2*CFG.OVERLAP)continue; /* 같은 자리 핀은 나란히 벌려 놓는다 */
-    if(a.l<c.r&&c.l<a.r&&a.t<c.b&&c.t<a.b){if(out.indexOf(a.n)<0)out.push(a.n);}}
-  return out;
-}
+/* ---------- 저장 전 검사 (툴 T-07, 부록 B) ---------- */
 function checks(sc){
   var out=[],sch=schedule(sc),seen={};
   function add(lv,id,msg,pi){out.push({lv:lv,id:id,msg:msg,pi:pi});}
@@ -993,39 +974,25 @@ function checks(sc){
       if(e.place){if(!place(e.place))add('err','CK-04','핀 '+p.no+'의 점 '+(k+1)+'이(가) 없는 장소를 가리킵니다.',pi);}
       else if(e.x<0||e.y<0||e.x>BG.w||e.y>BG.h)add('err','CK-01','핀 '+p.no+'의 점 '+(k+1)+'이(가) 배경 밖에 있습니다.',pi);});
     if(p.start.type!=='TIME'&&!findPin(sc,p.start.ref))add('err','CK-07','핀 '+p.no+'의 기준 핀이 없습니다.',pi);
-    var s=sch[p.no];
-    if(s&&s.dur){var v=build(sc,p).total/(s.dur/1000);if(v>CFG.SPEED_WARN)add('warn','CK-13','핀 '+p.no+'이(가) 너무 빠릅니다('+Math.round(v)+'px/초).',pi);}
   });
   if(sch.cycle)add('err','CK-08','출발 조건이 서로를 기다리는 핀이 있습니다.');
-  var names={};
   state.places.forEach(function(pl){
     if(!pl.name.trim())add('err','CK-03','이름이 없는 장소가 있습니다.');
-    else if(names[pl.name])add('warn','CK-15','장소 이름 "'+pl.name+'"이(가) 겹칩니다.');names[pl.name]=1;
     if(pl.x<0||pl.y<0||pl.x>BG.w||pl.y>BG.h)add('err','CK-01','장소 '+pl.name+'이(가) 배경 밖에 있습니다.');});
-  var me=moveEnd(sc,sch);if(me>CFG.RECOMMEND_MAX)add('warn','CK-14','연출이 권장 길이보다 깁니다('+me+'ms).');
-  var iv=sc.pins.map(function(p){var q=sch[p.no];return q&&q.dur?[q.start,q.start+q.dur]:null;}).filter(Boolean),mx=0,at=0; /* CK-18, 연출 G-02 */
-  iv.forEach(function(a){var n=iv.filter(function(b){return b[0]<=a[0]&&a[0]<b[1];}).length;if(n>mx){mx=n;at=a[0];}});
-  if(mx>CFG.RECOMMEND_MOVING)add('warn','CK-18',at+'ms에 핀 '+mx+'개가 함께 움직입니다. 출발 시차를 두면 따라 보기 쉽습니다.');
-  var lim=1-CFG.DIALOG_AREA/100,pst=placeState(sc),vis=0; /* CK-19, CK-20, 연출 G-04·G-05 */
-  state.places.forEach(function(pl){var m=pst[pl.id];if(!m||m==='HIDE')return;vis++;if(pl.y/BG.h>lim)add('warn','CK-19',pl.name+'이(가) 대사창에 가려집니다.');});
-  sc.pins.forEach(function(p,pi){var r=rpath(sc,p),e=p.pts[p.pts.length-1];if(r.length<2||r[r.length-1][1]<=lim)return; /* 보이는 장소에 도착하면 위에서 이미 알렸다 */
-    var m2=e&&e.place?pst[e.place]:null;if(m2&&m2!=='HIDE')return;add('warn','CK-19','핀 '+p.no+'의 도착 지점이 대사창에 가려집니다.',pi);});
-  labelOverlap(sc,pst).forEach(function(n){add('warn','CK-17',n+'이(가) 다른 글자와 겹칩니다.');}); /* CK-17: 글자 수 대신 실제 겹침 */
-  if(vis>CFG.RECOMMEND_PLACES)add('warn','CK-20','보이는 장소가 '+vis+'개입니다. 이야기에 나오는 장소만 남기세요.');
   return out;
 }
 function syncChecks(){
-  var list=checks(S()),ul=$('checks'),ne=0,nw=0;ul.innerHTML='';
+  var list=checks(S()),ul=$('checks'),ne=0;ul.innerHTML='';
   list.forEach(function(c){
-    if(c.lv==='err')ne++;else nw++;
+    ne++;
     var li=document.createElement('li');
-    li.innerHTML='<span class="badge '+(c.lv==='err'?'crit':'')+'">'+(c.lv==='err'?'오류':'경고')+' '+c.id+'</span>';
+    li.innerHTML='<span class="badge crit">오류 '+c.id+'</span>';
     if(c.pi!==undefined){var b=document.createElement('button');b.type='button';b.textContent=c.msg;b.addEventListener('click',function(){sel=c.pi;selPt=-1;setTab('path');});li.appendChild(b);}
     else{var sp=document.createElement('span');sp.textContent=c.msg;li.appendChild(sp);}
     ul.appendChild(li);});
   if(!list.length){var li0=document.createElement('li');li0.innerHTML='<span class="badge ok">통과</span><span>저장할 수 있습니다.</span>';ul.appendChild(li0);}
-  var bd=$('ck-badge');bd.textContent='오류 '+ne+' · 경고 '+nw;bd.className='badge '+(ne?'crit':(nw?'':'ok'));
-  return {err:ne,warn:nw};
+  var bd=$('ck-badge');bd.textContent='오류 '+ne;bd.className='badge '+(ne?'crit':'ok');
+  return {err:ne};
 }
 
 function bind(id,ev,fn){var el=$(id); /* 값이 바뀌는 순간 직전 상태를 실행 취소 기록에 남긴다 */

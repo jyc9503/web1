@@ -177,7 +177,7 @@ def game(scene, t, prev=None, seamless=False, dialog=True, modes=None):
 
 
 def edit(scene, sel=0, prev=None, modes=None):
-    """편집 보기: 앞으로 갈 경로(파선), 도착 링, 선택한 핀의 점 번호, 대사창 영역."""
+    """편집 보기: 앞으로 갈 경로(파선), 도착 링, 선택한 핀의 점 번호."""
     o = svg_open("툴 편집 화면") + bg() + places(modes, edit=True)
     for c, pts in (prev or []):
         o += poly(pts, COL[c], DOT[0], DOT[1], .4)
@@ -321,7 +321,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
 """
     html = HEAD.format(title="맵 핀 이동 화면 시안", layout="Layout: 장면 컷 4장, 게임/편집 보기 비교, 해부도, 리소스 요청표를 위에서 아래로.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
-  <span class="tag">카제나 · 스토리 연출 · v0.21 시안</span>
+  <span class="tag">카제나 · 스토리 연출 · v0.22 시안</span>
   <h1>맵 핀 이동 화면 시안</h1>
   <p class="sub">아트팀과 배경 담당에게 보여주는 장면 컷과 리소스 요청 내용입니다. 배경, 캐릭터, 장소 이름은 자리표시용입니다. 화면은 가로 16:9로 확정했고, 스토리 화면의 실제 UI(대사창 위치 등)는 확인 전입니다. <span class="badge b-warn">검증필요</span></p>
 
@@ -333,7 +333,7 @@ td.spec{font-family:var(--f-mono);font-size:13px}
   <p>같은 장면 1입니다. 앞으로 갈 경로, 도착 링, 점 번호는 툴에서만 보입니다 (R-09).</p>
   <div class="pair">
     <figure class="card"><div class="shot">{game(S1, 4.0, dialog=False, modes=S1_PLACES)}</div><figcaption><b>게임 보기</b><p>지나온 궤적(점선), 장소 마크, 핀만 보인다.</p></figcaption></figure>
-    <figure class="card"><div class="shot">{edit(S1, 0, modes=S1_PLACES)}</div><figcaption><b>편집 보기</b><p>모든 핀의 경로(파선), 도착 링, 점과 번호가 보인다. 선택하지 않은 핀과 숨긴 장소 마크는 흐리게. 대사창 영역 가이드는 켜고 끌 수 있다(기본 꺼짐).</p></figcaption></figure>
+    <figure class="card"><div class="shot">{edit(S1, 0, modes=S1_PLACES)}</div><figcaption><b>편집 보기</b><p>모든 핀의 경로(파선), 도착 링, 점과 번호가 보인다. 선택하지 않은 핀과 숨긴 장소 마크는 흐리게.</p></figcaption></figure>
   </div>
 
   <h2>핀과 장소 마크 해부도</h2>
@@ -414,9 +414,9 @@ table.work tr:last-child td{border-bottom:0}
     html = HEAD.format(title="맵 핀 이동 연출 한 장 요약", layout="Layout: 리드·PD 회의용 한 장. 한 줄 요약 → 왜 → 유저가 보는 장면 3컷 → 범위·만드는 쪽 규모 → 위험 → 결정할 것.", tokens=TOKENS, css=css)
     html += f"""<div class="wrap">
   <header class="top">
-    <span class="tag">카제나 · 스토리 연출 · v0.21 · 회의용 한 장</span>
+    <span class="tag">카제나 · 스토리 연출 · v0.22 · 회의용 한 장</span>
     <h1>맵 핀 이동 연출</h1>
-    <p class="one">메인 스토리의 중요한 이동 장면에서, 지도 위 핀이 움직여 <b>누가 어디서 어디로 갔는지</b>를 3~8초 안에 보여준다.</p>
+    <p class="one">메인 스토리의 중요한 이동 장면에서, 지도 위 핀이 움직여 <b>누가 어디서 어디로 갔는지</b>를 보여준다.</p>
     <div class="meta"><span class="badge b-ok">확정 {c['확정']}</span><span class="badge b-warn">검증필요 {c['검증필요']}</span><span class="badge b-tbd">미정 {c['미정']}</span><span>규칙·기준 ID 기준. 회사 데이터 확인 전 초안</span></div>
   </header>
 
@@ -425,7 +425,7 @@ table.work tr:last-child td{border-bottom:0}
     <div class="why">
       <div><b>글로는 위치가 안 남는다</b><span>"관측소로 간다"를 대사로만 읽으면 지형과 거리감이 남지 않는다.</span></div>
       <div><b>여러 명이 흩어지는 장면</b><span>세 명이 각자 다른 곳으로 가는 장면을 한 화면에서 정리해 준다.</span></div>
-      <div><b>짧게, 가끔</b><span>메인 스토리의 중요한 이동에만 쓴다. 한 번 3~8초, 탭 한 번이면 끝 상태로 넘어간다.</span></div>
+      <div><b>짧게, 가끔</b><span>메인 스토리의 중요한 이동에만 쓴다. 탭 한 번이면 끝 상태로 넘어간다.</span></div>
     </div>
   </section>
 
@@ -443,7 +443,7 @@ table.work tr:last-child td{border-bottom:0}
       <h2>이번 범위</h2>
       <div class="scope">
         <div><h3>넣는 것</h3><ul class="plain"><li>지도 위 핀 이동, 지나온 길 점선</li><li>장소 이름 표시</li><li>앞 연출에서 이어가기, 대사 뒤 지도 유지</li><li>탭으로 넘기기, 배속·자동 진행·다시보기·대사 로그</li><li>기획자용 편집 툴</li></ul></div>
-        <div><h3>빼는 것</h3><ul class="plain"><li>카메라 이동·확대 (기능 완성 후 재검토)</li><li>유저가 핀을 조작</li><li>전투·탐험 화면의 지도</li><li>도착 강조 같은 추가 표현</li></ul></div>
+        <div><h3>빼는 것</h3><ul class="plain"><li>카메라 이동·확대</li><li>유저가 핀을 조작</li><li>전투·탐험 화면의 지도</li><li>도착 강조 같은 추가 표현</li></ul></div>
       </div>
     </section>
     <section class="block">
@@ -466,9 +466,8 @@ table.work tr:last-child td{border-bottom:0}
       <h2>위험과 대응</h2>
       <ul class="plain">
         <li><span><b>폰에서 글자가 작다.</b> 1080 기준 크기를 폰 가로에 줄이면 이름표가 9pt 안팎이 된다. 최솟값을 둬서 받치고, 값은 회사 UI 최소 글자 규칙을 따른다(R-57).</span></li>
-        <li><span><b>기획자마다 품질이 다르다.</b> 「연출 작성 기준」 5개를 두고, 툴이 길이·동시 이동 수·대사창 가림을 경고한다.</span></li>
         <li><span><b>툴이 가장 큰 일이다.</b> 툴 플랫폼(엔진 확장 / 웹)과 편의 기능 범위를 프로그램실과 먼저 정한다.</span></li>
-        <li><span><b>넓은 폰의 좌우 여백.</b> 지도 전체를 보이게 하므로 19.5:9 폰에서는 좌우에 검은 여백이 생긴다. 다음 버전에서 배경 확장을 검토한다.</span></li>
+        <li><span><b>넓은 폰의 좌우 여백.</b> 지도 전체를 보이게 하므로 19.5:9 폰에서는 좌우에 검은 여백이 생긴다.</span></li>
       </ul>
     </section>
     <section class="block">
@@ -481,7 +480,7 @@ table.work tr:last-child td{border-bottom:0}
     </section>
   </div>
 
-  <p class="foot">자세한 내용: 기획서 본문(10분), 툴 기획서, 툴 사용 안내, 동작 프로토타입. 배경·인물은 자리표시.</p>
+  <p class="foot">자세한 내용: 핵심 기획서, 전체 기획서, 툴 기획서, 동작 프로토타입. 배경·인물은 자리표시.</p>
 </div>
 </body>
 </html>

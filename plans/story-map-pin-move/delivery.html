@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>맵 핀 이동 연출 · 구현·아트·사운드 전달사항</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+body{margin:0}
+
+/* Layout: 좌측 고정 목차 + 본문 한 단. 표와 흐름도가 주인공이고, 색은 상태(확정/검증필요/미정) 구분에만 쓴다. */
+:root{
+  --bg:#f4f5f8; --surface:#ffffff; --ink:#161b26; --muted:#586174; --line:#dde1e9;
+  --accent:#2f55d4; --accent-soft:#e7ecfc;
+  --ok:#157347; --ok-soft:#dcf2e6;
+  --warn:#8f5500; --warn-soft:#fdebc8;
+  --tbd:#5f43b2; --tbd-soft:#ebe5fa;
+  --crit:#b3261e; --crit-soft:#fbe3e1;
+  --f-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,"D2Coding",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10131a; --surface:#171b24; --ink:#e8ebf2; --muted:#9aa3b5; --line:#2a303c;
+  --accent:#8fa8ff; --accent-soft:#1f2848;
+  --ok:#62d49c; --ok-soft:#16332a;
+  --warn:#f1bb5f; --warn-soft:#3a2c12;
+  --tbd:#bba9f6; --tbd-soft:#2a2446;
+  --crit:#ff8d85; --crit-soft:#3d1c1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10131a; --surface:#171b24; --ink:#e8ebf2; --muted:#9aa3b5; --line:#2a303c;
+  --accent:#8fa8ff; --accent-soft:#1f2848;
+  --ok:#62d49c; --ok-soft:#16332a;
+  --warn:#f1bb5f; --warn-soft:#3a2c12;
+  --tbd:#bba9f6; --tbd-soft:#2a2446;
+  --crit:#ff8d85; --crit-soft:#3d1c1a; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.7 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+a{color:var(--accent)}
+code,.mono{font-family:var(--f-mono);font-size:.88em}
+code{background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:4px}
+
+.shell{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px;padding-block:32px 80px}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;font-size:13px}
+nav.toc .label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+nav.toc a{display:block;padding:5px 10px;border-left:2px solid var(--line);color:var(--muted);text-decoration:none}
+nav.toc a:hover{color:var(--ink);border-left-color:var(--accent)}
+.legend{margin-top:22px;display:grid;gap:6px;font-size:12px;color:var(--muted)}
+.vbtn{margin-top:18px;width:100%;font:inherit;font-size:12.5px;padding:8px 10px;border-radius:6px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-align:left}
+.vbtn[aria-pressed="true"]{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.vbtn:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+main{min-width:0}
+header.doc{padding-bottom:24px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.sample-tag{display:inline-block;font-size:11px;letter-spacing:.1em;color:var(--muted);border:1px dashed var(--muted);padding:2px 8px;border-radius:4px;margin-bottom:14px}
+h1{font-size:30px;line-height:1.3;margin:0 0 6px;text-wrap:balance;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 20px}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.meta div{background:var(--surface);padding:10px 14px}
+.meta dt{font-size:11px;color:var(--muted);letter-spacing:.08em}
+.meta dd{margin:2px 0 0;font-weight:500}
+
+section{padding-top:40px;scroll-margin-top:16px}
+h2{font-size:20px;margin:0 0 14px;display:flex;align-items:baseline;gap:10px;text-wrap:balance}
+h2 .sec{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:400}
+h3{font-size:15px;margin:24px 0 8px}
+p{margin:0 0 12px;max-width:68ch}
+
+.badge{display:inline-block;font-size:11.5px;font-weight:700;line-height:1;padding:4px 8px;border-radius:999px;white-space:nowrap}
+.b-ok{background:var(--ok-soft);color:var(--ok)}
+.b-warn{background:var(--warn-soft);color:var(--warn)}
+.b-tbd{background:var(--tbd-soft);color:var(--tbd)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+th{text-align:left;font-size:12px;color:var(--muted);letter-spacing:.06em;font-weight:500;padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--line)}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.id{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--f-mono)}
+tr[data-s="warn"] td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
+tr[data-s="tbd"] td:first-child{box-shadow:inset 3px 0 0 var(--tbd)}
+.only-verify tr[data-s="ok"]{opacity:.32}
+
+.bar{display:inline-block;vertical-align:middle;height:8px;border-radius:4px;background:var(--accent);margin-right:8px}
+.bar.f{background:var(--crit)}
+
+.flow{border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow-x:auto;padding:12px}
+.flow svg{display:block;min-width:700px;width:100%;height:auto}
+.flow text{font-family:var(--f-body);font-size:13px;fill:var(--ink)}
+.flow .sm{font-size:11.5px;fill:var(--muted)}
+.n{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.n.start{fill:var(--accent-soft);stroke:var(--accent)}
+.n.good{fill:var(--ok-soft);stroke:var(--ok)}
+.n.bad{fill:var(--crit-soft);stroke:var(--crit)}
+.n.mid{fill:var(--warn-soft);stroke:var(--warn)}
+.e{stroke:var(--muted);stroke-width:1.5;fill:none}
+
+.note{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:14px 16px;margin:14px 0}
+.note.dev{border-color:var(--accent);background:var(--accent-soft)}
+.note.dev strong:first-child{color:var(--accent)}
+ul.check{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+ul.check li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px}
+ul.check .mono{color:var(--muted)}
+
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:8px}
+  nav.toc{position:static;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  nav.toc .label,.legend{display:none}
+  nav.toc a{border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--surface)}
+  .vbtn{width:auto;margin:0}
+  h1{font-size:25px}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+main ul,main ol{margin:0 0 14px;padding-left:22px;max-width:68ch}
+main li{margin:3px 0}
+main pre{margin:12px 0 16px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow-x:auto;font:13px/1.6 var(--f-mono)}
+main pre code{background:none;color:var(--ink);padding:0;font-size:inherit}
+.tablewrap{margin:12px 0 18px}
+.flow{margin:12px 0 18px}
+.cuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin:12px 0 18px}
+.cuts figure{margin:0;min-width:0}
+.cuts svg{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
+.cuts figcaption{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.55}
+main h4{font-size:14px;margin:18px 0 6px}
+.note ul{margin:8px 0 0}
+.note p{margin:0}
+td code{white-space:nowrap}
+th{white-space:nowrap}
+
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="toc" aria-label="목차">
+    <p class="label">목차</p>
+    <a href="#s1">구현 전달사항</a>
+<a href="#s2">아트·사운드 전달사항</a>
+    <div class="legend">
+      <span>배지 없음 = 확정, 그대로 구현</span>
+      <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
+      <span><span class="badge b-tbd">미정</span> 결정 대기</span>
+    </div>
+    <button class="vbtn" id="vbtn" type="button" aria-pressed="false">검증필요·미정만 강조</button>
+  </nav>
+  <main>
+    <header class="doc">
+      <span class="sample-tag">카오스 제로 나이트메어 · 초안</span>
+      <h1>맵 핀 이동 연출 · 구현·아트·사운드 전달사항</h1>
+      <p class="sub">「스토리 맵 핀 이동 연출」을 만들 때 프로그래머와 아트·사운드 담당에게 전하는 내용. 기획서에서 따로 떼어 냈다.</p>
+      <dl class="meta">
+        <div><dt>버전</dt><dd class="mono">v0.22 회사 검토용</dd></div>
+        <div><dt>작성</dt><dd>기획</dd></div>
+        <div><dt>구현 대상</dt><dd>클라이언트 · UI 아트 · 배경 · 사운드</dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">0건</span></dd></div>
+      </dl>
+    </header>
+    <section id="s1"><h2><span class="sec">§1</span>구현 전달사항</h2>
+<p>프로그래머에게 전하는 제안이다. 더 나은 방법이 있으면 바꿔도 되고, 화면 결과만 연출 기획서 「부록 C 계산 규칙」과 같으면 된다.</p>
+<ul>
+<li><strong>시각 하나로 화면을 계산한다</strong>: "연출 데이터 + 연출 시각 t → 배경 불투명도, 장소별 불투명도, 핀별 위치·불투명도·방향, 궤적 길이"를 돌려주는 함수 하나로 만든다. 탭 완료(연출 R-53), 배속(연출 R-54), 툴의 시간 이동, 로그 다시 재생(연출 R-45), 세이브 복원이 모두 t만 바꾸면 해결된다. 겹침 정렬도 t 하나로 계산하므로 프레임 사이 상태가 없다.</li>
+<li><strong>미리 계산</strong>: 연출을 불러올 때 경로 샘플 점, 구간 길이, 핀별 출발·도착 시각을 한 번 계산해 둔다. 이어가기는 앞 연출을 따라가 시작 상태를 계산한다(연출 F-10).</li>
+<li><strong>설정 값은 코드에 적지 않는다</strong>: 모든 수치는 설정 키에서 읽는다. 값을 바꾸고 다시 빌드하지 않고 확인할 수 있으면 좋다.</li>
+<li><strong>폰 최소 크기</strong>: 핀·이름표·장소 글자는 연출 F-13의 최솟값 아래로 줄이지 않는다. 폰 가로 화면에서 가장 먼저 깨지는 곳이다.</li>
+<li><strong>궤적은 코드로 그린다</strong>: 리소스 없이 핀 색의 둥근 점선을 그린다. 두께와 간격은 UI px 설정 값이다.</li>
+<li><strong>미리 불러오기</strong>: 스토리에 들어갈 때 그 스토리 행들이 가리키는 연출의 배경과 핀 아이콘을 미리 불러온다. 재생 순간에 멈칫하지 않게 한다. <code>검증필요</code></li>
+<li><strong>데이터 검사</strong>: 연출 JSON 안의 <code>actor_id</code>, <code>place_id</code>, <code>speed_preset_id</code>는 엑셀 검사가 닿지 않는다. 툴의 저장 전 검사(편집 툴 기획서 T-07)와 같은 규칙으로 빌드 때 한 번 더 검사하는 스크립트를 둔다. 손으로 고친 JSON도 걸러진다.</li>
+<li><strong>JSON 형식 버전</strong>: <code>version</code>이 아는 값이 아니면 연출을 건너뛰고 로그를 남긴다. 형식을 바꿀 때 버전을 올린다.</li>
+<li><strong>세이브</strong>: 스토리 중간 저장이 있다면 "지금 열린 연출 id" 하나만 저장한다. 복원할 때 그 연출의 최종 상태를 계산해 바로 유지 상태로 띄운다.</li>
+<li><strong>확인용 기능</strong>: 연출 id를 넣으면 스토리 없이 바로 재생하는 개발용 명령이 있으면 기획·QA 확인이 빨라진다.</li>
+<li><strong>로그</strong>: 연출 기획서 「부록 E 예외 처리」의 모든 줄은 연출 id와 핀 번호를 담은 로그를 남긴다.</li>
+</ul>
+</section>
+<section id="s2"><h2><span class="sec">§2</span>아트·사운드 전달사항</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>항목</th>
+<th>내용</th>
+<th>담당</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr data-s="ok">
+<td>배경 리소스</td>
+<td>2048×1152 고정. 더 큰 원본은 같은 비율로 줄여 넣는다. 장소 이름은 배경에 그리지 않는다(장소 마크가 글자를 올린다)</td>
+<td>배경</td>
+<td></td>
+</tr>
+<tr data-s="warn">
+<td>핀 아이콘</td>
+<td>원형 핀 아이콘. Actor 테이블의 리소스 경로를 쓴다. 함대 등 대상 Actor에도 핀용 아이콘이 있는지 확인</td>
+<td>아트</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>로그 아이콘</td>
+<td>대사 로그의 맵 연출 줄에 쓰는 전용 아이콘 1종</td>
+<td>UI 아트</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="ok">
+<td>핀 프레임</td>
+<td>원형 흰 링, 이동 중 진행 방향 삼각형. 지름 86px</td>
+<td>UI 아트</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>이름표</td>
+<td>핀 아래 알약 모양. 반투명 어두운 바탕. 글자 24px</td>
+<td>UI 아트</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>궤적 점선</td>
+<td>핀 색과 같은 색의 둥근 점선. 코드로 그린다</td>
+<td>클라이언트</td>
+<td></td>
+</tr>
+<tr data-s="ok">
+<td>장소 마크</td>
+<td>작은 점 + 장소 이름. 배경 위에서 읽히도록 글자에 어두운 외곽선. 이름표와 모양을 다르게 한다. 글자 28px</td>
+<td>UI 아트</td>
+<td></td>
+</tr>
+<tr data-s="warn">
+<td>기본 실루엣 핀</td>
+<td>Actor나 아이콘이 없을 때 쓰는 대체 핀 1종</td>
+<td>UI 아트</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>핀 색 팔레트</td>
+<td>핀 번호별 기본 색 8개 이상. 이웃한 번호끼리 배경 위에서 확실히 구분되어야 한다(기획자는 색을 고르지 않는다)</td>
+<td>UI 아트</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+<tr data-s="warn">
+<td>이동 효과음</td>
+<td>짧은 이동 시작음 1종(1초 이내)</td>
+<td>사운드</td>
+<td><span class="badge b-warn">검증필요</span></td>
+</tr>
+</tbody>
+</table></div></section>
+  </main>
+</div>
+<script>(function(){
+  var b=document.getElementById('vbtn');
+  if(!b)return;
+  b.addEventListener('click',function(){
+    var on=b.getAttribute('aria-pressed')!=='true';
+    b.setAttribute('aria-pressed',on);
+    document.querySelector('main').classList.toggle('only-verify',on);
+  });
+})();</script>
+</body>
+</html>
