@@ -1,0 +1,22 @@
+<svg viewBox="0 0 880 330" role="img" aria-label="맵 상태 흐름: 닫힘에서 맵 열기로 등장, 0ms에 재생, 마지막 도착 뒤 유지, 맵 닫기로 닫는 중을 거쳐 닫힘. 화면 탭은 등장·재생에서 바로 유지로, 이어가기는 유지에서 바로 재생으로 간다">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+  <rect class="n" x="10" y="120" width="110" height="56" rx="8"/><text x="65" y="144" text-anchor="middle">닫힘</text><text class="sm" x="65" y="162" text-anchor="middle">맵 없음</text>
+  <rect class="n start" x="180" y="120" width="130" height="56" rx="8"/><text x="245" y="144" text-anchor="middle">등장</text><text class="sm" x="245" y="162" text-anchor="middle">-800 ~ 0ms 페이드인</text>
+  <rect class="n mid" x="370" y="120" width="130" height="56" rx="8"/><text x="435" y="144" text-anchor="middle">재생</text><text class="sm" x="435" y="162" text-anchor="middle">0ms ~ 이동, 궤적</text>
+  <rect class="n good" x="560" y="120" width="130" height="56" rx="8"/><text x="625" y="144" text-anchor="middle">유지</text><text class="sm" x="625" y="162" text-anchor="middle">대사 뒤 배경</text>
+  <rect class="n" x="750" y="120" width="120" height="56" rx="8"/><text x="810" y="144" text-anchor="middle">닫는 중</text><text class="sm" x="810" y="162" text-anchor="middle">400ms</text>
+
+  <path class="e" d="M120 148H178" marker-end="url(#ar)"/><text class="sm" x="124" y="140">맵 열기</text>
+  <path class="e" d="M310 148H368" marker-end="url(#ar)"/><text class="sm" x="322" y="140">0ms</text>
+  <path class="e" d="M500 148H558" marker-end="url(#ar)"/><text class="sm" x="503" y="110">마지막 도착</text><text class="sm" x="503" y="125">+ 1000ms</text>
+  <path class="e" d="M690 148H748" marker-end="url(#ar)"/><text class="sm" x="694" y="140">맵 닫기</text>
+  <path class="e" d="M810 176V292H65V178" marker-end="url(#ar)"/><text class="sm" x="400" y="310" text-anchor="middle">닫기 끝 → 원래 스토리 배경에서 대사</text>
+
+  <rect class="n bad" x="320" y="216" width="190" height="50" rx="8"/><text x="415" y="238" text-anchor="middle">화면 탭: 빨리 감기</text><text class="sm" x="415" y="255" text-anchor="middle">300ms 만에 최종 상태 (R-12)</text>
+  <path class="e" d="M245 176V241H318" marker-end="url(#ar)"/>
+  <path class="e" d="M435 176V214" marker-end="url(#ar)"/>
+  <path class="e" d="M510 241H625V178" marker-end="url(#ar)"/>
+
+  <path class="e" d="M625 120V62H435V118" marker-end="url(#ar)"/>
+  <text x="530" y="38" text-anchor="middle">이어가기 연출 열기</text><text class="sm" x="530" y="54" text-anchor="middle">앞 연출의 맵이 열려 있으면 페이드인 없이 (R-24)</text>
+</svg>

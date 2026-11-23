@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>맵 핀 이동 연출 · 아트·사운드 전달사항</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+body{margin:0}
+
+/* Layout: 좌측 고정 목차 + 본문 한 단. 표와 흐름도가 주인공이고, 색은 상태(확정/검증필요/미정) 구분에만 쓴다. */
+:root{
+  --bg:#f4f5f8; --surface:#ffffff; --ink:#161b26; --muted:#586174; --line:#dde1e9;
+  --accent:#2f55d4; --accent-soft:#e7ecfc;
+  --ok:#157347; --ok-soft:#dcf2e6;
+  --warn:#8f5500; --warn-soft:#fdebc8;
+  --tbd:#5f43b2; --tbd-soft:#ebe5fa;
+  --crit:#b3261e; --crit-soft:#fbe3e1;
+  --f-body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,"D2Coding",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10131a; --surface:#171b24; --ink:#e8ebf2; --muted:#9aa3b5; --line:#2a303c;
+  --accent:#8fa8ff; --accent-soft:#1f2848;
+  --ok:#62d49c; --ok-soft:#16332a;
+  --warn:#f1bb5f; --warn-soft:#3a2c12;
+  --tbd:#bba9f6; --tbd-soft:#2a2446;
+  --crit:#ff8d85; --crit-soft:#3d1c1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10131a; --surface:#171b24; --ink:#e8ebf2; --muted:#9aa3b5; --line:#2a303c;
+  --accent:#8fa8ff; --accent-soft:#1f2848;
+  --ok:#62d49c; --ok-soft:#16332a;
+  --warn:#f1bb5f; --warn-soft:#3a2c12;
+  --tbd:#bba9f6; --tbd-soft:#2a2446;
+  --crit:#ff8d85; --crit-soft:#3d1c1a; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.7 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+a{color:var(--accent)}
+code,.mono{font-family:var(--f-mono);font-size:.88em}
+code{background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:4px}
+
+.shell{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px;padding-block:32px 80px}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;font-size:13px}
+nav.toc .label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+nav.toc a{display:block;padding:5px 10px;border-left:2px solid var(--line);color:var(--muted);text-decoration:none}
+nav.toc a:hover{color:var(--ink);border-left-color:var(--accent)}
+.legend{margin-top:22px;display:grid;gap:6px;font-size:12px;color:var(--muted)}
+.vbtn{margin-top:18px;width:100%;font:inherit;font-size:12.5px;padding:8px 10px;border-radius:6px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-align:left}
+.vbtn[aria-pressed="true"]{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.vbtn:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+main{min-width:0}
+header.doc{padding-bottom:24px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.sample-tag{display:inline-block;font-size:11px;letter-spacing:.1em;color:var(--muted);border:1px dashed var(--muted);padding:2px 8px;border-radius:4px;margin-bottom:14px}
+h1{font-size:30px;line-height:1.3;margin:0 0 6px;text-wrap:balance;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 20px}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.meta div{background:var(--surface);padding:10px 14px}
+.meta dt{font-size:11px;color:var(--muted);letter-spacing:.08em}
+.meta dd{margin:2px 0 0;font-weight:500}
+
+section{padding-top:40px;scroll-margin-top:16px}
+h2{font-size:20px;margin:0 0 14px;display:flex;align-items:baseline;gap:10px;text-wrap:balance}
+h2 .sec{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:400}
+h3{font-size:15px;margin:24px 0 8px}
+p{margin:0 0 12px;max-width:68ch}
+
+.badge{display:inline-block;font-size:11.5px;font-weight:700;line-height:1;padding:4px 8px;border-radius:999px;white-space:nowrap}
+.b-ok{background:var(--ok-soft);color:var(--ok)}
+.b-warn{background:var(--warn-soft);color:var(--warn)}
+.b-tbd{background:var(--tbd-soft);color:var(--tbd)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+th{text-align:left;font-size:12px;color:var(--muted);letter-spacing:.06em;font-weight:500;padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--line)}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.id{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--f-mono)}
+tr[data-s="warn"] td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
+tr[data-s="tbd"] td:first-child{box-shadow:inset 3px 0 0 var(--tbd)}
+.only-verify tr[data-s="ok"]{opacity:.32}
+
+.bar{display:inline-block;vertical-align:middle;height:8px;border-radius:4px;background:var(--accent);margin-right:8px}
+.bar.f{background:var(--crit)}
+
+.flow{border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow-x:auto;padding:12px}
+.flow svg{display:block;min-width:700px;width:100%;height:auto}
+.flow text{font-family:var(--f-body);font-size:13px;fill:var(--ink)}
+.flow .sm{font-size:11.5px;fill:var(--muted)}
+.n{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.n.start{fill:var(--accent-soft);stroke:var(--accent)}
+.n.good{fill:var(--ok-soft);stroke:var(--ok)}
+.n.bad{fill:var(--crit-soft);stroke:var(--crit)}
+.n.mid{fill:var(--warn-soft);stroke:var(--warn)}
+.e{stroke:var(--muted);stroke-width:1.5;fill:none}
+
+.note{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:14px 16px;margin:14px 0}
+.note.dev{border-color:var(--accent);background:var(--accent-soft)}
+.note.dev strong:first-child{color:var(--accent)}
+ul.check{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+ul.check li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px}
+ul.check .mono{color:var(--muted)}
+
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:8px}
+  nav.toc{position:static;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  nav.toc .label,.legend{display:none}
+  nav.toc a{border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--surface)}
+  .vbtn{width:auto;margin:0}
+  h1{font-size:25px}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+main ul,main ol{margin:0 0 14px;padding-left:22px;max-width:68ch}
+main li{margin:3px 0}
+main pre{margin:12px 0 16px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow-x:auto;font:13px/1.6 var(--f-mono)}
+main pre code{background:none;color:var(--ink);padding:0;font-size:inherit}
+.tablewrap{margin:12px 0 18px}
+.flow{margin:12px 0 18px}
+.cuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin:12px 0 18px}
+.cuts figure{margin:0;min-width:0}
+.cuts svg{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
+.cuts figcaption{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.55}
+main h4{font-size:14px;margin:18px 0 6px}
+.note ul{margin:8px 0 0}
+.note p{margin:0}
+td code{white-space:nowrap}
+th{white-space:nowrap}
+
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="toc" aria-label="목차">
+    <p class="label">목차</p>
+    
+    <div class="legend">
+      <span>배지 없음 = 확정, 그대로 구현</span>
+      <span><span class="badge b-warn">검증필요</span> 회사 데이터 확인 전</span>
+      <span><span class="badge b-tbd">미정</span> 결정 대기</span>
+    </div>
+    <button class="vbtn" id="vbtn" type="button" aria-pressed="false">검증필요·미정만 강조</button>
+  </nav>
+  <main>
+    <header class="doc">
+      <span class="sample-tag">카오스 제로 나이트메어 · 초안</span>
+      <h1>맵 핀 이동 연출 · 아트·사운드 전달사항</h1>
+      <p class="sub">「스토리 맵 핀 이동 연출」에 필요한 아트·사운드 리소스. 기획서에서 따로 떼어 냈다.</p>
+      <dl class="meta">
+        <div><dt>버전</dt><dd class="mono">v0.28 회사 검토용</dd></div>
+        <div><dt>작성</dt><dd>기획</dd></div>
+        <div><dt>구현 대상</dt><dd>UI 아트 · 배경 · 사운드</dd></div>
+        <div><dt>검증필요·미정 (ID 기준)</dt><dd><span class="badge b-warn">0건</span></dd></div>
+      </dl>
+    </header>
+    
+  </main>
+</div>
+<script>(function(){
+  var b=document.getElementById('vbtn');
+  if(!b)return;
+  b.addEventListener('click',function(){
+    var on=b.getAttribute('aria-pressed')!=='true';
+    b.setAttribute('aria-pressed',on);
+    document.querySelector('main').classList.toggle('only-verify',on);
+  });
+})();</script>
+</body>
+</html>
